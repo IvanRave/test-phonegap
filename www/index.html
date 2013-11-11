@@ -1,42 +1,59 @@
 <!DOCTYPE html>
-<!--
-    Licensed to the Apache Software Foundation (ASF) under one
-    or more contributor license agreements.  See the NOTICE file
-    distributed with this work for additional information
-    regarding copyright ownership.  The ASF licenses this file
-    to you under the Apache License, Version 2.0 (the
-    "License"); you may not use this file except in compliance
-    with the License.  You may obtain a copy of the License at
-
-    http://www.apache.org/licenses/LICENSE-2.0
-
-    Unless required by applicable law or agreed to in writing,
-    software distributed under the License is distributed on an
-    "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
-     KIND, either express or implied.  See the License for the
-    specific language governing permissions and limitations
-    under the License.
--->
-<html>
-    <head>
-        <meta charset="utf-8" />
-        <meta name="format-detection" content="telephone=no" />
-        <meta name="viewport" content="user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1, width=device-width, height=device-height, target-densitydpi=device-dpi" />
-        <link rel="stylesheet" type="text/css" href="css/index.css" />
-        <title>Hello World</title>
-    </head>
-    <body>
-        <div class="app">
-            <h1>PhoneGap</h1>
-            <div id="deviceready" class="blink">
-                <p class="event listening">Connecting to Device</p>
-                <p class="event received">Boo!</p>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title>WFM</title>
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="css/bootstrap.css" rel="stylesheet" media="screen">
+    <link href="css/bootstrap-theme.css" rel="stylesheet" media="screen">
+    <link href="css/lightbox.css" rel="stylesheet" />
+    <link href="css/main.css" rel="stylesheet" />
+    <link href="css/jquery.fileupload-ui.css" rel="stylesheet" />
+    <link href="css/bootstrap-datepicker.css" rel="stylesheet" />
+    <link href="css/jquery.jcrop.css" rel="stylesheet" />
+</head>
+<body>
+    <!--[if lt IE 9]><p class="chromeframe">You are using an <strong>outdated</strong> browser. Please upgrade your browser.</p><![endif]-->
+    <div class="spinner"></div>
+    <div class="hide" id="wfm-project">
+        <nav class="wfm-nav clearfix">
+            <div class="pull-left">
+                <a href="#/companies">WFM</a>
             </div>
+            <div class="pull-right">
+                <a ng-hide="isLogged" href="#/account/logon">Sign in</a>
+                <a ng-show="isLogged" href="#/account/logoff">Log out</a>
+            </div>
+        </nav>
+        <div class="wfm-content-wrap">
+            <div id="modal-standard-block" class="modal fade" role="dialog" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close modal-close" aria-hidden="true">&times;</button>
+                <h4 class="modal-title"></h4>
+            </div>
+            <form id="modal-standard-form">
+                <div class="modal-body" style="padding-bottom:30px"></div>
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-primary">OK</button>
+                    <button type="button" class="btn btn-default modal-close">Cancel</button>
+                </div>
+            </form>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+            <div ng-view></div>
         </div>
-        <script type="text/javascript" src="phonegap.js"></script>
-        <script type="text/javascript" src="js/index.js"></script>
-        <script type="text/javascript">
-            app.initialize();
-        </script>
-    </body>
+    </div>
+    <footer class="navbar-fixed-bottom navbar-inverse">
+        <div class="footer-logo-wrap">
+            <div class="footer-logo"></div>
+        </div>
+    </footer>
+    <!-- Load main script file for page or default (with auth logic only) -->
+    <script data-main="js/rqr-company" src="js/require.js"></script>
+</body>
 </html>

@@ -1,0 +1,69 @@
+
+<div class="wfm-content-pad">
+    <div class="clearfix">
+        <div class="col-md-6 col-md-offset-1">
+            <h3>Registration:</h3>
+            <form class="form-horizontal" name="accountForm">
+                <div class="form-group" ng-class="{'has-error': accountForm.Email.$invalid}">
+                    <label class="control-label col-sm-2">Email</label>
+                    <div class="col-sm-6">
+                        <input type="email" name="Email" required autofocus class="form-control" ng-model="usver.Email" />
+                    </div>
+                    <div class="col-sm-4 has-error">
+                        <span ng-show="accountForm.Email.$error.email" class="help-block">wrong email format</span>
+                        <span ng-show="accountForm.Email.$error.required" class="help-block">required</span>
+                    </div>
+                </div>
+                <div class="form-group" ng-class="{'has-error': accountForm.Password.$invalid}">
+                    <label class="control-label col-sm-2">Password</label>
+                    <div class="col-sm-6">
+                        <input type="text" name="Password" required class="form-control" ng-model="usver.Password"
+                               ng-minlength="{[{bound.password.minLength}]}" ng-maxlength="{[{bound.password.maxLength}]}" autocomplete="off" />
+                    </div>
+                    <div class="col-sm-4 has-error">
+                        <span ng-show="accountForm.Password.$error.maxlength" class="help-block">max length: <span ng-bind="bound.password.maxLength"></span></span>
+                        <span ng-show="accountForm.Password.$error.minlength" class="help-block">min length: <span ng-bind="bound.password.minLength"></span></span>
+                        <span ng-show="accountForm.Password.$error.required" class="help-block">required</span>
+                    </div>
+                </div>
+                <div class="form-group" ng-class="{'has-error': accountForm.PasswordConfirmation.$invalid}">
+                    <label class="control-label col-sm-2">Password confirmation</label>
+                    <div class="col-sm-6">
+                        <input type="text" name="PasswordConfirmation" required class="form-control" ng-model="usver.PasswordConfirmation"
+                               ng-minlength="{[{bound.password.minLength}]}" ng-maxlength="{[{bound.password.maxLength}]}" autocomplete="off" />
+                    </div>
+                    <div class="col-sm-4 has-error">
+                        <span ng-show="accountForm.PasswordConfirmation.$error.maxlength" class="help-block">max length: <span ng-bind="bound.password.maxLength"></span></span>
+                        <span ng-show="accountForm.PasswordConfirmation.$error.minlength" class="help-block">min length: <span ng-bind="bound.password.minLength"></span></span>
+                        <span ng-show="accountForm.PasswordConfirmation.$error.required" class="help-block">required</span>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="col-sm-2 col-sm-offset-2">
+                        <button ng-click="tryRegister()" ng-disabled="accountForm.$invalid || !isProcessBtnEnabled" class="btn btn-primary">Register</button>
+                    </div>
+                    <div class="col-sm-8 has-error">
+                        <span class="help-block" ng-bind="processError"></span>
+                    </div>
+                </div>
+            </form>
+        </div>
+        <div class="col-md-4">
+			<h3>Steps:</h3>
+            <ul class="list-unstyled text-center">
+                <li class="well well-sm text-center">
+                    <div class="step-1"></div>
+                    <div>Email confirmation</div>
+                </li>
+                <li class="well well-sm text-center">
+                    <div class="step-2"></div>
+                    <div>Company info</div>
+                </li>
+                <li class="well well-sm text-center">
+                    <div class="step-3"></div>
+                    <div>Use well file manager</div>
+                </li>
+            </ul>
+        </div>
+    </div>
+</div>
