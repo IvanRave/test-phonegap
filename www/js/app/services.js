@@ -2,13 +2,12 @@
 // requirejs: app/cabinet-services
 // angular: ang-cabinet-services
 
-define(['angular', 'app/app-resource'], function (angular) {
-    return angular.module('ang-cabinet-services', ['ang-app-resource'])
-    .service('SharedService', ['AccessLevelFactory', function () {
+define(['angular'], function (angular) {
+    'use strict';
+
+    angular.module('ang-cabinet-services', []).service('SharedService', [function () {
         // private variable
         var sharedObject = {
-            ////prop3: 'test property',
-            ////accessLevelDict: accessLevelFactory.get()
             accessLevelDict: {
                 "CanManageAll": { "AccessCode": 1, "Description": "Can manage" },
                 "CanEditAll": { "AccessCode": 2, "Description": "Can edit" },

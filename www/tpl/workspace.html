@@ -1,0 +1,1296 @@
+<div id="workspace-project">
+  <div data-bind="ifnot: isStructureLoaded" class="text-center">
+    <span>loading...</span>
+  </div>
+
+  <div style="display:none" data-bind="visible: isStructureLoaded">
+    <div class="clearfix">
+      <div class="col-md-2" style="padding-left: 0">
+        <div class="wfm-workspace-sidebar" data-bind="scroller: { height: windowHeight, width: windowWidth }">
+  <div class="wfm-list">
+    <ul class="list-unstyled">
+      <!-- ko foreach: wellRegionList -->
+      <li>
+        <div class="clearfix">
+          <i class="glyphicon" data-bind="css:{ 'glyphicon-circle-arrow-down' : isOpenItem, 'glyphicon-circle-arrow-right' : !isOpenItem() }, click: toggleItem"></i>
+          <div class="wfm-menu-item" data-bind="click: selectItem">
+            <div class="pull-right">
+              <small>
+                <i class="glyphicon glyphicon-globe"></i>
+              </small>
+            </div>
+            <div>
+              <span data-bind="text: Name, attr: {title: Name}"></span>
+            </div>
+          </div>
+        </div>
+        <ul class="list-unstyled wfm-child" data-bind="visible: isOpenItem">
+          <!-- ko foreach: WellFields -->
+          <li>
+            <div class="clearfix">
+              <i class="glyphicon" data-bind="css:{ 'glyphicon-circle-arrow-down' : isOpenItem, 'glyphicon-circle-arrow-right' : !isOpenItem() }, click: toggleItem"></i>
+              <div class="wfm-menu-item" data-bind="click: selectItem">
+                <div class="pull-right">
+                  <small>
+                    <i class="glyphicon glyphicon-home"></i>
+                  </small>
+                </div>
+                <div>
+                  <span data-bind="text: Name, attr: {title: Name}"></span>
+                </div>
+              </div>
+            </div>
+            <ul class="list-unstyled wfm-child" data-bind="visible: isOpenItem">
+              <!-- ko foreach: WellGroups -->
+              <li>
+                <div class="clearfix">
+                  <i class="glyphicon" data-bind="css:{ 'glyphicon-circle-arrow-down' : isOpenItem, 'glyphicon-circle-arrow-right' : !isOpenItem() }, click: toggleItem"></i>
+                  <div class="wfm-menu-item" data-bind="click: selectItem">
+                    <div class="pull-right">
+                      <small>
+                        <i class="glyphicon glyphicon-list"></i>
+                      </small>
+                    </div>
+                    <div>
+                      <span data-bind="text: Name, attr: {title: Name}"></span>
+                    </div>
+                  </div>
+                </div>
+                <ul class="list-unstyled wfm-child" data-bind="visible: isOpenItem">
+                  <!-- ko foreach: Wells -->
+                  <li>
+                    <div class="clearfix">
+                      <div class="wfm-menu-item" data-bind="click: selectItem">
+                        <div class="pull-right">
+                          <small>
+                            <i class="glyphicon glyphicon-leaf"></i>
+                          </small>
+                        </div>
+                        <div>
+                          <span data-bind="text: Name, attr: {title: Name}"></span>
+                        </div>
+                      </div>
+                    </div>
+                  </li>
+                  <!-- /ko -->
+                  <li data-bind="if: $root.isEditable">
+                    <button class="btn btn-xs" data-bind="click: addWell" type="button">Add well</button>
+                  </li>
+                </ul>
+              </li>
+              <!-- /ko -->
+              <li data-bind="if: $root.isEditable">
+                <button class="btn btn-xs" data-bind="click: addWellGroup" type="button">Add group</button>
+              </li>
+            </ul>
+          </li>
+          <!-- /ko -->
+          <li data-bind="if: $root.isEditable">
+            <button class="btn btn-xs" data-bind="click: addWellField" type="button">Add field</button>
+          </li>
+        </ul>
+      </li>
+      <!-- /ko -->
+      <li data-bind="if: $root.isEditable">
+        <button class="btn btn-xs" data-bind="click: addWellRegion" type="button">Add region</button>
+      </li>
+    </ul>
+  </div>
+</div>
+      </div>
+      <div class="col-md-10">
+        <div class="workspace-container">
+          <div data-bind="with: selectedWellRegion">
+            <div data-bind="ifnot: selectedWellField">
+              
+<h4>
+    <span data-bind="text: Name"></span>
+    <small data-bind="if: $root.isEditable">
+        <button type="button" class="btn btn-xs btn-default" data-bind="click: editWellRegion">
+            <i class="glyphicon glyphicon-edit"></i>
+        </button>
+        <button type="button" class="btn btn-xs btn-default" data-bind="click: $parent.deleteWellRegion">
+            <i class="glyphicon glyphicon-remove"></i>
+        </button>
+    </small>
+</h4>
+            </div>
+            <div data-bind="with: selectedWellField">
+              <div data-bind="ifnot: selectedWellGroup">
+                
+<div class="row">
+    <div class="col-md-8">
+        <div style="width: 620px; height: 512px; border: 1px dotted #ccc">
+            <div data-bind="with: selectedWellFieldMap">
+                <div data-bind="template: {afterRender: afterRenderMapObj }">
+                    <div style="width: 620px; height: 512px" id="map"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="clearfix">
+            <h4 class="pull-left">
+                <span data-bind="text: Name"></span>
+                <small data-bind="if: $root.isEditable">
+                    <button class="btn btn-xs btn-default" data-bind="click: editWellField">
+                        <i class="glyphicon glyphicon-edit"></i>
+                    </button>
+                    <button class="btn btn-xs btn-default" data-bind="click: $parent.deleteWellField">
+                        <i class="glyphicon glyphicon-remove"></i>
+                    </button>
+                </small>
+            </h4>
+            <h4 class="pull-right">
+                <span class="btn btn-xs btn-default fileinput-button">
+                    <i class="glyphicon glyphicon-plus"></i>
+                    <span>Add map...</span>
+                    <input id="map_file_upload" type="file" name="map_files[]">
+                </span>
+            </h4>
+        </div>
+
+        <!-- ko foreach: WellFieldMaps -->
+        <div>
+            <div class="clearfix">
+                <div class="pull-left">
+                    <i class="glyphicon glyphicon-circle-arrow-down" data-bind="visible: $data === $parent.selectedWellFieldMap()"></i>
+                    <i class="glyphicon glyphicon-circle-arrow-right" data-bind="visible: $data != $parent.selectedWellFieldMap()"></i>
+                    <a href="#" data-bind="click: showWellFieldMap, text: Name, attr: { title: Description }"></a>
+                </div>
+                <div class="pull-right">
+                    <i class="glyphicon glyphicon-edit link-icon" data-bind="click: editWellFieldMap"></i>
+                    <i class="glyphicon glyphicon-remove link-icon" data-bind="click: $parent.deleteWellFieldMap"></i>
+                </div>
+            </div>
+            <div data-bind="visible: $data === $parent.selectedWellFieldMap()">
+                <div data-bind="foreach: WellInWellFieldMaps">
+                    <div style="margin-left: 16px">
+                        <i class="glyphicon glyphicon-leaf"></i>&nbsp;<span data-bind="text: getWell().Name()"></span>
+                    </div>
+                </div>
+                <div data-bind="foreach: WellFieldMapAreas">
+                    <div style="margin-left: 16px">
+                        <i class="glyphicon glyphicon-picture"></i>&nbsp;<span data-bind="text: Name"></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- /ko -->
+    </div>
+
+</div>
+
+<div style="margin-left: 16px">
+    <div id="map_obj_list">
+    </div>
+</div>
+
+<div>
+    <h4>Map help:</h4>
+    <div>
+        <h5>Scale:</h5>
+        <div>1. Select 'Ruler' and specify two points on the map</div>
+        <div>2. Press "Set scale" and enter actual distance between this points (in meters)</div>
+    </div>
+    <div>
+        <h5>Point:</h5>
+        <label>Select 'Add well' button and specify well point on the map</label>
+    </div>
+    <div>
+        <h5>Area:</h5>
+        <div>1. Select "Ruler" and specify few points on the map</div>
+        <div>2. Click "Add area" on the map toolbar</div>
+        <div>3. Hover on selected area to get the result (square meters)</div>
+    </div>
+</div>
+
+              </div>
+              <div data-bind="with: selectedWellGroup">
+                <div data-bind="ifnot: selectedWell">
+                  
+<h4>
+    <span data-bind="text: Name"></span>
+    <small data-bind="if: $root.isEditable">
+        <button type="button" class="btn btn-xs btn-default" data-bind="click: editWellGroup">
+            <i class="glyphicon glyphicon-edit"></i>
+        </button>
+        <button type="button" class="btn btn-xs btn-default" data-bind="click: $parent.deleteWellGroup">
+            <i class="glyphicon glyphicon-remove"></i>
+        </button>
+    </small>
+</h4>
+
+<h4 class="text-center">Last test data:</h4>
+<table class="table">
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Date</th>
+            <!-- ko foreach: wellGroupWfmParameterList -->
+            <th data-bind="with: wfmParameter">
+                <span data-bind="text: id"></span>,<br />
+                <span data-bind="text: uom"></span>
+            </th>
+            <!-- /ko -->
+        </tr>
+    </thead>
+    <tbody>
+        <!-- ko foreach: {data: Wells, as: 'well'} -->
+        <tr>
+            <td>
+                <span data-bind="text: Name"></span>
+            </td>
+            <td>
+                <div data-bind="with: lastTestScope">
+                    <span data-bind="text: startUnixTimeDateView"></span>
+                </div>
+            </td>
+            <!-- ko foreach: { data: $parent.wellGroupWfmParameterList, as: 'wgWfmParameter'} -->
+            <td>
+                <div data-bind="with: well.lastTestScope">
+                    <span data-bind="text: testDataTotal()[wgWfmParameter.wfmParameter().id]"></span>
+                </div>
+            </td>
+            <!-- /ko -->
+            <!-- /ko -->
+        </tr>
+        <!-- /ko -->
+        <!--<tr class="success">
+            <td>
+                Total
+            </td>
+            <td></td>
+        </tr>-->
+    </tbody>
+</table>
+                </div>
+                <div data-bind="with: selectedWell">
+                  <div>
+  <div class="wfm-workspace-well-tab clearfix">
+    <div class="pull-left" style="margin-top:1px">
+      <button type="button" class="btn btn-inverse btn-sm" data-bind="click: function(){ selectedSectionId(null); }">
+        Well<br />dashboard
+      </button>
+    </div>
+    <div class="pull-left">
+      <ul class="nav nav-pills" data-bind="template: {foreach: sectionList, as: 'section'}">
+        <!-- ko if: (section.id !== 'volume' && section.id !== 'sketch' && section.id !== 'pd') -->
+        <li data-bind="css: {'active': section.id === $parent.selectedSectionId() }">
+          <div data-bind="click: function() { $parent.selectSection(section.id); }">
+            <span data-bind="text: section.name"></span>
+            <br />
+            <i class="wfmicon" data-bind="css: 'wfmicon-' + section.id"></i>
+          </div>
+        </li>
+        <!-- /ko -->
+        <!-- ko if: section.id === 'sketch' -->
+        <li class="dropup" data-bind="css: {'active': section.id === $parent.selectedSectionId() }">
+          <div class="dropdown-toggle" title="Sketch and volume" data-toggle="dropdown" data-bind="drpdwn: {}">
+            <span data-bind="text: section.name"></span>
+            <br />
+            <i class="wfmicon" data-bind="css: 'wfmicon-'+section.id"></i>
+            <span class="caret"></span>
+          </div>
+          <ul class="dropdown-menu">
+            <li>
+              <div data-bind="click: function() { $parent.selectSection('sketch'); }">Sketch</div>
+            </li>
+            <li>
+              <div data-bind="click: function() { $parent.selectSection('volume'); }">Volume</div>
+            </li>
+          </ul>
+        </li>
+        <!-- /ko -->
+        <!-- ko if: section.id === 'pd' -->
+        <li class="dropup" data-bind="css: {'active': section.id === $parent.selectedSectionId() }">
+          <div class="dropdown-toggle" title="Decline curve analysis" data-toggle="dropdown" data-bind="drpdwn:{}">
+            <span data-bind="text: section.name"></span>
+            <br />
+            <i class="wfmicon" data-bind="css: 'wfmicon-' + section.id"></i>
+            <span class="caret"></span>
+          </div>
+          <ul class="dropdown-menu" data-bind="foreach: $root.wfmParamSquadList">
+            <li>
+              <div data-bind="click: function() { $parents[1].selectSection(section.id); $parents[1].mainPerfomanceView.selectAttrGroupId($data.id); }">
+                <span data-bind="text: id"></span>
+              </div>
+            </li>
+          </ul>
+        </li>
+        <!-- /ko -->
+      </ul>
+    </div>
+    <div class="pull-left" style="padding:1px;">
+      <button class="btn btn-inverse btn-sm" data-bind="click: showFmg">
+        File<br />manager
+      </button>
+    </div>
+  </div>
+
+  <script type="text/html" id="well-history-tpl">
+  <span data-bind="ifnot: isLoadedHistoryList">Loading...</span>
+
+  <div data-bind="if: isLoadedHistoryList">
+    <div class="row">
+      <div class="col-sm-3">
+        <div data-bind="visible: $root.isEditable">
+          <button class="btn btn-sm btn-default" data-bind="click: addWellHistory">
+            <i class="glyphicon glyphicon-plus"></i> Create new record
+          </button>
+        </div>
+      </div>
+      <div class="col-sm-9">
+        <span>Filter by date: </span>
+        <input type="text" class="datepicker" size="16" data-bind="datepicker: historyListFilter.startDate, datepickerOptions: { format: 'yyyy-mm-dd', startView: 'decade', autoclose: true }" />
+        <span> - </span>
+        <input type="text" class="datepicker" size="16" data-bind="datepicker: historyListFilter.endDate, datepickerOptions: { format: 'yyyy-mm-dd', startView: 'decade', autoclose: true }" />
+      </div>
+    </div>
+    <table class="table">
+      <thead>
+        <tr>
+          <th>
+            <a href="#" data-bind="click: changeSortedHistoryListOrder">
+              <i class="glyphicon" data-bind="    css: { 'glyphicon-arrow-down': sortedHistoryListOrder() === 1, 'glyphicon-arrow-up': sortedHistoryListOrder() === -1 }"></i>Date
+            </a>
+          </th>
+          <th>History</th>
+        </tr>
+      </thead>
+      <tbody data-bind="foreach: sortedHistoryList">
+        <tr>
+          <td>
+            <div>
+              <span data-bind="date: StartDate()"></span>
+            </div>
+            <div>
+              <span data-bind="date: EndDate(), visible: StartDate() !== EndDate()"></span>
+            </div>
+            <div class="btn-group" data-bind="visible: $root.isEditable">
+              <a class="btn btn-sm dropdown-toggle btn-default" data-toggle="dropdown" data-bind="drpdwn:{}" href="#">
+                Action
+                <span class="caret"></span>
+              </a>
+              <ul class="dropdown-menu">
+                <li>
+                  <a href="#" data-bind="click: editWellHistory">Edit</a>
+                </li>
+                <li>
+                  <a href="#" data-bind="click: chooseWellHistoryFile">Attach a file</a>
+                </li>
+                <li>
+                  <a href="#" data-bind="click: chooseWfmImage">Attach a cropped image</a>
+                </li>
+                <li class="divider"></li>
+                <li>
+                  <a href="#" data-bind="click: $parent.deleteWellHistory">Delete</a>
+                </li>
+              </ul>
+            </div>
+          </td>
+          <td>
+            <pre data-bind="text: History, visible: History"></pre>
+            <div data-bind="foreach: WfmImages">
+              <div>
+                <img src="" data-bind="attr: { src: dataUrl }" alt="History image" class="img-thumbnail elem-shadow" />
+                <span data-bind="visible: $root.isEditable">
+                  <i class="glyphicon glyphicon-remove link-icon" data-bind="click: $parent.deleteWfmImage"></i>
+                </span>
+              </div>
+            </div>
+            <div data-bind="foreach: WellHistoryFiles" class="clearfix">
+              <div class="img-thumbnail pull-left">
+                <a href="#" data-bind="text: FileNameWODate, click: downloadWellHistoryFile"></a>
+                <i class="glyphicon glyphicon-remove link-icon" data-bind="click: $parent.deleteWellHistoryFile, visible: $root.isEditable"></i>
+              </div>
+            </div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</script>
+  <script type="text/html" id="well-integrity-tpl">
+  <div data-bind="ifnot: isLoadedIntegrity">
+    Loading...
+  </div>
+  <div data-bind="if: isLoadedIntegrity">
+    <div data-bind="ifnot: isExistsSectionWellFiles">
+      <small>No files. Please use 'File Manager' to add files.</small>
+    </div>
+    <div data-bind="if: isExistsSectionWellFiles">
+      <div class="row">
+        <div class="col-sm-8">
+          <div data-bind="with: selectedWellFileIntegrity" class="text-center">
+            <img data-bind="attr: { src: Url }" alt="Integrity image" class="img-responsive" />
+          </div>
+        </div>
+        <div class="col-sm-4">
+          <h5>Files:</h5>
+          <ul data-bind="foreach: sectionWellFiles" class="nav">
+            <li data-bind="css: { 'open': isSelectedWellFileIntegrity }">
+              <a href="#" data-bind="text: displayedName, click: $parent.selectWellFileIntegrity"></a>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</script>
+  <script type="text/html" id="well-log-tpl">
+  <div class="clearfix">
+    <div class="pull-left" data-bind="visible: wellLogSelectedFile">
+      <div class="clearfix">
+        <div class="pull-left">
+          <div data-bind="visible: IsLogImageEditable">
+            <label class="radio-inline">
+              <input type="radio" name="log-tools" value="tool-hand" data-bind="checked: checkedLogTool" />Default
+            </label>
+            <label class="radio-inline">
+              <input type="radio" name="log-tools" value="tool-text" data-bind="checked: checkedLogTool" />Text
+            </label>
+            <label class="radio-inline">
+              <input type="radio" name="log-tools" value="tool-line" data-bind="checked: checkedLogTool" />Line
+            </label>
+            <label class="radio-inline">
+              <input type="radio" name="log-tools" value="tool-arrow" data-bind="checked: checkedLogTool" />Arrow
+            </label>
+          </div>
+        </div>
+        <div class="pull-right" style="margin-right: 22px">
+          <div data-bind="visible: !IsLogImageEditable()">
+            <button type="button" class="btn btn-sm btn-primary" style="width: 60px" data-bind="click: startLogImageEdit">Edit</button>
+          </div>
+          <!-- TODO: add icons to button -->
+          <div class="btn-group" data-bind="visible: IsLogImageEditable">
+            <button type="button" class="btn btn-sm btn-primary" style="width: 60px" data-bind="click: saveWellLogSelectedFileImagePart">Save</button>
+            <button type="button" class="btn btn-sm btn-default" style="width: 60px" data-bind="click: cancelLogImageEdit">Cancel</button>
+          </div>
+        </div>
+      </div>
+      <div style="position: relative; z-index: 1;">
+        <div style="height:480px; width:650px; overflow: auto; overflow-x: hidden;">
+          <img id="log_img" style="z-index: 1; width: 624px; border: 2px solid #ccc;" src="#" alt="no data" data-bind="attr: { src: WellLogImageUrl } " />
+        </div>
+        <canvas id="log_cnvs" width="624" height="480" style="position: absolute; top: 0; left: 0; border: 2px dotted #f00; z-index: 2;" data-bind="visible: IsLogImageEditable"></canvas>
+        <div data-bind="visible: IsLogImageEditable">
+          <canvas id="draw_cnvs_log" width="624" height="480" data-bind="drawCnvsLog: {}" style="position: absolute; top: 0; left: 0; display: none; z-index: 3; border: 2px dotted #f00;"></canvas>
+          <div id="text_cnvs_log" data-bind="click: drawLogText" style="background-color: #fff; opacity: 0.5; filter: alpha(opacity = 50); width: 624px; height: 480px; position: absolute; top: 0; left: 0; z-index: 11; display: none; border: 2px dotted #f00;"></div>
+        </div>
+      </div>
+    </div>
+    <div class="pull-right" style="width: 280px">
+      <h5>Log images:</h5>
+      <div data-bind="foreach: logImageList">
+        <div>
+          <i class="glyphicon glyphicon-picture"></i>&nbsp;
+          <a href="#" data-bind="text: displayedName, click: showLogImage, style: { 'font-weight': $data === $parent.wellLogSelectedFile() ? 'bold' : 'normal' }"></a>
+        </div>
+      </div>
+      <div>
+        <small>*import file from "File manager" to add image</small>
+      </div>
+    </div>
+  </div>
+</script>
+  <script type="text/html" id="well-map-tpl">
+  <div class="row">
+    <div class="col-md-8">
+      <div style="width: 620px; height: 512px; border: 1px dotted #555">
+        <div data-bind="with: $data.getWellGroup().getWellField().selectedWellFieldMap()">
+          <div data-bind="template: {afterRender: afterRenderMapObj }">
+            <div style="width: 620px; height: 512px" id="map"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-4">
+      <h4>
+        <span data-bind="text: Name"></span>&nbsp;maps:
+      </h4>
+      <!--<div data-bind="foreach: wellGroup.wellField.WellFieldMaps()">
+            <div data-bind="visible: ($.inArray($parent.Id, $.map(WellInWellFieldMaps(), function (val, i) { return val.WellId })) > -1)">-->
+      <div data-bind="foreach: wellMapList">
+        <div class="clearfix">
+          <div class="pull-left">
+            <i class="glyphicon glyphicon-circle-arrow-down" data-bind="visible: $data === $parent.getWellGroup().getWellField().selectedWellFieldMap()"></i>
+            <i class="glyphicon glyphicon-circle-arrow-right" data-bind="visible: $data != $parent.getWellGroup().getWellField().selectedWellFieldMap()"></i>
+            <a href="#" data-bind="click: showWellFieldMap, text: Name, attr: { title: Description }"></a>
+          </div>
+          <div class="pull-right">
+            <i class="glyphicon glyphicon-edit link-icon" data-bind="click: editWellFieldMap"></i>
+            <i class="glyphicon glyphicon-remove link-icon" data-bind="click: $parent.getWellGroup().getWellField().deleteWellFieldMap"></i>
+          </div>
+        </div>
+        <div data-bind="visible: $data === $parent.getWellGroup().getWellField().selectedWellFieldMap()">
+          <div data-bind="foreach: WellInWellFieldMaps">
+            <div style="margin-left: 16px">
+              <i class="glyphicon glyphicon-leaf"></i>&nbsp;<span data-bind="text: getWell().Name()"></span>
+            </div>
+          </div>
+          <div data-bind="foreach: WellFieldMapAreas">
+            <div style="margin-left: 16px">
+              <i class="glyphicon glyphicon-picture"></i>&nbsp;<span data-bind="text: Name"></span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</script>
+  <script type="text/html" id="well-nodalanalysis-tpl">
+  <div data-bind="ifnot: isLoadedNodal">
+    Loading...
+  </div>
+  <div data-bind="if: isLoadedNodal">
+    <div data-bind="ifnot: isExistsSectionWellFiles">
+      <small>No files. Please use 'File Manager' to add files.</small>
+    </div>
+    <div data-bind="if: isExistsSectionWellFiles">
+      <div class="row">
+        <div class="col-sm-8">
+          <div data-bind="with: selectedWellFileNodal" class="text-center">
+            <img data-bind="attr: { src: Url }" alt="Nodal image" class="img-responsive" />
+          </div>
+        </div>
+        <div class="col-sm-4">
+          <h5>Files:</h5>
+          <ul data-bind="foreach: sectionWellFiles" class="nav">
+            <li data-bind="css: { 'open': isSelectedWellFileNodal }">
+              <a href="#" data-bind="text: displayedName, click: $parent.selectWellFileNodal"></a>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</script>
+  <script type="text/html" id="well-pd-tpl">
+  <div data-bind="with: mainPerfomanceView">
+    <div data-bind="ifnot: prfPartial.isLoadedHstProductionData">loading...</div>
+    <div data-bind="if: prfPartial.isLoadedHstProductionData">
+      <div data-bind="if: prfPartial.hstProductionDataSet().length === 0">No data. Import files from "File manager" to view production data.</div>
+      <div data-bind="if: prfPartial.hstProductionDataSet().length > 0">
+        <!-- Settings panel -->
+        <div data-bind="with: prfPartial">
+          <div data-bind="if: requiredForecastParamListNaNString" class="text-right">
+            <small>
+              Forecast inaccessible: required parameters:<span data-bind="text: requiredForecastParamListNaNString"></span>
+            </small>
+          </div>
+          <div data-bind="ifnot: requiredForecastParamListNaNString">
+            <div data-bind="with: forecastEvolution">
+              <div data-bind="if: requiredForecastEvoListNaNString" class="text-right">
+                <small>
+                  Forecast inaccessible: required evolutions:<span data-bind="text: requiredForecastEvoListNaNString"></span>
+                </small>
+              </div>
+            </div>
+            <div class="text-right">
+              <label class="checkbox-inline">
+                <input type="checkbox" data-bind="checked: isVisibleForecastPanel" />Show settings
+              </label>
+            </div>
+            <div data-bind="if: isVisibleForecastPanel" class="text-center">
+              <div class="btn-group">
+                <button type="button" class="btn btn-default btn-sm" data-bind="click: forecastEvolution.save">Save evolution</button>
+                <button type="button" class="btn btn-default btn-sm" data-bind="click: deleteWellProductionData">Delete production data</button>
+              </div>
+              <div>
+                <div class="evo-scope-wrap">
+                  <span class="evo-wrap" data-bind="with: forecastEvolution.Dict">
+                    <b>Liquid</b> = <input type="text" class="input-narrow" data-bind="value: LiquidEvolutionA" />
+                    * EXP (<input type="text" class="input-narrow" data-bind="value: LiquidEvolutionB" /> * X)
+                  </span>
+                  <span class="evo-wrap" title="Corrections to last value = Evolution1 * EXP(Evolution2 * LastPd.LiquidCum)">
+                    Diff = <span data-bind="text: DZADiffLiquid"></span>
+                  </span>
+                  <span class="evo-wrap" title="Corrections to last value = Diff - LastPd.LiquidRate">
+                    Result = <span data-bind="text: DZADiffLiquidResult"></span>
+                  </span>
+                </div>
+                <div class="evo-scope-wrap">
+                  <span class="evo-wrap" data-bind="with: forecastEvolution.Dict">
+                    <b>Water cut</b> = <input type="text" class="input-narrow" data-bind="value: WctEvolutionC" />
+                    * Ln(X) - <input type="text" class="input-narrow" data-bind="value: WctEvolutionD" />
+                  </span>
+                  <span class="evo-wrap" title="Corrections to last value = Evolution1 * Ln(LastPd.OilCum) - Evolution2">
+                    Diff = <span data-bind="text: DZADiffWCT"></span>
+                  </span>
+                  <span class="evo-wrap" title="Corrections to last value = Diff - LastPd.WaterCut">
+                    Result = <span data-bind="text: DZADiffWCTResult"></span>
+                  </span>
+                </div>
+                <div class="evo-scope-wrap">
+                  <span class="evo-wrap" data-bind="with: forecastEvolution.Dict">
+                    <b>GOR</b> = <input type="text" class="input-narrow" data-bind="value: GorEvolutionF" />
+                    * Ln(X) + <input type="text" class="input-narrow" data-bind="value: GorEvolutionG" />
+                  </span>
+                  <span class="evo-wrap" title="Corrections to last value = Evolution1 * Ln(LastPd.OilCum) + Evolution2">
+                    Diff = <span data-bind="text: DZADiffGOR"></span>
+                  </span>
+                  <span class="evo-wrap" title="Corrections to last value = Diff - LastPd.GOR">
+                    Result = <span data-bind="text: DZADiffGORResult"></span>
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- / with prfPartial  -->
+        <div data-bind="ifnot: selectedAttrGroup">
+          Please choose perfomance group:
+          <ul data-bind="foreach: $root.wfmParamSquadList">
+            <li data-bind="with: id">
+              <a href="#" data-bind="click: $parent.selectAttrGroupId">
+                <span data-bind="text: $data"></span>
+              </a>
+            </li>
+          </ul>
+        </div>
+        <div data-bind="if: selectedAttrGroup">
+          <div>
+            <div class="clearfix pd-graph-wrap">
+  <div class="pull-right pd-graph-vscale">
+    <svg version="1.1" width="60px" data-bind="svgAxisValue: {valueBorder: filteredByDateProductionDataSetValueBorder}, attr:{ height: prfGraphHeight }">
+      <g class="axis"></g>
+    </svg>
+  </div>
+  <div class="pd-graph-grid">
+    <div>
+      <svg version="1.1" width="100%" data-bind="attr: { height: prfGraphHeight }, svgResponsive: { ratio: prfPartial.prfGraph.viewBox.ratio, tmpPrfGraphHeight: prfGraphHeight }" viewbox="0 0 1200 400">
+        <g class="svg-prf-graph-g" data-bind="foreach: {data: selectedWellGroupWfmParameterList, as: 'groupParam'}">
+          <!-- ko with: $parent.productionDataSetSvgPath -->
+          <!-- ko if: $data[groupParam.wfmParameterId] -->
+          <path d="M0 0" data-bind="attr:{d: $data[groupParam.wfmParameterId], stroke: groupParam.color }" style="stroke-width:1; fill: none"></path>
+          <!-- /ko -->
+          <!-- /ko -->
+        </g>
+      </svg>
+    </div>
+    <div>
+      <!--svg-path-line-->
+      <svg version="1.1" width="100%" height="20px" data-bind="svgAxisTime: {timeBorder: filteredByDateProductionDataSetTimeBorder, windowSize: $root.windowWidth }">
+        <g class="axis"></g>
+      </svg>
+    </div>
+  </div>
+</div>
+            <div class="clearfix" style="margin-top:4px">
+              <div class="text-center">
+                <select data-bind="options: joinedYearList, value: WPDDateStartYear" class="input-sm"></select>
+                <select data-bind="options: monthList, value: WPDDateStartMonth" class="input-sm"></select>
+                <span>&nbsp;-&nbsp;</span>
+                <select data-bind="options: joinedYearList, value: WPDDateEndYear" class="input-sm"></select>
+                <select data-bind="options: monthList, value: WPDDateEndMonth" class="input-sm"></select>
+                <label class="checkbox-inline">
+                  <input type="checkbox" data-bind="checked: isVisibleForecastData, enable: prfPartial.isForecastPossible" />Show forecast graph and data
+                </label>
+              </div>
+            </div>
+            <table class="table table-condensed">
+  <thead>
+    <tr>
+      <th>Time</th>
+      <!-- ko foreach: {data: selectedWellGroupWfmParameterList, as: 'groupParam'} -->
+      <th>
+        <div>
+          <small>
+            <i class="glyphicon glyphicon-bookmark" data-bind="style: { color: color }"></i>
+          </small>
+          <span data-bind="text: groupParam.wfmParameterId"></span>
+        </div>
+        <div>
+          <label class="checkbox-inline">
+            <input type="checkbox" title="show/hide" data-bind="checked: isVisible" />Show
+          </label>
+          <label class="checkbox-inline">
+            <input type="checkbox" title="usual/calc" data-bind="checked: isCalc" />Calc
+          </label>
+        </div>
+        <div data-bind="foreach: { data: groupParam.wfmParameter().uomMatrix(), as: 'mtrx' }" class="clearfix">
+          <div data-bind="foreach: {data: mtrx, as: 'uomItem' }" class="pull-left">
+            <div class="btn-group">
+              <button type="button" class="btn btn-default dropdown-toggle btn-sm" data-toggle="dropdown">
+                <span data-bind="text: uomItem"></span>
+                <span class="caret"></span>
+              </button>
+              <ul class="dropdown-menu" role="menu" data-bind="foreach: {data: groupParam.wfmParameter().getPossibleUomListForSelectedUom(uomItem), as: 'possibleUom'}">
+                <li>
+                  <a href="#" data-bind="text: possibleUom, click: function(){ groupParam.wfmParameter().changeSelectedUom(possibleUom, $parentContext.$parentContext.$index(), $parentContext.$index()); }"></a>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </th>
+      <!-- /ko -->
+    </tr>
+  </thead>
+  <tbody>
+    <!-- ko foreach: { data: filteredByDateProductionDataSet, as: 'wpd' } -->
+    <!-- ko if: isSelectedPrfYear -->
+    <tr>
+      <td>
+        (<span title="Production days" data-bind="text: wpd.ProdDays"></span>)&nbsp;<span data-bind="text: wpd.prfYear + '-' + wpd.prfMonthStr"></span>
+      </td>
+      <!-- ko foreach: {data: $parent.selectedWellGroupWfmParameterList, as: 'groupParam'} -->
+      <td>
+        <span data-bind="visible: isVisible, prec: {value: wpd[groupParam.wfmParameterId], coef: groupParam.wfmParameter().uomCoef}"></span>
+      </td>
+      <!-- /ko -->
+    </tr>
+    <!-- /ko -->
+    <!-- /ko -->
+  </tbody>
+</table>
+            <div class="text-center">
+              <ul class="pagination pagination-sm" data-bind="foreach: {data: joinedYearList, as: 'joinedYear'}">
+                <li data-bind="visible: joinedYear >= $parent.WPDDateStartYear() && joinedYe"
+                  <= $parent.WPDDateEndYear(), css: {'active': joinedYear === $parent.selectedPrfTableYear() }">
+                  <a href="#" data-bind="text: joinedYear, click: function(){ $parent.selectPrfTableYear(joinedYear);}"></a>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</script>
+  <script type="text/html" id="well-report-tpl">
+    under construction...
+    <div class="hide">
+        <div data-bind="foreach: sectionList ">
+            <!-- ko if: ($.inArray(id, ['report', 'test', 'integrity', 'nodalanalysis']) === -1) -->
+            <div class="row" style="border: 1px solid #ccc; padding: 4px; border-radius: 2px; margin-bottom: 1px">
+                <div class="col-sm-2">
+                    <label class="checkbox">
+                        <input type="checkbox" data-bind="value: $data.id, checked: $parent.reportSectionIdList, click: function () { $parent.checkReportSection($data); return true; }" /><span data-bind="    text: name"></span>
+                    </label>
+                </div>
+                <div class="col-sm-10" data-bind="visible: $.inArray($data.id, $parent.reportSectionIdList()) >= 0 ">
+                    <!-- ko if: (id === 'history') -->
+                    <!-- ko if: ($parent.isLoadedHistoryList() === true) -->
+                    <span>Filter by date: </span>
+                    <input class="input-sm datepicker" size="16" type="text" data-bind="datepicker: $parent.historyListFilter.startDate, datepickerOptions: { format: 'yyyy-mm-dd', startView: 'year', autoclose: true }">
+                    <span>- </span>
+                    <input class="input-sm datepicker" size="16" type="text" data-bind="datepicker: $parent.historyListFilter.endDate, datepickerOptions: { format: 'yyyy-mm-dd', startView: 'year', autoclose: true }">
+                    <span>Record count: </span><span data-bind="text: $parent.sortedHistoryList().length"></span>
+                    <!-- /ko -->
+                    <!-- /ko -->
+                    <!-- ko if: (id === 'map') -->
+                    <select class="form-control" data-bind="options: $parent.wellMapList(), optionsText: 'Name', optionsCaption: 'Choose map...', value: $parent.selectedReportMap"></select>
+                    <!-- /ko -->
+                    <!-- ko if: (id === 'log') -->
+                    <select class="form-control" data-bind="options: $parent.logImageList(), optionsText: 'displayedName', optionsCaption: 'Choose log...', value: $parent.selectedReportLog"></select>
+                    <!-- /ko -->
+                    <!-- ko if: (id === 'pd') -->
+                    <div>
+                        <!-- ko foreach: $parent.wfmParamSquadList -->
+                        <label class="checkbox-inline">
+                            <input type="checkbox" data-bind="value: $data, checked: $parents[1].selectedWfmParamSquadList" />
+                            <span data-bind="text: $data"></span>
+                        </label>
+                        <!-- /ko -->
+                        <!-- put dates and years pd -->
+                    </div>
+                    <!-- /ko -->
+                    <!-- ko if: (id === 'test') -->
+                    <span>specify period with dates (calendar should appear)</span>
+                    <!-- /ko -->
+                </div>
+            </div>
+            <!-- /ko -->
+        </div>
+        <div style="margin-top: 4px;">
+            <button type="button" class="btn btn-primary" data-bind="click: createReport">Create report (PDF)</button>
+            <label class="checkbox">
+                <input type="checkbox" disabled data-bind="checked: isCompanyLogoInReport" /><span>Add logo of your company</span>
+            </label>
+        </div>
+        <!--<div><textarea placeholder="comment..."></textarea></div>-->
+        <!--<span data-bind="text: ko.toJSON(reportSectionIdList)"></span>-->
+    </div>
+</script>
+  <script type="text/html" id="well-sketch-tpl">
+  <div class="row">
+    <div class="col-sm-4 text-center">
+      <div>
+        <button class="btn btn-default btn-sm" style="width:100%" data-bind="click: function(){ chooseMainFile('sketch'); }">Choose sketch...</button>
+      </div>
+      <div>
+        <a href="#" data-bind="attr: { href: MainSketchUrl }" data-lightbox="image-sketch" title="Sketch">
+          <img src="#" class="img-responsive" data-bind="attr: { src: MainSketchUrl }" alt="Sketch image" />
+        </a>
+      </div>
+    </div>
+    <div class="col-sm-8">
+      <div data-bind="visible: IsEditSketchDesc" class="clearfix">
+        <div>
+          <textarea id="sketch_desc" class="form-control" placeholder="Enter sketch description..." data-bind="text: SketchDesc"></textarea>
+        </div>
+        <button class="btn btn-success" data-bind="click: saveSketchDesc">
+          <i class="glyphicon glyphicon-ok-circle"></i>&nbsp;<span>Save</span>
+        </button>
+        <button class="btn btn-default" data-bind="click: turnEditSketchDesc">
+          <i class="glyphicon glyphicon-ban-circle"></i>&nbsp;<span>Cancel</span>
+        </button>
+      </div>
+      <div data-bind="visible: !IsEditSketchDesc()">
+        <div data-bind="html: SketchDesc" style="-ms-word-wrap: break-word; word-wrap: break-word; padding: 8px 2px;"></div>
+        <div class="btn-group">
+          <button class="btn btn-default" data-bind="click: turnEditSketchDesc">
+            <i class="glyphicon glyphicon-edit"></i>&nbsp;<span>Edit sketch description</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</script>
+  <script type="text/html" id="well-summary-tpl">
+  <div data-bind="foreach: wellPropertyList">
+    <div>
+      <i class="glyphicon glyphicon-edit" data-bind="click: $parent.editField, visible: $root.isEditable"></i>
+      <label data-bind="text: ttl"></label>
+    </div>
+    <div class="well well-sm" data-bind="visible: $parent[id]">
+      <!-- ko if: tpe === 'SingleLine' -->
+      <span data-bind="text: $parent[id]"></span>
+      <!-- /ko -->
+      <!-- ko if: tpe === 'MultiLine' -->
+      <span class="pre-wrap-text" data-bind="text: $parent[id]"></span>
+      <!-- /ko -->
+      <!-- ko if: tpe === 'DateLine' -->
+      <span data-bind="date: $parent[id]"></span>
+      <!-- /ko -->
+    </div>
+  </div>
+
+  <div class="text-right" data-bind="visible: $root.isEditable">
+    <button type="button" class="btn btn-default" data-bind="click: $parent.deleteWell">Delete well</button>
+  </div>
+</script>
+  <script type="text/html" id="well-test-tpl">
+  <div class="clearfix">
+    <div class="pull-left">
+      <button type="button" class="btn btn-default" data-bind="click: addTestScope">
+        <i class="glyphicon glyphicon-plus"></i> Add new test
+      </button>
+    </div>
+    <div class="pull-right">
+      <button type="button" class="btn btn-default" data-bind="click: getWellGroup().addWellGroupWfmParameter, enable: getWellGroup().selectedWfmParameterId">Add</button>
+    </div>
+    <div class="pull-right">
+      <select class="form-control" data-bind="options: getWellGroup().unselectedWfmParameterList, optionsValue: 'id', optionsText: 'name', value: getWellGroup().selectedWfmParameterId, optionsCaption: 'Add new parameter...'"></select>
+    </div>
+  </div>
+  <div data-bind="foreach: { data: sortedTestScopeList, as: 'testScope' }">
+    <div style="margin-top: 16px; background-color: #f5f5f5">
+      <div class="test-header clearfix" data-bind="css: { 'test-approved': isApproved, 'test-declined': isApproved() === false }">
+        <div class="pull-left" style="padding:2px 0">
+          <button class="btn btn-xs" data-bind="click: $parent.chooseTestScope">
+            <i class="glyphicon" data-bind="css: {'glyphicon-chevron-up': $parent.selectedTestScope() === testScope, 'glyphicon-chevron-down': $parent.selectedTestScope() !== testScope }"></i> Details
+          </button>
+        </div>
+        <div class="pull-left" style="margin-left: 16px; padding:2px;">
+          <span data-bind="text: startUnixTimeDateView"></span>
+        </div>
+        <div class="pull-right">
+          <div class="btn-group" data-bind="if: isApproved() === null">
+            <button type="button" class="btn btn-sm btn-success" data-bind="click: function(){ setIsApproved(true); }">Approve</button>
+            <button type="button" class="btn btn-sm btn-danger" data-bind="click: function(){ setIsApproved(false); }">Decline</button>
+          </div>
+          <span data-bind="if: isApproved() === true">Valid</span>
+          <span data-bind="if: isApproved() === false">Invalid</span>
+        </div>
+      </div>
+      <table class="table table-condensed">
+        <thead>
+          <tr>
+            <th>Hour</th>
+            <!-- ko foreach: $parent.getWellGroup().wellGroupWfmParameterList -->
+            <th>
+              <span data-bind="text: wfmParameterId"></span>
+            </th>
+            <!-- /ko -->
+            <th data-bind="visible: $parent.selectedTestScope() === testScope">Comment</th>
+            <th data-bind="visible: $parent.selectedTestScope() === testScope"></th>
+          </tr>
+        </thead>
+        <tbody data-bind="visible: $parent.selectedTestScope() === testScope">
+          <!-- ko foreach: {data: testDataList, as: 'testData'} -->
+          <tr>
+            <td>
+              <span data-bind="text: hourNumber"></span>
+            </td>
+            <!-- ko foreach: $parents[1].getWellGroup().wellGroupWfmParameterList() -->
+            <td>
+              <div data-bind="if: testData.isEdit() === true">
+                <input class="input-sm" style="width: 50px" data-bind="value: testData.dict[$data.wfmParameterId]" />
+              </div>
+              <div data-bind="if: testData.isEdit() === false">
+                <span data-bind="text: testData.dict[$data.wfmParameterId]"></span>
+              </div>
+            </td>
+            <!-- /ko -->
+            <td>
+              <div data-bind="if: isEdit() === true">
+                <input data-bind="value: comment" />
+              </div>
+              <div data-bind="if: isEdit() === false">
+                <span data-bind="text: comment"></span>
+              </div>
+            </td>
+            <td>
+              <button type="button" class="btn btn-default btn-xs" data-bind="click: editTestData, visible: isEdit() === false">Edit</button>
+              <button type="button" class="btn btn-default btn-xs" data-bind="click: saveTestData, visible: isEdit() === true">Save</button>
+              <button type="button" class="btn btn-default btn-xs" data-bind="click: cancelEditTestData, visible: isEdit() === true">Cancel</button>
+              <button type="button" class="btn btn-default btn-xs" data-bind="click: testScope.deleteTestData, visible: $index() === ($parent.testDataList().length - 1)">Delete</button>
+            </td>
+          </tr>
+          <!-- /ko -->
+          <tr>
+            <td colspan="6">
+              <button type="button" class="btn btn-xs btn-default" data-bind="click: testScope.addTestData">Add new hour</button>
+            </td>
+          </tr>
+        </tbody>
+        <tfoot>
+          <tr>
+            <td>Total</td>
+            <!-- ko foreach: $parent.getWellGroup().wellGroupWfmParameterList() -->
+            <td>
+              <b data-bind="text: testScope.testDataTotal()[$data.wfmParameterId] "></b>
+            </td>
+            <!-- /ko -->
+            <td data-bind="visible: $parent.selectedTestScope() === testScope"></td>
+            <td data-bind="visible: $parent.selectedTestScope() === testScope"></td>
+          </tr>
+        </tfoot>
+      </table>
+    </div>
+  </div>
+</script>
+  <script type="text/html" id="well-volume-tpl">
+  <div class="row">
+    <div class="col-sm-4 text-center">
+      <div>
+        <button class="btn" style="width:100%" data-bind="click: function(){ chooseMainFile('volume'); }">Choose volume...</button>
+      </div>
+      <a href="#" data-bind="attr: { href: MainVolumeUrl }" data-lightbox="image-volume" title="Volume">
+        <img src="#" class="img-responsive" data-bind="attr: { src: MainVolumeUrl }" alt="Volume image" />
+      </a>
+    </div>
+  </div>
+</script>
+  <script type="text/html" id="perfomance-widget-tpl">
+    <div data-bind="if: widget.isVisSettingPanel">
+        <div class="widget-setting-panel">
+            <div data-bind="with: widget.perfomanceView">
+                <div class="text-center">
+                    <div data-bind="foreach: $root.wfmParamSquadList" class="btn-group">
+                        <!-- ko with: id -->
+                        <button type="button" class="btn btn-default btn-sm" data-bind="click: $parents[1].selectAttrGroupId, css: {'active': $parents[1].selectedAttrGroupId() === $data } ">
+                            <span data-bind="text: $data"></span>
+                        </button>
+                        <!-- /ko -->
+                    </div>
+                    <div style="margin-top:4px">
+                        <select data-bind="options: joinedYearList, value: WPDDateStartYear" class="input-sm"></select>
+                        <select data-bind="options: monthList, value: WPDDateStartMonth" class="input-sm"></select>
+                        <span>&nbsp;-&nbsp;</span>
+                        <select data-bind="options: joinedYearList, value: WPDDateEndYear" class="input-sm"></select>
+                        <select data-bind="options: monthList, value: WPDDateEndMonth" class="input-sm"></select>
+                        <label class="checkbox-inline">
+                            <input type="checkbox" data-bind="checked: isVisibleForecastData, enable: prfPartial.isForecastPossible" />Show forecast
+                        </label>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="widget-content">
+        <div data-bind="with: widget.perfomanceView">
+            <div data-bind="ifnot: prfPartial.isLoadedHstProductionData">loading...</div>
+            <div data-bind="if: prfPartial.isLoadedHstProductionData">
+                <div data-bind="if: prfPartial.hstProductionDataSet().length === 0">No data. Import files from "File manager" to view production data.</div>
+                <div data-bind="if: prfPartial.hstProductionDataSet().length > 0">
+                    <div data-bind="if: selectedAttrGroup">
+                        <div class="clearfix pd-graph-wrap">
+  <div class="pull-right pd-graph-vscale">
+    <svg version="1.1" width="60px" data-bind="svgAxisValue: {valueBorder: filteredByDateProductionDataSetValueBorder}, attr:{ height: prfGraphHeight }">
+      <g class="axis"></g>
+    </svg>
+  </div>
+  <div class="pd-graph-grid">
+    <div>
+      <svg version="1.1" width="100%" data-bind="attr: { height: prfGraphHeight }, svgResponsive: { ratio: prfPartial.prfGraph.viewBox.ratio, tmpPrfGraphHeight: prfGraphHeight }" viewbox="0 0 1200 400">
+        <g class="svg-prf-graph-g" data-bind="foreach: {data: selectedWellGroupWfmParameterList, as: 'groupParam'}">
+          <!-- ko with: $parent.productionDataSetSvgPath -->
+          <!-- ko if: $data[groupParam.wfmParameterId] -->
+          <path d="M0 0" data-bind="attr:{d: $data[groupParam.wfmParameterId], stroke: groupParam.color }" style="stroke-width:1; fill: none"></path>
+          <!-- /ko -->
+          <!-- /ko -->
+        </g>
+      </svg>
+    </div>
+    <div>
+      <!--svg-path-line-->
+      <svg version="1.1" width="100%" height="20px" data-bind="svgAxisTime: {timeBorder: filteredByDateProductionDataSetTimeBorder, windowSize: $root.windowWidth }">
+        <g class="axis"></g>
+      </svg>
+    </div>
+  </div>
+</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</script>
+
+<script type="text/html" id="sketch-widget-tpl">
+    <div data-bind="if: widget.isVisSettingPanel">
+        <div class="widget-setting-panel">
+            <label>
+                <input type="checkbox" data-bind="checked: widget.isVisImg" /> Image
+            </label>
+            <label>
+                <input type="checkbox" data-bind="checked: widget.isVisDescription" /> Description
+            </label>
+        </div>
+    </div>
+    <div class="widget-content">
+        <div data-bind="with: $parents[3]">
+            <div data-bind="if: widget.isVisImg">
+                <img src="#" class="img-responsive" data-bind="attr: { src: MainSketchUrl }" alt="Sketch image" />
+            </div>
+            <div data-bind="if: widget.isVisDescription">
+                <div data-bind="html: SketchDesc" style="-ms-word-wrap: break-word; word-wrap: break-word; padding: 8px 2px;"></div>
+            </div>
+        </div>
+    </div>
+</script>
+<script type="text/html" id="summary-widget-tpl">
+    <div data-bind="if: widget.isVisSettingPanel">
+        <div class="widget-setting-panel">
+            <label>
+                <input type="checkbox" data-bind="checked: widget.isVisName" /> Name
+            </label>
+            <label>
+                <input type="checkbox" data-bind="checked: widget.isVisDescription" /> Description
+            </label>
+            <label>
+                <input type="checkbox" data-bind="checked: widget.isVisProductionHistory" /> Production history
+            </label>
+        </div>
+    </div>
+    <div class="widget-content" data-bind="with: $parents[3]">
+        <div data-bind="if: widget.isVisName">
+            <h4 data-bind="text: Name"></h4>
+        </div>
+        <div data-bind="if: widget.isVisDescription">
+            <span data-bind="text: Description"></span>
+        </div>
+        <div data-bind="if: widget.isVisProductionHistory">
+            <span data-bind="text: ProductionHistory"></span>
+        </div>
+    </div>
+</script>
+
+
+<script type="text/html" id="well-widget-scope-tpl">
+  <div data-bind="if: isLoadedWellWidgoutList">
+    <div class="text-right">
+      <select data-bind="options: wellWidgoutList, optionsText: 'name', value: selectedWellWidgout"></select>
+    </div>
+    <div data-bind="with: selectedWellWidgout">
+      <div class="row" data-bind="foreach: widgockList">
+        <div data-bind="css: columnStyle">
+          <div data-bind="foreach: widgetList">
+            <div class="widget-tile">
+              <div class="clearfix widget-tile-header">
+                <div class="pull-left">
+                  <div data-bind="ifnot: isVisSettingPanel">
+                    <b data-bind="text: name"></b>
+                  </div>
+                  <div data-bind="if: isVisSettingPanel">
+                    <input type="text" class="input-sm" data-bind="value: name" />
+                  </div>
+                </div>
+                <div class="pull-right">
+                  <div data-bind="ifnot: isVisSettingPanel">
+                    <button type="button" class="btn btn-xs" data-bind="click: showVisSettingPanel">
+                      <i class="glyphicon glyphicon-cog"></i>
+                    </button>
+                  </div>
+                  <div data-bind="if: isVisSettingPanel">
+                    <button type="button" class="btn btn-sm btn-success" data-bind="click: saveWidget">
+                      Save
+                    </button>
+                  </div>
+                </div>
+              </div>
+              <div class="widget-tile-content">
+                <div data-bind="template: { name: widgetTpl, data: $data, as: 'widget', afterRender: processWidget }"></div>
+              </div>
+            </div>
+          </div>
+          <div class="widget-tile">
+            <div class="widget-empty">
+              <button type="button" class="btn btn-default btn-xs">
+                <i class="glyphicon glyphicon-plus"></i> Add widget
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</script>
+
+  <div class="well-content-pad">
+    <div data-bind="if: selectedSectionId">
+      <div data-bind="template: { name: 'well-' + selectedSectionId() + '-tpl' }"></div>
+    </div>
+    <div data-bind="ifnot: selectedSectionId">
+      <div data-bind="template: { name: 'well-widget-scope-tpl', afterRender: afterRenderWidgetScope }"></div>
+    </div>
+  </div>
+  <div id="modal-file-manager" class="modal fade" role="dialog" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-wide">
+    <div class="modal-content">
+      <div class="modal-body">
+        <div class="row">
+          <div class="col-sm-3">
+            <ul data-bind="foreach: sectionList" class="nav">
+              <!-- ko if: formatList.length > 0 -->
+              <li data-bind="css: { 'open': $parent.selectedFmgSectionId() === $data.id }">
+                <a href="#" data-bind="click: $parent.selectFmgSection">
+                  <span data-bind="text: $data.name"></span>
+                </a>
+              </li>
+              <!-- /ko -->
+            </ul>
+          </div>
+          <div class="col-sm-9">
+            <!-- ko foreach: sectionList -->
+            <!-- ko if: formatList.length > 0 -->
+            <div data-bind="visible: $parent.selectedFmgSectionId() === $data.id" class="btn-group">
+              <span class="btn btn-default btn-sm fileinput-button">
+                <i class="glyphicon glyphicon-plus"></i>
+                <span data-bind="text: 'Add ' + $data.name.toLowerCase() + ' file...'"></span>
+                <input data-bind="attr: { id: $data.id + '_file_upload', name: $data.id + '_files[]' }" type="file"></input>
+              </span>
+            </div>
+            <!-- /ko -->
+            <!-- /ko -->
+            <!-- ko if: (selectedFmgSectionId() !== null) -->
+            <table class="table">
+              <thead>
+                <tr>
+                  <th></th>
+                  <th>Name</th>
+                  <th>Size, KB</th>
+                  <th>Last modified (UTC)</th>
+                  <th></th>
+                  <th></th>
+                  <th></th>
+                </tr>
+              </thead>
+              <tbody>
+                <!-- ko foreach: filteredWellFileList -->
+                <tr>
+                  <td>
+                    <label class="checkbox">
+                      <input type="checkbox" data-bind="checked: isChecked" />
+                    </label>
+                  </td>
+                  <td>
+                    <span data-bind="text: displayedName"></span>
+                  </td>
+                  <td>
+                    <span data-bind="text: Math.round(Size / 1024), attr: { title: Size + ' bytes' }"></span>
+                  </td>
+                  <td>
+                    <span data-bind="text: LastModified"></span>
+                  </td>
+                  <td>
+                    <!-- ko if:  ((Purpose === 'log') || (Purpose === 'pd')) -->
+                    <div class="btn-group dropup">
+                      <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" data-bind="drpdwn: {}">
+                        Action <span class="caret"></span>
+                      </button>
+                      <ul class="dropdown-menu">
+                        <!-- ko if:  (Purpose === 'log') -->
+                        <li data-bind="visible: getExt() === 'las'">
+                          <a href="#" data-bind="click: importWellFileToLog">Import to log image</a>
+                        </li>
+                        <li data-bind="visible: getExt() === 'png'">
+                          <a href="#" data-bind="click: function (data, event) { downloadAsExt('jpeg') }">Download as JPEG</a>
+                        </li>
+                        <li data-bind="visible: getExt() === 'png'">
+                          <a href="#" data-bind="click: function (data, event) { downloadAsExt('tiff') }">Download as TIFF</a>
+                        </li>
+                        <!-- /ko -->
+                        <!-- ko if: (Purpose === 'pd') -->
+                        <li>
+                          <a href="#" data-bind="click: importToProductionData">Import to PD</a>
+                        </li>
+                        <!-- /ko -->
+                      </ul>
+                    </div>
+                    <!-- /ko -->
+                  </td>
+                  <td>
+                    <i class="glyphicon glyphicon-download-alt link-icon" title="Download file" data-bind="click: downloadWellFile "></i>
+                  </td>
+                  <td>
+                    <i class="glyphicon glyphicon-remove link-icon" title="Delete file" data-bind="click: $parent.deleteWellFile "></i>
+                  </td>
+                </tr>
+                <!-- /ko -->
+              </tbody>
+            </table>
+            <!-- /ko -->
+            <!-- ko if: (selectedFmgSectionId() === null) -->
+            <div>choose directory...</div>
+            <!-- /ko -->
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-primary modal-ok">OK</button>
+        <button type="button" class="btn btn-default modal-close">Cancel</button>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <p class="text-error" data-bind="if: viewModelError">
+            <span data-bind="text: viewModelError"></span>
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div id="modal-wide-block" class="modal fade" role="dialog" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-wide">
+        <div class="modal-content">
+            <div class="modal-body">
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary modal-ok">OK</button>
+                <button type="button" class="btn btn-default modal-close">Cancel</button>
+            </div>
+        </div>
+    </div>
+</div>
+</div>

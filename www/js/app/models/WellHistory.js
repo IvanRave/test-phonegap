@@ -1,5 +1,5 @@
-define(['jquery', 'knockout', 'app/datacontext', 'bootstrap-modal', 'moment', 'app/app-helper', 'app/models/WellHistoryFile', 'app/models/wfm-image'],
-    function ($, ko, datacontext, bootstrapModal, appMoment, appHelper) {
+define(['jquery', 'knockout', 'app/datacontext', 'bootstrap-modal', 'moment', 'app/models/WellHistoryFile', 'app/models/wfm-image'],
+    function ($, ko, datacontext, bootstrapModal, appMoment) {
         'use strict';
 
         // convert data objects into array
@@ -113,7 +113,7 @@ define(['jquery', 'knockout', 'app/datacontext', 'bootstrap-modal', 'moment', 'a
                         }
                     });
 
-                    bootstrapModal.closeModalWideWindow();
+                    bootstrapModal.closeModalFileManager();
                 }
 
                 self.getWell().showFmg(callbackFunction);
@@ -133,7 +133,7 @@ define(['jquery', 'knockout', 'app/datacontext', 'bootstrap-modal', 'moment', 'a
                         return;
                     }
 
-                    bootstrapModal.closeModalWideWindow();
+                    bootstrapModal.closeModalFileManager();
 
                     var urlQueryParams = {
                         well_id: self.WellId,
@@ -147,7 +147,6 @@ define(['jquery', 'knockout', 'app/datacontext', 'bootstrap-modal', 'moment', 'a
                     var innerDiv = document.createElement('div');
                     var historyImgElem = document.createElement('img');
                     innerDiv.appendChild(historyImgElem);
-                    appHelper.toggleLoadingState(true);
                     // load image before open window and set JCrop
                     historyImgElem.onload = function () {
                         // load need libraries for cropping
@@ -166,7 +165,6 @@ define(['jquery', 'knockout', 'app/datacontext', 'bootstrap-modal', 'moment', 'a
                                 bgOpacity: 0.6
                             });
 
-                            appHelper.toggleLoadingState(false);
                             // submitted by OK button
                             bootstrapModal.openModalWideWindow(innerDiv, function () {
                                 ////var url = path + '&crop=(' + coords[0] + ',' + coords[1] + ',' + coords[2] + ',' + coords[3] + ')';
@@ -189,7 +187,7 @@ define(['jquery', 'knockout', 'app/datacontext', 'bootstrap-modal', 'moment', 'a
                                     // push to wellhistory wfmimages
                                 });
 
-                                bootstrapModal.closeModalWideWindow();
+                                bootstrapModal.closeModalFileManager();
                             });
                             // end of require
                         });

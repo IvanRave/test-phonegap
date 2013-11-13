@@ -1,7 +1,9 @@
-define(['jquery', 'knockout', 'app/datacontext', 'bootstrap-modal',
-    'app/workspace/viewmodel',
-    'app/models/Well', 'app/models/WellGroupWfmParameter'
-], function ($, ko, datacontext, bootstrapModal) {
+define(['jquery',
+    'knockout',
+    'app/datacontext',
+    'bootstrap-modal',
+    'app/models/Well',
+    'app/models/WellGroupWfmParameter'], function ($, ko, datacontext, bootstrapModal) {
     'use strict';
 
     // 18. WellGroupWfmParameter
@@ -114,7 +116,7 @@ define(['jquery', 'knockout', 'app/datacontext', 'bootstrap-modal',
         ////            IsSystem: false
         ////        });
 
-        ////        datacontext.postWfmParameter(wfmParameterNew).done(function (wfmParameterResponse) {
+        ////        datacontext.postParameter(wfmParameterNew).done(function (wfmParameterResponse) {
         ////            var createdWfmParameter = datacontext.createWfmParameter(wfmParameterResponse);
 
         ////            // request to create wellGroupWfmParameter 

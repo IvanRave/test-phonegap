@@ -1,4 +1,4 @@
-define(['jquery', 'app/app-helper'], function ($, appHelper) {
+define(['jquery', 'app/ajax-request'], function ($, ajaxRequest) {
     'use strict';
 
     function wellRegionUrl(uqp) {
@@ -37,9 +37,6 @@ define(['jquery', 'app/app-helper'], function ($, appHelper) {
     function wellHistoryFileUrl(uqp) {
         return 'http://wfm-client.azurewebsites.net/api/wellhistoryfile/' + (uqp ? ('?' + $.param(uqp)) : '');
     }
-    function fileManagerUrl() {
-        return 'wfm-template/workspace/file-manager.html';
-    }
     function userProfileUrl(uqp) {
         return 'http://wfm-client.azurewebsites.net/api/userprofile/' + (uqp ? ('?' + $.param(uqp)) : '');
     }
@@ -52,9 +49,6 @@ define(['jquery', 'app/app-helper'], function ($, appHelper) {
     function testDataUrl(uqp) {
         return 'http://wfm-client.azurewebsites.net/api/testdata/' + (uqp ? ('?' + $.param(uqp)) : '');
     }
-    function wfmParameterUrl(uqp) {
-        return 'http://wfm-client.azurewebsites.net/api/wfmparameter/' + (uqp ? ('?' + $.param(uqp)) : '');
-    }
     function wellGroupWfmParameterUrl(uqp) {
         return 'http://wfm-client.azurewebsites.net/api/wellgroupwfmparameter/' + (uqp ? ('?' + $.param(uqp)) : '');
     }
@@ -64,18 +58,6 @@ define(['jquery', 'app/app-helper'], function ($, appHelper) {
     function forecastEvolutionUrl(uqp) {
         return 'http://wfm-client.azurewebsites.net/api/forecastevolution/' + (uqp ? ('?' + $.param(uqp)) : '');
     }
-    function accountLogoffUrl(uqp) {
-        return 'http://wfm-client.azurewebsites.net/api/account/logoff/' + (uqp ? ('?' + $.param(uqp)) : '');
-    }
-    function accountLogonUrl(uqp) {
-        return 'http://wfm-client.azurewebsites.net/api/account/logon/' + (uqp ? ('?' + $.param(uqp)) : '');
-    }
-    function accountRegisterUrl(uqp) {
-        return 'http://wfm-client.azurewebsites.net/api/account/register/' + (uqp ? ('?' + $.param(uqp)) : '');
-    }
-    function accountRegisterConfirmationUrl(uqp) {
-        return 'http://wfm-client.azurewebsites.net/api/account/register/confirmation/' + (uqp ? ('?' + $.param(uqp)) : '');
-    }
     function companyUserUrl(uqp) {
         return 'http://wfm-client.azurewebsites.net/api/companyuser/' + (uqp ? ('?' + $.param(uqp)) : '');
     }
@@ -84,117 +66,6 @@ define(['jquery', 'app/app-helper'], function ($, appHelper) {
     }
     function wellWidgoutUrl(wellId, widgetId) {
         return 'http://wfm-client.azurewebsites.net/api/wells/' + wellId + '/widgouts' + (widgetId ? ('/' + widgetId) : '');
-    }
-
-    // Request to server
-    function ajaxRequest(type, url, data) { // Ajax helper
-        var options = {
-            ////dataType: "json",
-            cache: false,
-            type: type,
-            xhrFields: {
-                // For CORS request to send cookies
-                withCredentials: true
-            }
-        };
-
-        ////if (true) {
-        ////    // default content-type = url-encoded string
-        ////}
-        ////else {
-        options.contentType = 'application/json; charset=utf-8';
-        ////}
-
-        if (data) {
-            // all knockout models need contain toPlainJson function, 
-            // which converts knockout object to plain object (observables to plain objects etc.)
-            if ($.isFunction(data.toPlainJson)) {
-                ////if (true) {
-                ////    try {
-                ////        options.data = $.param(data.toPlainJson());
-                ////    }
-                ////    catch (err) {
-                ////        console.log(err);
-                ////    }
-                ////}
-                ////else {
-                options.data = JSON.stringify(data.toPlainJson());
-                ////}
-            }
-            else if ($.isArray(data)) {
-                // each array element convert to plain json (it is not an appropriate way: would be better to convert each element to plain json before sending to ajaxRequest)
-                // for other libraries (not knockout models - for plain JSON objects)
-                options.data = JSON.stringify(data);
-            }
-            else {
-                console.log('not ko object and not array');
-                console.log(data);
-                console.log(JSON.stringify(data));
-                // for other libraries (not knockout models - for plain JSON objects)
-                options.data = JSON.stringify(data);
-            }
-
-            // remove knockout dependency from this module
-            ////data: JSON.stringify(ko.toJS(data)) 
-            ////ko.toJSON(data)
-        }
-
-        appHelper.toggleLoadingState(true);
-        return $.ajax(url, options)
-            .fail(function (jqXHR, textStatus, errorThrown) {
-                // TODO: include notification system: https://github.com/Nijikokun/bootstrap-notify
-                console.log(jqXHR);
-                console.log('WFM jqXHR: ' + JSON.stringify(jqXHR));
-                switch (jqXHR.status) {
-                    case 401:
-                        ////window.location.href = 'account/logonindex.html';
-                        ////alert('Access is denied. Please login with right credentials.');
-                        window.location.href = '#/account/logon';
-                        break;
-                        ////throw new Error('Access is denied');
-                    case 404:
-                        alert('Data is not found');
-                        break;
-                    case 422:
-                        // Business-logic errors
-                        // TODO: handle all 400 errors
-                        break;
-                    case 400:
-                        var resJson = jqXHR.responseJSON;
-                        console.log(resJson);
-                        if (resJson.errId === 'validationErrors') {
-                            // Show window - but modal window can be active already
-                            // TODO: make realization for all cases, or show in alert
-
-                            require(['app/lang-helper'], function (langHelper) {
-                                var errMsg = 'Validation errors:';
-                                $.each(resJson.modelState, function (stateKey, stateValue) {
-                                    errMsg += '\n' + (langHelper.translate(stateKey) || stateKey) + ': ';
-
-                                    $.each(stateValue, function (errIndex, errValue) {
-                                        errMsg += langHelper.translateRow(errValue) + '; ';
-                                    });
-                                });
-
-                                alert(errMsg);
-                            });
-
-                            return;
-                        }
-                        else {
-                            console.log(resJson);
-                            alert(textStatus + ": " + jqXHR.responseText + " (" + errorThrown + ")");
-                        }
-
-                        break;
-                    default:
-                        alert(textStatus + ": " + jqXHR.responseText + " (" + errorThrown + ")");
-                        console.log(jqXHR);
-                }
-            })
-            .always(function () {
-                appHelper.toggleLoadingState(false);
-            });
     }
 
     // DataContext operations
@@ -447,10 +318,6 @@ define(['jquery', 'app/app-helper'], function ($, appHelper) {
         }));
     }
 
-    function getFileManagerUrl() {
-        return fileManagerUrl();
-    }
-
     // user profile
     function createUserProfile(data) {
         return new datacontext.userProfile(data); // from cabinet.model.js
@@ -492,21 +359,6 @@ define(['jquery', 'app/app-helper'], function ($, appHelper) {
             testscope_id: testDataItem.testScopeId,
             hournumber: testDataItem.hourNumber
         }));
-    }
-
-    // parameter list (all parameter only in Library)
-    // IsSystem: true
-    // for modal window select box, where user may choose some parameters for himself wellgroup
-    function getWfmParameterList(uqp) {
-        return ajaxRequest('GET', wfmParameterUrl(uqp));
-    }
-
-    function postWfmParameter(data) {
-        return ajaxRequest('POST', wfmParameterUrl(), data);
-    }
-
-    function putWfmParameter(uqp, data) {
-        return ajaxRequest('PUT', wfmParameterUrl(uqp), data);
     }
 
     // get wellGroup wfmParameter list
@@ -610,7 +462,6 @@ define(['jquery', 'app/app-helper'], function ($, appHelper) {
         // WellHistoryFile
         saveNewWellHistoryFile: saveNewWellHistoryFile,
         deleteWellHistoryFile: deleteWellHistoryFile,
-        getFileManagerUrl: getFileManagerUrl,
         // section list
         getSectionList: getSectionList,
         imageMimeTypes: imageMimeTypes,
@@ -627,10 +478,6 @@ define(['jquery', 'app/app-helper'], function ($, appHelper) {
         saveNewTestData: saveNewTestData,
         saveChangedTestData: saveChangedTestData,
         deleteTestData: deleteTestData,
-        // wfm parameter
-        getWfmParameterList: getWfmParameterList,
-        postWfmParameter: postWfmParameter,
-        putWfmParameter: putWfmParameter,
         // well group wfm parameter
         getWellGroupWfmParameterList: getWellGroupWfmParameterList,
         postWellGroupWfmParameter: postWellGroupWfmParameter,
@@ -639,25 +486,6 @@ define(['jquery', 'app/app-helper'], function ($, appHelper) {
         getWfmParamSquadList: getWfmParamSquadList,
         getForecastEvolution: getForecastEvolution,
         postForecastEvolution: postForecastEvolution
-    };
-
-    // Account logoff
-    datacontext.accountLogoff = function (uqp) {
-        return ajaxRequest('POST', accountLogoffUrl(uqp));
-    };
-
-    // Account logon
-    datacontext.accountLogon = function (uqp, data) {
-        return ajaxRequest('POST', accountLogonUrl(uqp), data);
-    };
-
-    // Account register
-    datacontext.accountRegister = function (uqp, data) {
-        return ajaxRequest('POST', accountRegisterUrl(uqp), data);
-    };
-
-    datacontext.accountRegisterConfirmation = function (uqp, data) {
-        return ajaxRequest('POST', accountRegisterConfirmationUrl(uqp), data);
     };
 
     // api/company/

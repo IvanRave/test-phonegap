@@ -4,38 +4,38 @@
         <div class="col-md-6 col-md-offset-1">
             <h3>Registration:</h3>
             <form class="form-horizontal" name="accountForm">
-                <div class="form-group" ng-class="{'has-error': accountForm.Email.$invalid}">
+                <div class="form-group" ng-class="{'has-error': accountForm.email.$invalid}">
                     <label class="control-label col-sm-2">Email</label>
                     <div class="col-sm-6">
-                        <input type="email" name="Email" required autofocus class="form-control" ng-model="usver.Email" />
+                        <input class="form-control" type="email" name="email" required autofocus ng-model="usver.email" />
                     </div>
                     <div class="col-sm-4 has-error">
-                        <span ng-show="accountForm.Email.$error.email" class="help-block">wrong email format</span>
-                        <span ng-show="accountForm.Email.$error.required" class="help-block">required</span>
+                        <span class="help-block" ng-show="accountForm.email.$error.email">wrong email format</span>
+                        <span class="help-block" ng-show="accountForm.email.$error.required">required</span>
                     </div>
                 </div>
-                <div class="form-group" ng-class="{'has-error': accountForm.Password.$invalid}">
+                <div class="form-group" ng-class="{'has-error': accountForm.password.$invalid}">
                     <label class="control-label col-sm-2">Password</label>
                     <div class="col-sm-6">
-                        <input type="text" name="Password" required class="form-control" ng-model="usver.Password"
+                        <input class="form-control" type="text" name="password" required ng-model="usver.password"
                                ng-minlength="{[{bound.password.minLength}]}" ng-maxlength="{[{bound.password.maxLength}]}" autocomplete="off" />
                     </div>
                     <div class="col-sm-4 has-error">
-                        <span ng-show="accountForm.Password.$error.maxlength" class="help-block">max length: <span ng-bind="bound.password.maxLength"></span></span>
-                        <span ng-show="accountForm.Password.$error.minlength" class="help-block">min length: <span ng-bind="bound.password.minLength"></span></span>
-                        <span ng-show="accountForm.Password.$error.required" class="help-block">required</span>
+                        <span class="help-block" ng-show="accountForm.password.$error.maxlength">max length: <span ng-bind="bound.password.maxLength"></span></span>
+                        <span class="help-block" ng-show="accountForm.password.$error.minlength">min length: <span ng-bind="bound.password.minLength"></span></span>
+                        <span class="help-block" ng-show="accountForm.password.$error.required">required</span>
                     </div>
                 </div>
-                <div class="form-group" ng-class="{'has-error': accountForm.PasswordConfirmation.$invalid}">
+                <div class="form-group" ng-class="{'has-error': accountForm.passwordConfirmation.$invalid}">
                     <label class="control-label col-sm-2">Password confirmation</label>
                     <div class="col-sm-6">
-                        <input type="text" name="PasswordConfirmation" required class="form-control" ng-model="usver.PasswordConfirmation"
+                        <input class="form-control" type="text" name="passwordConfirmation" required ng-model="usver.passwordConfirmation"
                                ng-minlength="{[{bound.password.minLength}]}" ng-maxlength="{[{bound.password.maxLength}]}" autocomplete="off" />
                     </div>
                     <div class="col-sm-4 has-error">
-                        <span ng-show="accountForm.PasswordConfirmation.$error.maxlength" class="help-block">max length: <span ng-bind="bound.password.maxLength"></span></span>
-                        <span ng-show="accountForm.PasswordConfirmation.$error.minlength" class="help-block">min length: <span ng-bind="bound.password.minLength"></span></span>
-                        <span ng-show="accountForm.PasswordConfirmation.$error.required" class="help-block">required</span>
+                        <span class="help-block" ng-show="accountForm.passwordConfirmation.$error.maxlength">max length: <span ng-bind="bound.password.maxLength"></span></span>
+                        <span class="help-block" ng-show="accountForm.passwordConfirmation.$error.minlength">min length: <span ng-bind="bound.password.minLength"></span></span>
+                        <span class="help-block" ng-show="accountForm.passwordConfirmation.$error.required">required</span>
                     </div>
                 </div>
                 <div class="form-group">

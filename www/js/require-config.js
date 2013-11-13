@@ -2,6 +2,7 @@
     requirejs.config({
         //baseUrl: '.',
         paths: {
+            'jquery.bootstrap': 'bootstrap',
             // The jQuery UI widget factory, can be omitted if jQuery UI is already included 
             'jquery.ui.widget': 'ajaxupload/vendor/jquery.ui.widget',
             // The Iframe Transport is required for browsers without support for XHR file uploads 
@@ -27,13 +28,9 @@
             // Shim config does not work after optimization builds with CDN resources.
             // Need only for 3-rd side libraries when no AMD
             // Bootstrap - set module define in it's file
-            ////'jquery.bootstrap': {
-            ////    deps: ['jquery'],
-            ////    exports: '$'
-            ////},
+            'jquery.bootstrap': { deps: ['jquery'] },
             'angular': { deps: ['jquery'], exports: 'angular' }, // work: angular.module and other
-            'angular-route': { deps: ['angular'] },
-            'angular-resource': { deps: ['angular'] }
+            'angular-route': { deps: ['angular'] }
             ////'jspdf.plugin.addimage': { deps: ['jspdf'] },
             ////'jspdf.plugin.cell': { deps: ['jspdf'] },
             ////'jspdf.plugin.from_html': { deps: ['jspdf'] },

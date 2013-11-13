@@ -53,5 +53,9 @@
         $modalWideBlock.modal('show');
     };
 
+    bootstrapModal.closeModalFileManager = function () {
+        $('#modal-file-manager').modal('hide');
+    }
+
     return bootstrapModal;
 });

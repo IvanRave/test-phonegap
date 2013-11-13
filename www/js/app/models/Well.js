@@ -423,7 +423,6 @@ define([
         ////        }
         ////    }
 
-        ////    appHelper.toggleLoadingState(true);
         ////    require(['app/pdf-helper'], function (pdfHelper) {
 
         ////        pdfHelper.getImageFromUrl(logoUrl, function (logoBase64) {
@@ -504,7 +503,6 @@ define([
         ////                        }
 
         ////                        pdfHelper.savePdf(doc, 'Report ' + self.Name() + ' ' + nowDateString);
-        ////                        appHelper.toggleLoadingState(false);
         ////                    });
         ////                });
         ////            });
@@ -535,44 +533,87 @@ define([
         // file manager
         // function(selectedItemFromKnockout, ...)
         self.showFmg = function (callbackFunction) {
-            var innerDiv = document.createElement('div');
+            var jqrModalFileManager = $('#modal-file-manager');
 
-            $(innerDiv).load(datacontext.getFileManagerUrl(), function () {
-                ko.applyBindings(self, $(innerDiv).get(0));
+            $.each(self.sectionList, function (elemIndex, elemValue) {
+                if (elemValue.formatList.length > 0) {
+                    var elemFileUpload = jqrModalFileManager.find('#' + elemValue.id + '_file_upload').get(0);
 
-                $.each(self.sectionList, function (elemIndex, elemValue) {
-                    if (elemValue.formatList.length > 0) {
-                        var elemFileUpload = $(innerDiv).find('#' + elemValue.id + '_file_upload').get(0);
+                    fileHelper.initFileUpload(elemFileUpload, datacontext.getWellFileUrl({
+                        well_id: self.Id,
+                        purpose: elemValue.id,
+                        status: 'work'
+                    }), elemValue.formatList, function () {
+                        self.getWellFileList();
+                    });
+                }
+            });
 
-                        fileHelper.initFileUpload(elemFileUpload, datacontext.getWellFileUrl({
-                            well_id: self.Id,
-                            purpose: elemValue.id,
-                            status: 'work'
-                        }), elemValue.formatList, function () {
-                            self.getWellFileList();
-                        });
+            self.getWellFileList();
+
+            function hideModal(){
+                jqrModalFileManager.modal('hide');
+            }
+
+            function submitFunction() {
+                // get checked (selected) files
+                var checkedWellFiles = $.map(ko.unwrap(self.WellFiles), function (elemValue) {
+                    if (ko.unwrap(elemValue.isChecked) === true) {
+                        return elemValue;
                     }
                 });
 
-                self.getWellFileList();
-                var submitFunction = function () {
-                    // get checked (selected) files
-                    var checkedWellFiles = $.map(self.WellFiles(), function (elemValue) {
-                        if (elemValue.isChecked() === true) {
-                            return elemValue;
-                        }
-                    });
+                if (typeof (callbackFunction) !== 'undefined' && $.isFunction(callbackFunction)) {
+                    callbackFunction(checkedWellFiles);
+                }
+                else {
+                    hideModal();
+                }
+            }
 
-                    if (typeof (callbackFunction) !== 'undefined' && $.isFunction(callbackFunction)) {
-                        callbackFunction(checkedWellFiles);
-                    }
-                    else {
-                        bootstrapModal.closeModalWideWindow();
-                    }
-                };
+            jqrModalFileManager.find('.modal-ok').off('click').on('click', submitFunction);
+            jqrModalFileManager.find('.modal-close').off('click').on('click', hideModal);
 
-                bootstrapModal.openModalWideWindow(innerDiv, submitFunction);
-            });
+            jqrModalFileManager.modal('show');
+
+            ////var innerDiv = document.createElement('div');
+
+            ////$(innerDiv).load(datacontext.getFileManagerUrl(), function () {
+            ////    ko.applyBindings(self, $(innerDiv).get(0));
+
+            ////    $.each(self.sectionList, function (elemIndex, elemValue) {
+            ////        if (elemValue.formatList.length > 0) {
+            ////            var elemFileUpload = $(innerDiv).find('#' + elemValue.id + '_file_upload').get(0);
+
+            ////            fileHelper.initFileUpload(elemFileUpload, datacontext.getWellFileUrl({
+            ////                well_id: self.Id,
+            ////                purpose: elemValue.id,
+            ////                status: 'work'
+            ////            }), elemValue.formatList, function () {
+            ////                self.getWellFileList();
+            ////            });
+            ////        }
+            ////    });
+
+            ////    self.getWellFileList();
+            ////    var submitFunction = function () {
+            ////        // get checked (selected) files
+            ////        var checkedWellFiles = $.map(self.WellFiles(), function (elemValue) {
+            ////            if (elemValue.isChecked() === true) {
+            ////                return elemValue;
+            ////            }
+            ////        });
+
+            ////        if (typeof (callbackFunction) !== 'undefined' && $.isFunction(callbackFunction)) {
+            ////            callbackFunction(checkedWellFiles);
+            ////        }
+            ////        else {
+            ////            bootstrapModal.closeModalWideWindow();
+            ////        }
+            ////    };
+
+            ////    bootstrapModal.openModalWideWindow(innerDiv, submitFunction);
+            ////});
         };
 
         self.sketchHashString = ko.observable(new Date().getTime());
@@ -593,7 +634,7 @@ define([
                     return;
                 }
 
-                bootstrapModal.closeModalWideWindow();
+                bootstrapModal.closeModalFileManager();
 
                 var urlQueryParams = {
                     well_id: self.Id,
@@ -1010,7 +1051,7 @@ define([
                 datacontext.getWellWidgoutList(self.Id).done(function (response) {
                     console.log('response');
                     console.log(response);
-                    
+
                     self.wellWidgoutList(importWellWidgoutList(response, self));
                     self.isLoadedWellWidgoutList(true);
 

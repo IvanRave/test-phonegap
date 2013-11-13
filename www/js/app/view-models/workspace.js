@@ -77,7 +77,7 @@ define([
     ////    return choosedObj;
     ////}
 
-    function AppViewModel(companyId, isEditable, choosedObj) {
+    function WorkspaceViewModel(companyId, isEditable, choosedObj) {
         var self = this;
 
         // Test company Id with Guid format (this checks retry server check in WorkSpace view of Home controller
@@ -226,6 +226,6 @@ define([
 
         loadStructure();
     }
-
-    return AppViewModel;
+    
+    return WorkspaceViewModel;
 });
