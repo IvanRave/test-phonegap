@@ -64,8 +64,11 @@ define(['jquery', 'app/ajax-request'], function ($, ajaxRequest) {
     function companyUrl(uqp) {
         return 'http://wfm-client.azurewebsites.net/api/company/' + (uqp ? ('?' + $.param(uqp)) : '');
     }
-    function wellWidgoutUrl(wellId, widgetId) {
-        return 'http://wfm-client.azurewebsites.net/api/wells/' + wellId + '/widgouts' + (widgetId ? ('/' + widgetId) : '');
+    function wellWidgoutUrl(wellId, widgoutId) {
+        return 'http://wfm-client.azurewebsites.net/api/wells/' + wellId + '/widgouts' + (widgoutId ? ('/' + widgoutId) : '');
+    }
+    function widgetUrl(widgockId, widgetId) {
+        return 'http://wfm-client.azurewebsites.net/api/widgocks/' + widgockId + '/widgets' + (widgetId ? ('/' + widgetId) : '');
     }
 
     // DataContext operations
@@ -514,6 +517,24 @@ define(['jquery', 'app/ajax-request'], function ($, ajaxRequest) {
     // Widget layout for well
     datacontext.getWellWidgout = function (wellId, widgoutId) {
         return ajaxRequest('GET', wellWidgoutUrl(wellId, widgoutId));
+    };
+
+    datacontext.postWellWidget = function (wellId, widgoutData) {
+        return ajaxRequest('POST', wellWidgoutUrl(wellId), widgoutData);
+    };
+
+    // Widget (well widget or well group widget etc.)
+    datacontext.postWidget = function (widgockId, widgetData) {
+        return ajaxRequest('POST', widgetUrl(widgockId), widgetData);
+    };
+
+    // Save changed widget
+    datacontext.putWidget = function (widgockId, widgetId, widgetData) {
+        return ajaxRequest('PUT', widgetUrl(widgockId, widgetId), widgetData);
+    };
+
+    datacontext.deleteWidget = function (widgockId, widgetId) {
+        return ajaxRequest('DELETE', widgetUrl(widgockId, widgetId));
     };
 
     return datacontext;

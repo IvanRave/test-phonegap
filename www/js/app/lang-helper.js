@@ -9,6 +9,8 @@ define([], function () {
         // 
         'name': 'name',
         // 
+        'description': 'description',
+        // 
         'email': 'email',
         // 
         'password': 'password',
@@ -30,6 +32,10 @@ define([], function () {
         'saving': 'saving',
         // 
         'tosave': 'save',
+        // 
+        'toadd': 'add',
+        // 
+        'adding': 'add',
         // 
         'viewing': 'view',
         // 
@@ -136,6 +142,18 @@ define([], function () {
         'workspace': 'workspace',
         // 
         'processing': 'processing',
+        // 
+        'toaddwidget': 'add widget',
+        // 
+        'productionhistory': 'production history',
+        // 
+        'summary': 'summary',
+        // 
+        'sketch': 'sketch',
+        // 
+        'settings': 'settings',
+        // 
+        'layout': 'layout',
         // 
     };
 

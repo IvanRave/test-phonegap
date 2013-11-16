@@ -7,12 +7,11 @@ define([
     'app/app-helper',
     'moment',
     'app/models/well-partials/perfomance-partial',
-    'app/models/widgouts/well-widgout',
     'app/models/WellFile',
     'app/models/ColumnAttribute',
     'app/models/WellHistory',
     'app/models/TestScope'
-], function ($, ko, datacontext, fileHelper, bootstrapModal, appHelper, appMoment, wellPerfomancePartial, WellWidgout) {
+], function ($, ko, datacontext, fileHelper, bootstrapModal, appHelper, appMoment, wellPerfomancePartial) {
     'use strict';
 
     // WellFiles (convert data objects into array)
@@ -26,11 +25,6 @@ define([
 
     // Test scope
     function importTestScopeDtoList(data, wellItem) { return $.map(data || [], function (item) { return datacontext.createTestScope(item, wellItem); }); }
-
-    // Well widget layout list
-    function importWellWidgoutList(data, wellId) {
-        return $.map(data || [], function (item) { return new WellWidgout(item, wellId); });
-    }
 
     var wellPropertyList = [
         { id: 'Name', ttl: 'Name', tpe: 'SingleLine' },
@@ -1049,14 +1043,17 @@ define([
         self.getWellWidgoutList = function () {
             if (!ko.unwrap(self.isLoadedWellWidgoutList)) {
                 datacontext.getWellWidgoutList(self.Id).done(function (response) {
-                    console.log('response');
-                    console.log(response);
+                    console.log('well widgout response', response);
+                    require(['app/models/widgout'], function (Widgout) {
+                        // Well widget layout list
+                        function importWidgoutList(data, parentItem) {
+                            return $.map(data || [], function (item) { return new Widgout(item, parentItem); });
+                        }
 
-                    self.wellWidgoutList(importWellWidgoutList(response, self));
-                    self.isLoadedWellWidgoutList(true);
-
-                    console.log('wList');
-                    console.log(ko.unwrap(self.wellWidgoutList));
+                        self.wellWidgoutList(importWidgoutList(response, self));
+                        self.isLoadedWellWidgoutList(true);
+                        console.log('wList', ko.unwrap(self.wellWidgoutList));
+                    });
                 });
             }
         };

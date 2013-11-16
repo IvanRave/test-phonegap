@@ -1,23 +1,29 @@
-define(['jquery', 'knockout', 'app/models/widgock'], function ($, ko, Widgock) {
+define(['jquery', 'knockout'], function ($, ko) {
     'use strict';
 
-    // Well widget layout list
-    function importWidgockList(data, widgoutItem) {
-        return $.map(data || [], function (item) { return new Widgock(item, widgoutItem); });
-    }
-
     // Widget layout
-    function Widgout(data) {
+    function Widgout(data, parent) {
         var self = this;
         data = data || {};
+
+        self.getParent = function () {
+            return parent;
+        };
 
         self.id = data.Id;
         self.name = ko.observable(data.Name);
 
-        self.widgockList = ko.observableArray(importWidgockList(data.WidgockDtoList, self));
+        // Well widget block list
+        self.widgockList = ko.observableArray();
 
-        ////// Load widget block list
-        ////self.widgockList(importWidgockList(data.WidgockDtoList));
+        // Load widget block list
+        require(['app/models/widgock'], function (Widgock) {
+            function importWidgockList(data, widgoutItem) {
+                return $.map(data || [], function (item) { return new Widgock(item, widgoutItem); });
+            }
+
+            self.widgockList(importWidgockList(data.WidgockDtoList, self));
+        });
     }
 
     return Widgout;

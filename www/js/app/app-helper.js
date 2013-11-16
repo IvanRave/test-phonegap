@@ -92,5 +92,9 @@ define(['jquery'], function ($) {
         return tempArr;
     };
 
+    appHelper.capitalizeFirst = function (str) {
+        return str.charAt(0).toUpperCase() + str.slice(1);
+    };
+
     return appHelper;
 });

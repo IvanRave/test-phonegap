@@ -1,4 +1,4 @@
-define(['jquery', 'knockout', 'app/models/widget'], function ($, ko, Widget) {
+define(['jquery', 'knockout', 'app/datacontext', 'app/models/widget', 'app/app-helper'], function ($, ko, appDatacontext, Widget, appHelper) {
     'use strict';
 
     // Well widget layout list
@@ -28,7 +28,42 @@ define(['jquery', 'knockout', 'app/models/widget'], function ($, ko, Widget) {
             deferEvaluation: true
         });
 
-        self.widgetList = ko.observableArray(importWidgetList(data.WidgetDtoList, self));
+        self.widgetList = ko.observableArray();
+
+        self.sectionIdList = ['perfomance', 'summary', 'sketch'];
+
+        self.selectedSectionId = ko.observable();
+
+        self.addWidget = function () {
+            var sectionId = ko.unwrap(self.selectedSectionId);
+            if (sectionId) {
+                var tmpWidgetList = ko.unwrap(self.widgetList);
+                // Get order number of last widget
+                var lastOrderNumber = ko.unwrap(tmpWidgetList[tmpWidgetList.length - 1].orderNumber);
+
+                appDatacontext.postWidget(self.id, {
+                    Name: appHelper.capitalizeFirst(sectionId),
+                    SectionId: sectionId,
+                    OrderNumber: lastOrderNumber + 1,
+                    Opts: '{}',
+                    WidgockId: self.id
+                }).done(function (createdWidget) {
+                    var widgetNew = new Widget(createdWidget, self);
+                    self.widgetList.push(widgetNew);
+                    widgetNew.showVisSettingPanel();
+                });
+            }
+        };
+
+        self.deleteWidget = function (widgetToDelete) {
+            if (confirm('Are you sure you want to delete "' + ko.unwrap(widgetToDelete.name) + '"?')) {
+                appDatacontext.deleteWidget(widgetToDelete.widgockId, widgetToDelete.id).done(function () {
+                    self.widgetList.remove(widgetToDelete);
+                });
+            }
+        };
+
+        self.widgetList(importWidgetList(data.WidgetDtoList, self));
     }
 
     return Widgock;

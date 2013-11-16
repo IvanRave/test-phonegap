@@ -208,8 +208,7 @@
               </div>
               <div data-bind="with: selectedWellGroup">
                 <div data-bind="ifnot: selectedWell">
-                  
-<h4>
+                  <h4>
     <span data-bind="text: Name"></span>
     <small data-bind="if: $root.isEditable">
         <button type="button" class="btn btn-xs btn-default" data-bind="click: editWellGroup">
@@ -1051,7 +1050,6 @@
         </div>
     </div>
 </script>
-
 <script type="text/html" id="sketch-widget-tpl">
     <div data-bind="if: widget.isVisSettingPanel">
         <div class="widget-setting-panel">
@@ -1100,56 +1098,65 @@
         </div>
     </div>
 </script>
-
-
 <script type="text/html" id="well-widget-scope-tpl">
-  <div data-bind="if: isLoadedWellWidgoutList">
-    <div class="text-right">
-      <select data-bind="options: wellWidgoutList, optionsText: 'name', value: selectedWellWidgout"></select>
-    </div>
-    <div data-bind="with: selectedWellWidgout">
-      <div class="row" data-bind="foreach: widgockList">
-        <div data-bind="css: columnStyle">
-          <div data-bind="foreach: widgetList">
-            <div class="widget-tile">
-              <div class="clearfix widget-tile-header">
-                <div class="pull-left">
-                  <div data-bind="ifnot: isVisSettingPanel">
-                    <b data-bind="text: name"></b>
-                  </div>
-                  <div data-bind="if: isVisSettingPanel">
-                    <input type="text" class="input-sm" data-bind="value: name" />
-                  </div>
-                </div>
-                <div class="pull-right">
-                  <div data-bind="ifnot: isVisSettingPanel">
-                    <button type="button" class="btn btn-xs" data-bind="click: showVisSettingPanel">
-                      <i class="glyphicon glyphicon-cog"></i>
-                    </button>
-                  </div>
-                  <div data-bind="if: isVisSettingPanel">
-                    <button type="button" class="btn btn-sm btn-success" data-bind="click: saveWidget">
-                      Save
-                    </button>
-                  </div>
-                </div>
-              </div>
-              <div class="widget-tile-content">
-                <div data-bind="template: { name: widgetTpl, data: $data, as: 'widget', afterRender: processWidget }"></div>
-              </div>
+    <div data-bind="if: isLoadedWellWidgoutList">
+        <div class="clearfix">
+			<div class="pull-left">
+				<span class="bld" data-bind="text: Name"></span>
+			</div>
+            <div class="pull-right">
+				<select class="form-control input-sm" data-bind="options: wellWidgoutList, optionsText: 'name', value: selectedWellWidgout"></select>
             </div>
-          </div>
-          <div class="widget-tile">
-            <div class="widget-empty">
-              <button type="button" class="btn btn-default btn-xs">
-                <i class="glyphicon glyphicon-plus"></i> Add widget
-              </button>
-            </div>
-          </div>
         </div>
-      </div>
+        <div data-bind="with: selectedWellWidgout">
+            <div class="row" data-bind="foreach: widgockList">
+                <div data-bind="css: columnStyle">
+                    <div data-bind="foreach: widgetList">
+                        <div class="widget-tile">
+                            <div class="clearfix widget-tile-header">
+                                <div class="pull-left">
+                                    <div data-bind="ifnot: isVisSettingPanel">
+                                        <b data-bind="text: name"></b>
+                                    </div>
+                                    <div data-bind="if: isVisSettingPanel">
+                                        <input type="text" class="input-sm" data-bind="value: name" />
+                                    </div>
+                                </div>
+                                <div class="pull-right">
+                                    <div data-bind="ifnot: isVisSettingPanel">
+                                        <button class="btn btn-xs" type="button" data-bind="click: showVisSettingPanel">
+                                            <i class="glyphicon glyphicon-cog" title="Settings"></i>
+                                        </button>
+                                        <button class="btn btn-xs" type="button" data-bind="click: $parent.deleteWidget">
+                                            <i class="glyphicon glyphicon-remove" title="Delete"></i>
+                                        </button>
+                                    </div>
+                                    <div data-bind="if: isVisSettingPanel">
+                                        <button class="btn btn-sm btn-success" type="button" data-bind="click: putWidget">
+                                            Save
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="widget-tile-content">
+                                <div data-bind="template: { name: widgetTpl, data: $data, as: 'widget', afterRender: processWidget }"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="widget-tile">
+                        <div class="widget-empty">
+                            <div class="text-right">
+                                <select class="input-sm" data-bind="options: sectionIdList, value: selectedSectionId, optionsCaption: 'widget type...'"></select>
+                                <button class="btn btn-default btn-sm" type="button" data-bind="click: addWidget, enable: selectedSectionId">
+                                    Add
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
-  </div>
 </script>
 
   <div class="well-content-pad">

@@ -1,8 +1,9 @@
-define(['knockout',
+define(['jquery', 'knockout',
+    'app/datacontext',
     'app/models/widgets/widget-perfomance',
     'app/models/widgets/widget-summary',
     'app/models/widgets/widget-sketch'
-], function (ko, WidgetPerfomance, WidgetSummary, WidgetSketch) {
+], function ($, ko, appDatacontext, WidgetPerfomance, WidgetSummary, WidgetSketch) {
     'use strict';
 
     // Supertype
@@ -10,12 +11,18 @@ define(['knockout',
         var self = this;
         data = data || {};
 
+        self.getWidgock = function () {
+            return widgockItem;
+        };
+
+        // Properties
         self.id = data.Id;
         self.name = ko.observable(data.Name);
+        self.sectionId = data.SectionId;
+        self.widgockId = data.WidgockId;
+        self.orderNumber = ko.observable(data.OrderNumber);
 
-        self.widgetType = data.WidgetType;
-
-        self.widgetTpl = self.widgetType + '-widget-tpl';
+        self.widgetTpl = self.sectionId + '-widget-tpl';
 
         self.isVisSettingPanel = ko.observable(false);
 
@@ -23,8 +30,11 @@ define(['knockout',
             self.isVisSettingPanel(true);
         };
 
-        self.saveWidget = function () {
-            self.isVisSettingPanel(false);
+        self.putWidget = function () {
+            appDatacontext.putWidget(self.widgockId, self.id, self.toPlainJson()).done(function () {
+                self.isVisSettingPanel(false);
+            });
+
             console.log('saved');
         };
 
@@ -32,23 +42,33 @@ define(['knockout',
             console.log('process widget');
         };
 
-        if (self.widgetType === 'perfomance') {
-            WidgetPerfomance.call(self, data, widgockItem);
+        var optsObj = JSON.parse(data.Opts);
+        ////self.optsObj = ko.observable({});
+
+        ////$.each(JSON.parse(data.Opts), function (elemKey, elemValue) {
+        ////    ko.unwrap(self.optsObj)[elemKey] = ko.observable(elemValue);
+        ////});
+
+        if (self.sectionId === 'perfomance') {
+            WidgetPerfomance.call(self, optsObj, self.getWidgock());
         }
-        else if (self.widgetType === 'summary') {
-            WidgetSummary.call(self, data);
+        else if (self.sectionId === 'summary') {
+            WidgetSummary.call(self, optsObj);
         }
-        else if (self.widgetType === 'sketch') {
-            WidgetSketch.call(self, data);
+        else if (self.sectionId === 'sketch') {
+            WidgetSketch.call(self, optsObj);
         }
 
-        ////self.save = function () {
-
-        ////};
-
-        ////self.remove = function () {
-
-        ////};
+        self.toPlainJson = function () {           
+            return {
+                id: ko.unwrap(self.id),
+                name: ko.unwrap(self.name),
+                sectionId: ko.unwrap(self.sectionId),
+                widgockId: ko.unwrap(self.widgockId),
+                orderNumber: ko.unwrap(self.orderNumber),
+                opts: JSON.stringify(self.toPlainOpts())
+            };
+        };
     }
 
     return Widget;
