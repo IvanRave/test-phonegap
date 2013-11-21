@@ -1,4 +1,4 @@
-define(['jquery', 'knockout', 'moment', 'jquery.slimscroll', 'jquery.bootstrap', 'bootstrap-datepicker'], function ($, ko, appMoment) {
+define(['jquery', 'knockout', 'moment', 'jquery.slimscroll', 'jquery.bootstrap', 'bootstrap-datepicker', 'picker.date'], function ($, ko, appMoment) {
     'use strict';
 
     // Hooks up a form to jQuery Validation
@@ -85,75 +85,171 @@ define(['jquery', 'knockout', 'moment', 'jquery.slimscroll', 'jquery.bootstrap',
         }
     };
 
+    ko.bindingHandlers.hidden = {
+        update: function (element, valueAccessor) {
+            ko.bindingHandlers.visible.update(element, function () {
+                return !ko.utils.unwrapObservable(valueAccessor());
+            });
+        }
+    };
+
     ko.bindingHandlers.scroller = {
         init: function (element) {
-            // minus top block minus bottom block
-            var needHeight = $(window).height() - 32 - 40;
-            // 15 - col margin
-            var needWidth = $(window).width() / 6 - 15;
             $(element).slimScroll({
-                height: needHeight,
-                width: needWidth,
                 railVisible: true,
                 alwaysVisible: true,
                 color: '#fcfcfc',
-                distance: '0px',
+                //distance: '0',
+                position: 'left',
+                ////width: 210,
                 // move page scroll with this scroll
-                allowPageScroll: false
+                allowPageScroll: true
             });
         },
         update: function (element, valueAccessor) {
-            var needHeight = valueAccessor().height() - 32 - 40;
-            var needWidth;
-            // 992px - small size in bootstrap
-            if (valueAccessor().width() > 992) {
-                needWidth = valueAccessor().width() / 6 - 15;
+            var curValue = ko.unwrap(valueAccessor());
+            var curHeight = ko.unwrap(curValue.height),
+                curWidth = ko.unwrap(curValue.width);
+
+            if ($.isNumeric(curHeight)) {
+                // Convert to numbers (if not)
+                curHeight = +curHeight;
+                curWidth = +curWidth;
+
+                // 992px - small size in bootstrap - min width for div with scroll
+                var minWidth = 992,
+                    topMargin = 32,
+                    bottomMargin = 50,
+                    defaultMenuWidth = 210;
+
+                var needHeight,
+                    needWidth;
+                if (curWidth >= minWidth) {
+                    needHeight = curHeight - topMargin - bottomMargin;
+                    needWidth = defaultMenuWidth;
+                }
+                else {
+                    needHeight = 'auto'; // by content
+                    needWidth = curWidth; // full width
+                }
+
+                $(element).parent().height(needHeight);
+                $(element).height(needHeight);
+
+                $(element).parent().width(needWidth);
+                $(element).width(needWidth);
             }
-            else {
-                needWidth = valueAccessor().width() - 15;
-            }
 
-            $(element).parent().height(needHeight);
-            $(element).height(needHeight);
-
-            $(element).parent().width(needWidth);
-            $(element).width(needWidth);
-
-            ////console.log(needHeight);
             ////$(element).slimScroll({
-            ////    height: needHeight,
             ////    railVisible: true,
             ////    alwaysVisible: true
             ////});
         }
     };
 
+    ////ko.bindingHandlers.datepicker = {
+    ////    init: function (element, valueAccessor, allBindingsAccessor) {
+    ////        //initialize datepicker with some optional options
+    ////        var options = allBindingsAccessor().datepickerOptions || {};
+    ////        $(element).datepicker(options);
+
+    ////        //when a user changes the date, update the view model
+    ////        ko.utils.registerEventHandler(element, "changeDate", function (event) {
+    ////            var value = valueAccessor();
+    ////            if (ko.isObservable(value)) {
+    ////                value(event.date);
+    ////            }
+    ////        });
+    ////    },
+    ////    update: function (element, valueAccessor) {
+    ////        var widget = $(element).data("datepicker");
+
+    ////        // When the view model is updated, update the widget
+    ////        if (widget) {
+
+    ////            widget.date = ko.utils.unwrapObservable(valueAccessor());
+    ////            if (widget.date) {
+    ////                widget.setValue();
+    ////            }
+    ////        }
+    ////    }
+    ////};
+
     ko.bindingHandlers.datepicker = {
-        init: function (element, valueAccessor, allBindingsAccessor) {
-            //initialize datepicker with some optional options
-            var options = allBindingsAccessor().datepickerOptions || {};
-            $(element).datepicker(options);
+        init: function (element, valueAccessor, allBindings) {
+            // Initialize datepicker with some optional options
+            var curValue = valueAccessor();
 
-            //when a user changes the date, update the view model
-            ko.utils.registerEventHandler(element, "changeDate", function (event) {
-                var value = valueAccessor();
-                if (ko.isObservable(value)) {
-                    value(event.date);
+            if (ko.isObservable(curValue)) {
+                var options = allBindings.get('datepickerOptions') || {};
+
+                var $input = $(element).pickadate(options);
+                var picker = $input.pickadate('picker');
+
+                var startValue = ko.unwrap(curValue);
+
+                if (startValue) {
+                    // convert to ms
+                    startValue = startValue * 1000;
+                    // convert to local time to show in input
+                    var startUtcOffset = new Date(startValue).getTimezoneOffset() * 60 * 1000;
+                    startValue -= startUtcOffset;
+                    ////console.log('set as a start value in input: with utc', new Date(startValue).toISOString());
+                    picker.set('select', startValue);
                 }
-            });
-        },
-        update: function (element, valueAccessor) {
-            var widget = $(element).data("datepicker");
 
-            // When the view model is updated, update the widget
-            if (widget) {
+                picker.on({
+                    set: function (event) {
+                        ////console.log('on Set call with event: ', event);
 
-                widget.date = ko.utils.unwrapObservable(valueAccessor());
-                if (widget.date) {
-                    widget.setValue();
-                }
+                        // select - UTC unix time
+                        var unixTimeMs = event.select;
+                        if (unixTimeMs) {
+                            // offset in seconds
+                            var utcOffset = new Date(unixTimeMs).getTimezoneOffset() * 60;
+                            ////console.log('withoututc', unixTimeMs / 1000 - utcOffset);
+                            // Save as UTC unix time (seconds)
+                            curValue(unixTimeMs / 1000 - utcOffset);
+                        }
+                        else {
+                            // Set to undefined
+                            curValue(null);
+                        }
+                    }
+                });
+
+                ////options.onSet = function (event) {
+
+
+                ////};
+
+                ////options.max = new Date();
+
+                ////$(element).pickadate(options);
             }
         }
+        ////update: function (element, valueAccessor) {
+
+        ////    var picker = $(element).pickadate('picker');
+
+        ////    var curVal = ko.unwrap(valueAccessor());
+
+        ////    console.log('picker', picker);
+        ////    console.log(curVal);
+
+        ////    ////if (curVal) {
+        ////    ////    // Convert to unit time miliseconds
+        ////    ////    curVal = curVal * 1000;
+        ////    ////    console.log('curval', new Date(curVal).toISOString());
+        ////    ////    // Get utc offset
+
+        ////    ////    //var utcOffset = new Date(curVal).getTimezoneOffset() * 60;
+        ////    ////    // Diff UTC
+        ////    ////    //curVal = curVal - utcOffset;
+
+        ////    ////    picker.set('select', curVal);
+        ////    ////}
+        ////}
     };
 
     // for bootstrap dropdown (wich not loaded correctly by data-toggle in external page)

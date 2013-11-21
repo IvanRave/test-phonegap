@@ -16,6 +16,41 @@ define(['jquery',
     function ($, angular, appDatacontext) {
         'use strict';
 
+        function initWorkspace(angRouteParams, isEditable) {
+            // Script collection for rjs optimization (bundle or debug)
+            var workspaceWrapUrl = '';
+            // 
+            workspaceWrapUrl = 'app/workspace-wrap-bundle-0.4.10';
+            // 
+
+            require([workspaceWrapUrl], function () {
+                require(['app/view-models/workspace'], function (WorkspaceViewModel) {
+                    // Get company Id
+                    ////'9cf09ba5-c049-4148-8e5f-869c1e26c330';
+                    var workspaceViewModel = new WorkspaceViewModel(angRouteParams.companyId, isEditable, {
+                        regionId: parseInt(angRouteParams['region']),
+                        fieldId: parseInt(angRouteParams['field']),
+                        groupId: parseInt(angRouteParams['group']),
+                        wellId: parseInt(angRouteParams['well']),
+                        sectionId: angRouteParams['section']
+                    });
+
+                    require(['jquery', 'knockout', 'app/bindings'], function ($, ko) {
+                        $(function () {
+                            var jqrWindow = $(window);
+                            jqrWindow.resize(function () {
+                                workspaceViewModel.windowHeight(jqrWindow.height());
+                                workspaceViewModel.windowWidth(jqrWindow.width());
+                            });
+
+
+                            ko.applyBindings(workspaceViewModel, document.getElementById('workspace-project'));
+                        });
+                    });
+                });
+            });
+        }
+
         angular.module('ang-company-controllers', ['ngRoute', 'ang-cabinet-services', 'ang-app-filters'])
         .controller('CompanyUserCtrl', ['$scope', 'SharedService', function (scp, sharedService) {
             scp.accessLevelDict = sharedService.getSharedObject().accessLevelDict;
@@ -160,42 +195,12 @@ define(['jquery',
             ////    });
             ////};
         }])
-        .controller('WorkspaceCtrl', ['$routeParams', function (angRouteParams) {
+        .controller('WorkspaceManageCtrl', ['$routeParams', function (angRouteParams) {
             // View workspace: do not load libs for edit (for example Wisywig editor, or file-uploading features)
             // Views can be devided too: one - for view, second - for edit (do not put external elements, like input boxes, file-input boxes etc.)
-
-            // Script collection for rjs optimization (bundle or debug)
-            var workspaceWrapUrl = '';
-            // 
-            workspaceWrapUrl = 'app/workspace-wrap-bundle-0.2.0';
-            // 
-
-            require([workspaceWrapUrl], function () {
-
-                require(['app/view-models/workspace'], function (WorkspaceViewModel) {
-                    // Get company Id
-                    ////'9cf09ba5-c049-4148-8e5f-869c1e26c330';
-                    var workspaceViewModel = new WorkspaceViewModel(angRouteParams.companyId, angRouteParams['editable'] ? true : false, {
-                        regionId: parseInt(angRouteParams['region']),
-                        fieldId: parseInt(angRouteParams['field']),
-                        groupId: parseInt(angRouteParams['group']),
-                        wellId: parseInt(angRouteParams['well']),
-                        sectionId: parseInt(angRouteParams['section'])
-                    });
-
-                    require(['jquery', 'knockout', 'app/bindings'], function ($, ko) {
-                        $(function () {
-                            var jqrWindow = $(window);
-                            jqrWindow.resize(function () {
-                                workspaceViewModel.windowHeight(jqrWindow.height());
-                                workspaceViewModel.windowWidth(jqrWindow.width());
-                            });
-
-
-                            ko.applyBindings(workspaceViewModel, document.getElementById('workspace-project'));
-                        });
-                    });
-                });
-            });
+            initWorkspace(angRouteParams, true);
+        }])
+        .controller('WorkspaceCtrl', ['$routeParams', function (angRouteParams) {
+            initWorkspace(angRouteParams, false);
         }]);
     });

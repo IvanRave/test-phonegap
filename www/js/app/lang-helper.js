@@ -155,6 +155,28 @@ define([], function () {
         // 
         'layout': 'layout',
         // 
+        'todeletelayout': 'delete layout',
+        // 
+        'tocreatelayout': 'create new layout',
+        // 
+        'confirmtodelete': 'are you sure you want to delete',
+        // 
+        'development': 'development',
+        // 
+        'documentation': 'documentation',
+        // 
+        'attachfile': 'attach a file',
+        // 
+        'cropimage': 'crop an image',
+        // 
+        'tocreaterecord': 'create new record',
+        // 
+        'filterbydate': 'filter by date',
+        // 
+        'sortbydate': 'sort by date',
+        // 
+        'nowellhistorylist': 'no well history',
+        // 
     };
 
     ////var signArr = /,!/g; [',', '!', '.', ':', '?', '(', ')', '[', ']', '{', '}', '\'', ';'];

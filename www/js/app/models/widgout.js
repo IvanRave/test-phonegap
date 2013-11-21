@@ -1,4 +1,4 @@
-define(['jquery', 'knockout'], function ($, ko) {
+define(['jquery', 'knockout', 'app/datacontext'], function ($, ko, appDatacontext) {
     'use strict';
 
     // Widget layout
@@ -12,6 +12,16 @@ define(['jquery', 'knockout'], function ($, ko) {
 
         self.id = data.Id;
         self.name = ko.observable(data.Name);
+
+        self.putWellWidgout = function () {
+            // Get well id as parent
+            appDatacontext.putWellWidgout(self.getParent().Id, self.id, {
+                id: self.id,
+                name: ko.unwrap(self.name)
+            });
+        };
+
+        self.name.subscribe(self.putWellWidgout);
 
         // Well widget block list
         self.widgockList = ko.observableArray();

@@ -8,15 +8,22 @@ define(['knockout'], function (ko) {
         opts = opts || {};
 
         self.perfomanceView = widgockItem.getWidgout().getParent().perfomancePartial.createPerfomanceView({
-            isVisibleForecastData: false,
-            selectedAttrGroupId: opts.SelectedAttrGroupId
-            ////endYear: 2010,
-            ////startYear: 2007
+            isVisibleForecastData: opts['IsVisibleForecastData'],
+            selectedAttrGroupId: opts['SelectedAttrGroupId'],
+            endYear: opts['EndYear'],
+            startYear: opts['StartYear'],
+            endMonth: opts['EndMonth'],
+            startMonth: opts['StartMonth']
         });
 
         self.toPlainOpts = function () {
             return {
-                'SelectedAttrGroupId': ko.unwrap(self.perfomanceView.selectedAttrGroupId)
+                'SelectedAttrGroupId': ko.unwrap(self.perfomanceView['selectedAttrGroupId']),
+                'IsVisibleForecastData': ko.unwrap(self.perfomanceView['isVisibleForecastData']),
+                'EndYear': ko.unwrap(self.perfomanceView['WPDDateEndYear']),
+                'StartYear': ko.unwrap(self.perfomanceView['WPDDateStartYear']),
+                'EndMonth': ko.unwrap(self.perfomanceView['WPDDateEndMonth']),
+                'StartMonth': ko.unwrap(self.perfomanceView['WPDDateStartMonth'])
             };
         };
     }

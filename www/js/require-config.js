@@ -29,6 +29,7 @@
             // Need only for 3-rd side libraries when no AMD
             // Bootstrap - set module define in it's file
             'jquery.bootstrap': { deps: ['jquery'] },
+            'jquery.slimscroll': { deps: ['jquery'] },
             'angular': { deps: ['jquery'], exports: 'angular' }, // work: angular.module and other
             'angular-route': { deps: ['angular'] }
             ////'jspdf.plugin.addimage': { deps: ['jspdf'] },

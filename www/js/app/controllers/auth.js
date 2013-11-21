@@ -10,6 +10,21 @@ define(['jquery',
     function ($, angular, appDatacontext) {
         'use strict';
 
+        // From asdf=awegawe&mobaweb=123&aqwegWQ=12
+        // To {asdf: asdfads, awega:123, awegawe=12}
+        function getSearchParamsFromUrl(searchParamsString) {
+            var searchParams = {};
+            if (searchParamsString) {
+                var tmpStringArr = searchParamsString.split('&');
+                for (var i = 0; i < tmpStringArr.length; i += 1) {
+                    var urlParamObj = tmpStringArr[i].split('=');
+                    searchParams[urlParamObj[0]] = urlParamObj[1];
+                }
+            }
+
+            return searchParams;
+        }
+
         angular.module('ang-auth-controllers', ['ngRoute'])
         .controller('AccountLogonCtrl', ['$scope', '$rootScope', '$location', '$routeParams', function (scp, angRootScope, angLocation, angRouteParams) {
 
@@ -19,6 +34,19 @@ define(['jquery',
             scp.usver = {
                 email: angRouteParams.email
             };
+
+            var redirectUrl = angRouteParams.rurl;
+            var searchParams = {};
+            if (redirectUrl) {
+                var rurlArr = redirectUrl.split('?');
+                if (rurlArr[0]) {
+                    redirectUrl = rurlArr[0];
+                }
+                if (rurlArr[1]) {
+                    searchParams = getSearchParamsFromUrl(rurlArr[1]);
+                }
+            }
+
 
             // When user successfuly confirm email after registration - need to show notification
             scp.isEmailConfirmed = angRouteParams.confirmed;
@@ -41,7 +69,7 @@ define(['jquery',
 
                 scp.$apply(function () {
                     angRootScope.isLogged = true;
-                    angLocation.path('/companies');
+                    angLocation.path(redirectUrl || '/companies').search(searchParams);
                 });
             }
 

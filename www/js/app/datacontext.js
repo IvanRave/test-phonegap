@@ -509,7 +509,7 @@ define(['jquery', 'app/ajax-request'], function ($, ajaxRequest) {
         return ajaxRequest('GET', companyUserUrl(uqp));
     };
 
-    // Widget layouts for well
+    // Widget layouts for well=================================================================
     datacontext.getWellWidgoutList = function (wellId) {
         return ajaxRequest('GET', wellWidgoutUrl(wellId));
     };
@@ -519,11 +519,19 @@ define(['jquery', 'app/ajax-request'], function ($, ajaxRequest) {
         return ajaxRequest('GET', wellWidgoutUrl(wellId, widgoutId));
     };
 
-    datacontext.postWellWidget = function (wellId, widgoutData) {
+    datacontext.postWellWidgout = function (wellId, widgoutData) {
         return ajaxRequest('POST', wellWidgoutUrl(wellId), widgoutData);
     };
 
-    // Widget (well widget or well group widget etc.)
+    datacontext.putWellWidgout = function (wellId, id, widgoutData) {
+        return ajaxRequest('PUT', wellWidgoutUrl(wellId, id), widgoutData);
+    };
+
+    datacontext.deleteWellWidgout = function (wellId, widgoutId) {
+        return ajaxRequest('DELETE', wellWidgoutUrl(wellId, widgoutId));
+    };
+
+    // Widget (well widget or well group widget etc.)==========================================
     datacontext.postWidget = function (widgockId, widgetData) {
         return ajaxRequest('POST', widgetUrl(widgockId), widgetData);
     };
@@ -535,6 +543,150 @@ define(['jquery', 'app/ajax-request'], function ($, ajaxRequest) {
 
     datacontext.deleteWidget = function (widgockId, widgetId) {
         return ajaxRequest('DELETE', widgetUrl(widgockId, widgetId));
+    };
+
+    datacontext.getPossibleWidgoutList = function () {
+        return [{
+            name: '1 (one column)',
+            widgockDtoList: [{
+                orderNumber: 1,
+                columnCount: 12
+            }]
+        },
+       {
+           name: '1-1 (two columns)',
+           widgockDtoList: [{
+               orderNumber: 1,
+               columnCount: 6
+           },
+           {
+               orderNumber: 1,
+               columnCount: 6
+           }]
+       },
+       {
+           name: '1-1-1 (three columns)',
+           widgockDtoList: [{
+               orderNumber: 1,
+               columnCount: 4
+           },
+           {
+               orderNumber: 2,
+               columnCount: 4
+           },
+           {
+               orderNumber: 3,
+               columnCount: 4
+           }]
+       },
+       {
+           name: '1-2 (two columns)',
+           widgockDtoList: [{
+               orderNumber: 1,
+               columnCount: 4
+           },
+           {
+               orderNumber: 2,
+               columnCount: 8
+           }]
+       },
+       {
+           name: '2-1 (two columns)',
+           widgockDtoList: [{
+               orderNumber: 1,
+               columnCount: 8
+           },
+           {
+               orderNumber: 2,
+               columnCount: 4
+           }]
+       },
+       {
+           name: '1-1-1-1 (four columns)',
+           widgockDtoList: [{
+               orderNumber: 1,
+               columnCount: 3
+           },
+           {
+               orderNumber: 2,
+               columnCount: 3
+           },
+           {
+               orderNumber: 3,
+               columnCount: 3
+           },
+           {
+               orderNumber: 4,
+               columnCount: 3
+           }]
+       },
+       {
+           name: '1-1-2 (three columns)',
+           widgockDtoList: [{
+               orderNumber: 1,
+               columnCount: 3
+           },
+           {
+               orderNumber: 2,
+               columnCount: 3
+           },
+           {
+               orderNumber: 3,
+               columnCount: 6
+           }]
+       },
+       {
+           name: '1-2-1 (three columns)',
+           widgockDtoList: [{
+               orderNumber: 1,
+               columnCount: 3
+           },
+           {
+               orderNumber: 2,
+               columnCount: 6
+           },
+           {
+               orderNumber: 3,
+               columnCount: 3
+           }]
+       },
+       {
+           name: '2-1-1 (three columns)',
+           widgockDtoList: [{
+               orderNumber: 1,
+               columnCount: 6
+           },
+           {
+               orderNumber: 2,
+               columnCount: 3
+           },
+           {
+               orderNumber: 3,
+               columnCount: 3
+           }]
+       },
+       {
+           name: '3-1 (two columns)',
+           widgockDtoList: [{
+               orderNumber: 1,
+               columnCount: 9
+           },
+           {
+               orderNumber: 2,
+               columnCount: 3
+           }]
+       },
+       {
+           name: '1-3 (two columns)',
+           widgockDtoList: [{
+               orderNumber: 1,
+               columnCount: 3
+           },
+           {
+               orderNumber: 2,
+               columnCount: 9
+           }]
+       }];
     };
 
     return datacontext;

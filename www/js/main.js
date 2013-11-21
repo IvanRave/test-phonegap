@@ -14,8 +14,8 @@ require(['require-config'], function () {
                 .when('/companies/create', { controller: 'CompanyCreateCtrl', templateUrl: './tpl/cabinet/company-create.html' })
                 .when('/companies/:companyId/manage-info', { controller: 'CompanyManageInfoCtrl', templateUrl: './tpl/cabinet/manage-info.html' })
                 .when('/companies/:companyId/manage-users', { controller: 'CompanyManageUserCtrl', templateUrl: './tpl/cabinet/manage-user.html' })
-                .when('/companies/:companyId/view', { controller: 'WorkspaceCtrl', templateUrl: './tpl/workspace.html', reloadOnSearch: false })
-                .when('/companies/:companyId/manage', { controller: 'WorkspaceCtrl', templateUrl: './tpl/workspace.html', reloadOnSearch: false })
+                .when('/companies/:companyId', { controller: 'WorkspaceCtrl', templateUrl: './tpl/workspace.html', reloadOnSearch: false })
+                .when('/companies/:companyId/manage', { controller: 'WorkspaceManageCtrl', templateUrl: './tpl/workspace.html', reloadOnSearch: false })
                 .otherwise({ redirectTo: '/companies' });
 
             // Turn in CORS cookie support

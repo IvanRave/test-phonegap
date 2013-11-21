@@ -16,7 +16,7 @@
                                 <span style="font-weight:normal" ng-bind="companyUser.CompanyDto.Description"></span>
                             </h5>
                         </div>
-                        <a ng-show="companyUser.AccessLevel | bitwiseand: accessLevelDict.CanViewAll.AccessCode" class="btn btn-default" ng-href="#/companies/{[{companyUser.CompanyDto.Id}]}/view">View WFM</a>
+                        <a ng-show="companyUser.AccessLevel | bitwiseand: accessLevelDict.CanViewAll.AccessCode" class="btn btn-default" ng-href="#/companies/{[{companyUser.CompanyDto.Id}]}">View WFM</a>
                         <a ng-show="companyUser.AccessLevel | bitwiseand: accessLevelDict.CanEditAll.AccessCode" class="btn btn-default" ng-href="#/companies/{[{companyUser.CompanyDto.Id}]}/manage">Edit WFM</a>
                         <a ng-show="companyUser.AccessLevel | bitwiseand: accessLevelDict.CanManageAll.AccessCode" class="btn btn-default" ng-href="#/companies/{[{companyUser.CompanyDto.Id}]}/manage-info">Edit company info</a>
                         <a ng-show="companyUser.AccessLevel | bitwiseand: accessLevelDict.CanManageAll.AccessCode" class="btn btn-default" ng-href="#/companies/{[{companyUser.CompanyDto.Id}]}/manage-users">Edit company users</a>

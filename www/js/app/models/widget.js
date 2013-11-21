@@ -2,8 +2,9 @@ define(['jquery', 'knockout',
     'app/datacontext',
     'app/models/widgets/widget-perfomance',
     'app/models/widgets/widget-summary',
-    'app/models/widgets/widget-sketch'
-], function ($, ko, appDatacontext, WidgetPerfomance, WidgetSummary, WidgetSketch) {
+    'app/models/widgets/widget-sketch',
+    'app/models/widgets/widget-history'
+], function ($, ko, appDatacontext, WidgetPerfomance, WidgetSummary, WidgetSketch, WidgetHistory) {
     'use strict';
 
     // Supertype
@@ -34,8 +35,6 @@ define(['jquery', 'knockout',
             appDatacontext.putWidget(self.widgockId, self.id, self.toPlainJson()).done(function () {
                 self.isVisSettingPanel(false);
             });
-
-            console.log('saved');
         };
 
         self.processWidget = function () {
@@ -43,20 +42,20 @@ define(['jquery', 'knockout',
         };
 
         var optsObj = JSON.parse(data.Opts);
-        ////self.optsObj = ko.observable({});
-
-        ////$.each(JSON.parse(data.Opts), function (elemKey, elemValue) {
-        ////    ko.unwrap(self.optsObj)[elemKey] = ko.observable(elemValue);
-        ////});
-
-        if (self.sectionId === 'perfomance') {
-            WidgetPerfomance.call(self, optsObj, self.getWidgock());
-        }
-        else if (self.sectionId === 'summary') {
-            WidgetSummary.call(self, optsObj);
-        }
-        else if (self.sectionId === 'sketch') {
-            WidgetSketch.call(self, optsObj);
+        
+        switch (self.sectionId) {
+            case 'perfomance':
+                WidgetPerfomance.call(self, optsObj, self.getWidgock());
+                break;
+            case 'summary':
+                WidgetSummary.call(self, optsObj, ko.unwrap(self.getWidgock().getWidgout().getParent().wellPropertyList));
+                break;
+            case 'sketch':
+                WidgetSketch.call(self, optsObj);
+                break;
+            case 'history':
+                WidgetHistory.call(self, optsObj, self.getWidgock().getWidgout().getParent().historyList);
+                break;
         }
 
         self.toPlainJson = function () {           

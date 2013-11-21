@@ -87,7 +87,10 @@ define([
             return;
         }
 
+        // Manage or view: hide all editable blocks
         self.isEditable = isEditable;
+        // Left tree menu with well regions, groups, fields, wells
+        self.isVisibleMenu = ko.observable(true);
         self.wellRegionList = ko.observableArray();
         self.viewModelError = ko.observable();
         self.selectedWellRegion = ko.observable();
@@ -96,6 +99,32 @@ define([
         self.currentCompanyId = companyId;
         self.windowHeight = ko.observable($(window).height());
         self.windowWidth = ko.observable($(window).width());
+
+        // Left tree menu with well regions, groups, fields, wells
+        self.toggleIsVisibleMenu = function () {
+            self.isVisibleMenu(!ko.unwrap(self.isVisibleMenu));
+        };
+
+        self.sidebarWrapCss = ko.computed({
+            read: function () {
+                return ko.unwrap(self.isVisibleMenu) ? 'sidebar-wrap-visible' : 'hidden';
+            },
+            deferEvaluation: true
+        });
+
+        self.workAreaCss = ko.computed({
+            read: function () {
+                return ko.unwrap(self.isVisibleMenu) ? 'work-area' : '';
+            },
+            deferEvaluation: true
+        });
+
+        self.sidebarToggleCss = ko.computed({
+            read: function () {
+                return ko.unwrap(self.isVisibleMenu) ? 'sidebar-toggle-visible' : 'sidebar-toggle-hidden';
+            },
+            deferEvaluation: true
+        });
 
         // =====================================Wfm parameters begin==========================================================
         self.wfmParamSquadList = ko.lazyObservableArray(function () {

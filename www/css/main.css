@@ -15,7 +15,6 @@ body {
 }
 
 .wfm-nav {
-    background-color: #333;
     position: fixed;
     right: 0;
     left: 0;
@@ -44,6 +43,7 @@ footer {
 
     footer .footer-logo-wrap {
         padding: 12px;
+        padding-left: 22px;
     }
 
         footer .footer-logo-wrap .footer-logo {
@@ -275,9 +275,10 @@ footer {
 }
 
 .workspace-container {
+    padding-left: 21px;
 }
 
-.wfm-workspace-sidebar {
+.sidebar-wrap {
     background-color: #333;
 }
 
@@ -347,18 +348,66 @@ footer {
         color: #c0c0c0;
     }
 
+.sidebar-toggle {
+    width: 20px;
+    height: 20px;
+    z-index: 1031;
+}
+
+    .sidebar-toggle button {
+        background-color: #333;
+        padding: 0;
+        color: #efefef;
+        border: 0;
+        font-size: 0.8em;
+        width: 20px;
+        height: 20px;
+        border-radius: 0 6px 6px 0;
+    }
+
+        .sidebar-toggle button:hover {
+            color: #fefefe;
+        }
+
 @media screen and (min-width: 992px) {
-    .wfm-workspace-sidebar {
+    /*workspace menu*/
+    .sidebar-toggle {
         position: fixed;
+        bottom: 54px;
+    }
+
+    .sidebar-toggle-visible {
+        left: 210px;
+    }
+
+    .sidebar-toggle-hidden {
+        left: 0;
+    }
+
+    .sidebar-wrap-visible {
+        position: fixed;
+        /*set by scroller plugin*/
+        /*width: 210px;*/
         top: 32px;
-        bottom: 40px;
+        bottom: 50px;
         z-index: 98;
+        /*z-index for scroll - 99*/
     }
 
     .wfm-workspace-well-tab {
         position: fixed;
         bottom: 0;
         z-index: 1031;
+    }
+
+    .wfm-workspace-well-top-tab {
+        position: fixed;
+        top: 0;
+        z-index: 1031;
+    }
+
+    .work-area {
+        margin-left: 210px;
     }
 }
 
@@ -541,9 +590,9 @@ footer {
     }
 
 .elem-shadow {
-    -moz-box-shadow: 1px 1px 2px 3px #ccc;
-    -webkit-box-shadow: 1px 1px 2px 3px #ccc;
-    box-shadow: 1px 1px 2px 3px #ccc;
+    -moz-box-shadow: 1px 1px 2px 2px #ccc;
+    -webkit-box-shadow: 1px 1px 2px 2px #ccc;
+    box-shadow: 1px 1px 2px 2px #ccc;
 }
 
 .pre-wrap-text {
@@ -630,4 +679,12 @@ footer {
 
 .bld {
     font-weight: bold;
+}
+
+.well-history-block {
+    margin-top: 4px;
+    padding-top: 8px;
+    padding-bottom: 8px;
+    border-bottom: 1px dashed #ccc;
+    border-top: 1px dashed #ccc;
 }

@@ -7,11 +7,12 @@ define([
     'app/app-helper',
     'moment',
     'app/models/well-partials/perfomance-partial',
+    'app/models/well-partials/history-view',
     'app/models/WellFile',
     'app/models/ColumnAttribute',
     'app/models/WellHistory',
     'app/models/TestScope'
-], function ($, ko, datacontext, fileHelper, bootstrapModal, appHelper, appMoment, wellPerfomancePartial) {
+], function ($, ko, datacontext, fileHelper, bootstrapModal, appHelper, appMoment, wellPerfomancePartial, HistoryView) {
     'use strict';
 
     // WellFiles (convert data objects into array)
@@ -182,6 +183,14 @@ define([
 
         ///<param>attrGroup - when select PD section need to point attrGroup</param>
         self.selectSection = function (sectionId) {
+            window.location.hash = window.location.hash.split('?')[0] + '?' + $.param({
+                region: self.getWellGroup().getWellField().getWellRegion().Id,
+                field: self.getWellGroup().getWellField().Id,
+                group: self.getWellGroup().Id,
+                well: self.Id,
+                section: sectionId
+            });
+
             self.selectedSectionId(sectionId);
         };
 
@@ -239,13 +248,13 @@ define([
         };
 
         self.addTestScope = function () {
-            var inputStartDate = document.createElement("input");
-            inputStartDate.type = "text";
+            var inputStartDate = document.createElement('input');
+            inputStartDate.type = 'text';
 
             $(inputStartDate).datepicker({
-                format: "yyyy-mm-dd",
+                format: 'yyyy-mm-dd',
                 autoclose: true
-            }).prop({ required: true, placeholder: "yyyy-mm-dd" }).addClass('datepicker');
+            }).prop({ required: true, placeholder: 'yyyy-mm-dd' }).addClass('datepicker');
 
             var inputStartHour = document.createElement("input");
             inputStartHour.type = "number";
@@ -302,12 +311,14 @@ define([
 
         self.WellInWellFieldMaps = ko.observableArray();
 
+        // ================================================= Well history section start =======================================
+
         self.historyList = ko.observableArray();
 
         self.isLoadedHistoryList = ko.observable(false);
 
-        self.getHistoryList = function () {
-            if (self.isLoadedHistoryList() === false) {
+        self.getWellHistoryList = function () {
+            if (ko.unwrap(self.isLoadedHistoryList) === false) {
                 datacontext.getWellHistoryList({ well_id: self.Id }).done(function (response) {
                     self.historyList(importWellHistoryDto(response, self));
                     self.isLoadedHistoryList(true);
@@ -315,38 +326,85 @@ define([
             }
         };
 
-        self.historyListFilter = {
-            startDate: ko.observable(),
-            endDate: ko.observable()
-        };
+        self.addWellHistory = function () {
+            var historyDateFormat = 'yyyy-mm-dd';
 
-        self.sortedHistoryListOrder = ko.observable(-1);
+            var inputHistory = document.createElement('textarea');
+            $(inputHistory).prop({ 'rows': 5 }).addClass('form-control');
 
-        self.sortedHistoryList = ko.computed(function () {
-            var sortFilterArr = self.historyList();
+            // 1999-12-31 yyyy-mm-dd
+            var datePattern = '(?:19|20)[0-9]{2}-(?:(?:0[1-9]|1[0-2])-(?:0[1-9]|1[0-9]|2[0-9])|(?:(?!02)(?:0[1-9]|1[0-2])-(?:30))|(?:(?:0[13578]|1[02])-31))';
 
-            if (self.historyListFilter.startDate() || self.historyListFilter.endDate()) {
-                sortFilterArr = $.grep(sortFilterArr, function (elemValue) {
-                    if (self.historyListFilter.startDate() && new Date(self.historyListFilter.startDate()) > new Date(elemValue.StartDate())) {
-                        return false;
-                    }
+            var inputStartDate = document.createElement('input');
+            inputStartDate.type = 'text';
+            $(inputStartDate).prop({
+                'required': true,
+                'placeholder': historyDateFormat,
+                'pattern': datePattern,
+                'title': 'Date format: yyyy-mm-dd (year, month, day)'
+            }).addClass('datepicker').datepicker({
+                format: historyDateFormat,
+                startView: 'decade',
+                autoclose: true
+            });
 
-                    if (self.historyListFilter.endDate() && new Date(self.historyListFilter.endDate()) < new Date(elemValue.EndDate())) {
-                        return false;
-                    }
+            var inputEndDate = document.createElement('input');
+            inputEndDate.type = 'text';
+            $(inputEndDate).prop({
+                'placeholder': 'yyyy-mm-dd (not necessary)',
+                'pattern': datePattern,
+                'title': 'Date format: yyyy-mm-dd (year, month, day)'
+            }).addClass('datepicker').datepicker({
+                format: historyDateFormat,
+                startView: 'decade',
+                autoclose: true
+            });
 
-                    return true;
+            var innerDiv = document.createElement('div');
+            $(innerDiv).addClass('form-horizontal').append(
+                bootstrapModal.gnrtDom('Start date', inputStartDate),
+                bootstrapModal.gnrtDom('End date', inputEndDate),
+                bootstrapModal.gnrtDom('History', inputHistory)
+            );
+
+            function submitFunction() {
+                var userStartDate = $(inputStartDate).val();
+                var userEndDate = $(inputEndDate).val();
+
+                if (userEndDate && appMoment(userEndDate, historyDateFormat).format() < appMoment(userStartDate, historyDateFormat).format()) {
+                    alert('End date must be greater than start date');
+                    return;
+                }
+
+                var wellHistoryItem = datacontext.createWellHistory({
+                    StartDate: userStartDate,
+                    EndDate: userEndDate || userStartDate,
+                    History: $(inputHistory).val(),
+                    WellId: self.Id
+                }, self);
+
+                datacontext.saveNewWellHistory(wellHistoryItem).done(function (result) {
+                    var whi = datacontext.createWellHistory(result, self);
+                    self.historyList.push(whi);
                 });
+                bootstrapModal.closeModalWindow();
             }
 
-            return sortFilterArr.sort(function (left, right) {
-                return left.StartDate() === right.StartDate() ? 0 : (left.StartDate() > right.StartDate() ? parseInt(self.sortedHistoryListOrder(), 10) : -parseInt(self.sortedHistoryListOrder(), 10));
-            });
-        });
-
-        self.changeSortedHistoryListOrder = function () {
-            self.sortedHistoryListOrder(-parseInt(self.sortedHistoryListOrder(), 10));
+            bootstrapModal.openModalWindow("Well history", innerDiv, submitFunction);
         };
+
+        self.deleteWellHistory = function () {
+            var itemForDelete = this;
+            if (confirm('Are you sure you want to delete "' + appMoment(itemForDelete.StartDate()).format('YYYY-MM-DD') + '" record?')) {
+                datacontext.deleteWellHistory(itemForDelete).done(function () {
+                    self.historyList.remove(itemForDelete);
+                });
+            }
+        };
+
+        self.historyView = new HistoryView({}, self.historyList);
+
+        // ============================================================= Well history end ===============================================
 
         self.sectionList = datacontext.getSectionList();
 
@@ -358,7 +416,7 @@ define([
         self.checkReportSection = function (checkedReportSection) {
             switch (checkedReportSection.id) {
                 case 'map': self.getWellGroup().getWellField().getWellFieldMaps(); break;
-                case 'history': self.getHistoryList(); break;
+                case 'history': self.getWellHistoryList(); break;
                 case 'log': self.getWellFileList('log', 'work'); break;
                 case 'pd': self.perfomancePartial.getHstProductionDataSet(); break;
             }
@@ -545,7 +603,7 @@ define([
 
             self.getWellFileList();
 
-            function hideModal(){
+            function hideModal() {
                 jqrModalFileManager.modal('hide');
             }
 
@@ -820,86 +878,6 @@ define([
             });
         });
 
-        // ================================================= Well history section start =======================================
-
-        self.addWellHistory = function () {
-            var historyDateFormat = 'yyyy-mm-dd';
-
-            var inputHistory = document.createElement('textarea');
-            $(inputHistory).prop({ 'rows': 5 }).addClass('form-control');
-
-            // 1999-12-31 yyyy-mm-dd
-            var datePattern = '(?:19|20)[0-9]{2}-(?:(?:0[1-9]|1[0-2])-(?:0[1-9]|1[0-9]|2[0-9])|(?:(?!02)(?:0[1-9]|1[0-2])-(?:30))|(?:(?:0[13578]|1[02])-31))';
-
-            var inputStartDate = document.createElement('input');
-            inputStartDate.type = 'text';
-            $(inputStartDate).prop({
-                'required': true,
-                'placeholder': historyDateFormat,
-                'pattern': datePattern,
-                'title': 'Date format: yyyy-mm-dd (year, month, day)'
-            }).addClass('datepicker').datepicker({
-                format: historyDateFormat,
-                startView: 'decade',
-                autoclose: true
-            });
-
-            var inputEndDate = document.createElement('input');
-            inputEndDate.type = 'text';
-            $(inputEndDate).prop({
-                'placeholder': 'yyyy-mm-dd (not necessary)',
-                'pattern': datePattern,
-                'title': 'Date format: yyyy-mm-dd (year, month, day)'
-            }).addClass('datepicker').datepicker({
-                format: historyDateFormat,
-                startView: 'decade',
-                autoclose: true
-            });
-
-            var innerDiv = document.createElement('div');
-            $(innerDiv).addClass('form-horizontal').append(
-                bootstrapModal.gnrtDom('Start date', inputStartDate),
-                bootstrapModal.gnrtDom('End date', inputEndDate),
-                bootstrapModal.gnrtDom('History', inputHistory)
-            );
-
-            function submitFunction() {
-                var userStartDate = $(inputStartDate).val();
-                var userEndDate = $(inputEndDate).val();
-
-                if (userEndDate && appMoment(userEndDate, historyDateFormat).format() < appMoment(userStartDate, historyDateFormat).format()) {
-                    alert('End date must be greater than start date');
-                    return;
-                }
-
-                var wellHistoryItem = datacontext.createWellHistory({
-                    StartDate: userStartDate,
-                    EndDate: userEndDate || userStartDate,
-                    History: $(inputHistory).val(),
-                    WellId: self.Id
-                }, self);
-
-                datacontext.saveNewWellHistory(wellHistoryItem).done(function (result) {
-                    var whi = datacontext.createWellHistory(result, self);
-                    self.historyList.push(whi);
-                });
-                bootstrapModal.closeModalWindow();
-            }
-
-            bootstrapModal.openModalWindow("Well history", innerDiv, submitFunction);
-        };
-
-        self.deleteWellHistory = function () {
-            var itemForDelete = this;
-            if (confirm('Are you sure you want to delete "' + appMoment(itemForDelete.StartDate()).format('YYYY-MM-DD') + '" record?')) {
-                datacontext.deleteWellHistory(itemForDelete).done(function () {
-                    self.historyList.remove(itemForDelete);
-                });
-            }
-        };
-
-        // ================================================= Well history section end =======================================
-
         // ================================================================= Well log section begin ==============================================
         self.wellLogSelectedFile = ko.observable();
 
@@ -1036,6 +1014,36 @@ define([
         // Well widget layout -> widget block -> widget
         self.wellWidgoutList = ko.observableArray();
 
+        self.possibleWidgoutList = datacontext.getPossibleWidgoutList();
+
+        // Selected possible widget layout for adding to widget layout list
+        self.slcPossibleWidgout = ko.observable();
+
+        self.postWellWidgout = function () {
+            var wellWidgoutData = ko.unwrap(self.slcPossibleWidgout);
+            if (wellWidgoutData) {
+                datacontext.postWellWidgout(self.Id, wellWidgoutData).done(function (createdWellWidgoutData) {
+                    require(['app/models/widgout'], function (Widgout) {
+                        var widgoutNew = new Widgout(createdWellWidgoutData, self);
+                        self.wellWidgoutList.push(widgoutNew);
+                        self.selectedWellWidgout(widgoutNew);
+                        self.slcPossibleWidgout(null);
+                    });
+                });
+            }
+        };
+
+        self.deleteWellWidgout = function () {
+            var wellWidgoutToDelete = ko.unwrap(self.selectedWellWidgout);
+            if (wellWidgoutToDelete) {
+                if (confirm('Are you sure you want to delete "' + ko.unwrap(wellWidgoutToDelete.name) + '"?')) {
+                    datacontext.deleteWellWidgout(self.Id, wellWidgoutToDelete.id).done(function () {
+                        self.wellWidgoutList.remove(wellWidgoutToDelete);
+                    });
+                }
+            }
+        };
+
         self.selectedWellWidgout = ko.observable();
 
         self.isLoadedWellWidgoutList = ko.observable(false);
@@ -1064,6 +1072,7 @@ define([
             self.getWellGroup().getWellGroupWfmParameterList();
             self.perfomancePartial.forecastEvolution.getDict();
             self.perfomancePartial.getHstProductionDataSet();
+            self.getWellHistoryList();
         };
 
         // ============================================================ Change tab section =========================================================
@@ -1071,7 +1080,7 @@ define([
             console.log(sectionId);
             switch (sectionId) {
                 case 'history': {
-                    self.getHistoryList();
+                    self.getWellHistoryList();
                     break;
                 }
                 case 'pd': {
