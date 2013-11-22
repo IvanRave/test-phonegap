@@ -27,14 +27,14 @@ define(['jquery', 'knockout'], function ($, ko) {
 
             if (tmpStartDate || tmpEndDate) {
                 sortFilterArr = $.grep(sortFilterArr, function (elemValue) {
-                    var tmpElemStartDate = ko.unwrap(elemValue.StartDate);
-                    if (tmpStartDate && (new Date(tmpStartDate * 1000) > new Date(tmpElemStartDate))) {
+                    var tmpElemStartUnixTime = ko.unwrap(elemValue.startUnixTime);
+                    if (tmpStartDate && (new Date(tmpStartDate * 1000) > new Date(tmpElemStartUnixTime * 1000))) {
                         return false;
                     }
 
-                    var tmpElemEndDate = ko.unwrap(elemValue.EndDate);
+                    var tmpElemEndUnixTime = ko.unwrap(elemValue.endUnixTime);
 
-                    if (tmpEndDate && (new Date(tmpEndDate * 1000) < new Date(tmpElemEndDate))) {
+                    if (tmpEndDate && (new Date(tmpEndDate * 1000) < new Date(tmpElemEndUnixTime * 1000))) {
                         return false;
                     }
 
@@ -45,7 +45,7 @@ define(['jquery', 'knockout'], function ($, ko) {
             var tmpOrder = parseInt(ko.unwrap(vw.sortByDateOrder), 10);
 
             return sortFilterArr.sort(function (left, right) {
-                return left.StartDate() === right.StartDate() ? 0 : (left.StartDate() > right.StartDate() ? tmpOrder : -tmpOrder);
+                return ko.unwrap(left.startUnixTime) === ko.unwrap(right.startUnixTime) ? 0 : (ko.unwrap(left.startUnixTime) > ko.unwrap(right.startUnixTime) ? tmpOrder : -tmpOrder);
             });
         });
 

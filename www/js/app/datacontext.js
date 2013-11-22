@@ -70,6 +70,9 @@ define(['jquery', 'app/ajax-request'], function ($, ajaxRequest) {
     function widgetUrl(widgockId, widgetId) {
         return 'http://wfm-client.azurewebsites.net/api/widgocks/' + widgockId + '/widgets' + (widgetId ? ('/' + widgetId) : '');
     }
+    function jobTypeUrl(companyId, jobTypeId) {
+        return 'http://wfm-client.azurewebsites.net/api/companies/' + companyId + '/job-types' + (jobTypeId ? ('/' + jobTypeId) : '');
+    }
 
     // DataContext operations
     // 1. WellRegion
@@ -238,12 +241,12 @@ define(['jquery', 'app/ajax-request'], function ($, ajaxRequest) {
         return ajaxRequest('POST', wellHistoryUrl(), item);
     }
 
-    function saveChangedWellHistory(item) {
-        return ajaxRequest('PUT', wellHistoryUrl({ id: item.Id }), item);
+    function putWellHistory(wellHistoryData) {
+        return ajaxRequest('PUT', wellHistoryUrl({ id: wellHistoryData.id }), wellHistoryData);
     }
 
-    function deleteWellHistory(item) {
-        return ajaxRequest('DELETE', wellHistoryUrl({ id: item.Id }));
+    function deleteWellHistory(wellHistoryId) {
+        return ajaxRequest('DELETE', wellHistoryUrl({ id: wellHistoryId }));
     }
 
     // 9. WfmImage
@@ -441,7 +444,7 @@ define(['jquery', 'app/ajax-request'], function ($, ajaxRequest) {
         // WellHistory
         getWellHistoryList: getWellHistoryList,
         saveNewWellHistory: saveNewWellHistory,
-        saveChangedWellHistory: saveChangedWellHistory,
+        putWellHistory: putWellHistory,
         deleteWellHistory: deleteWellHistory,
         // WfmImage
         saveNewWfmImage: saveNewWfmImage,
@@ -543,6 +546,10 @@ define(['jquery', 'app/ajax-request'], function ($, ajaxRequest) {
 
     datacontext.deleteWidget = function (widgockId, widgetId) {
         return ajaxRequest('DELETE', widgetUrl(widgockId, widgetId));
+    };
+    
+    datacontext.getJobTypeList = function (companyId) {
+        return ajaxRequest('GET', jobTypeUrl(companyId));
     };
 
     datacontext.getPossibleWidgoutList = function () {

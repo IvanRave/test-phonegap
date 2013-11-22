@@ -96,5 +96,32 @@ define(['jquery'], function ($) {
         return str.charAt(0).toUpperCase() + str.slice(1);
     };
 
+    /// <summary>
+    /// Get element from list by property value: element with property [propName] equals [propValue]
+    /// </summary>
+    appHelper.getElementByPropertyValue = function (elemList, propName, propValue) {
+        var needElemValue = null;
+
+        if (propName) {
+            $.each(elemList, function (elemIndex, elemValue) {
+                if (elemValue[propName] === propValue) {
+                    // Find elem
+                    needElemValue = elemValue;
+                    // Exit from this cycle
+                    return false;
+                }
+
+                // Continue this cycle
+                return true;
+            });
+        }
+
+        return needElemValue;
+    };
+
+    appHelper.isGuidValid = function (guidValue) {
+        return (/^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$/).test(guidValue);
+    };
+
     return appHelper;
 });

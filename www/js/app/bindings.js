@@ -55,6 +55,14 @@ define(['jquery', 'knockout', 'moment', 'jquery.slimscroll', 'jquery.bootstrap',
             }
         }
     };
+    
+    ko.bindingHandlers.unix = {
+        update: function (element, valueAccessor) {
+            if (ko.unwrap(valueAccessor())) {
+                element.innerHTML = appMoment(ko.unwrap(valueAccessor()) * 1000).format('YYYY-MM-DD');
+            }
+        }
+    };
 
     ko.bindingHandlers.prec = {
         update: function (element, valueAccessor) {
@@ -201,25 +209,30 @@ define(['jquery', 'knockout', 'moment', 'jquery.slimscroll', 'jquery.bootstrap',
                 picker.on({
                     set: function (event) {
                         ////console.log('on Set call with event: ', event);
-
+                        
+                        ////var selectedObj = picker.get('select');
+                        ////console.log('slcObj', selectedObj);
                         // select - UTC unix time
-                        var unixTimeMs = event.select;
-                        if (unixTimeMs) {
-                            // offset in seconds
-                            var utcOffset = new Date(unixTimeMs).getTimezoneOffset() * 60;
-                            ////console.log('withoututc', unixTimeMs / 1000 - utcOffset);
-                            // Save as UTC unix time (seconds)
-                            curValue(unixTimeMs / 1000 - utcOffset);
+                        ////console.log(event);
+                        if (event.hasOwnProperty('select')) {
+                            var unixTimeMs = event.select;
+                            if (unixTimeMs) {
+                                // offset in seconds
+                                var utcOffset = new Date(unixTimeMs).getTimezoneOffset() * 60;
+                                ////console.log('withoututc', unixTimeMs / 1000 - utcOffset);
+                                // Save as UTC unix time (seconds)
+                                curValue(unixTimeMs / 1000 - utcOffset);
+                            }
                         }
-                        else {
-                            // Set to undefined
+                        else if (event.hasOwnProperty('clear')) {
+                            // Set to null by clear event
+                            // Do not set to null because of pickadate set undefined when choose year or month from select
                             curValue(null);
                         }
                     }
                 });
 
                 ////options.onSet = function (event) {
-
 
                 ////};
 

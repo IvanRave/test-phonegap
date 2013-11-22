@@ -1,5 +1,5 @@
-define(['jquery', 'knockout', 'app/datacontext', 'bootstrap-modal', 'moment', 'app/models/WellHistoryFile', 'app/models/wfm-image'],
-    function ($, ko, datacontext, bootstrapModal, appMoment) {
+define(['jquery', 'knockout', 'app/datacontext', 'bootstrap-modal', 'app/models/WellHistoryFile', 'app/models/wfm-image'],
+    function ($, ko, datacontext, bootstrapModal) {
         'use strict';
 
         // convert data objects into array
@@ -15,64 +15,41 @@ define(['jquery', 'knockout', 'app/datacontext', 'bootstrap-modal', 'moment', 'a
                 return well;
             };
 
-            self.Id = data.Id;
-            self.History = ko.observable(data.History);
-            self.StartDate = ko.observable(data.StartDate);
-            self.EndDate = ko.observable(data.EndDate);
-            self.WellId = data.WellId;
-            self.WfmImages = ko.observableArray();
+            // Properties
+            self.id = data.Id;
+            self.historyText = ko.observable(data.HistoryText);
+            self.startUnixTime = ko.observable(data.StartUnixTime);
+            self.endUnixTime = ko.observable(data.EndUnixTime);
+            self.jobTypeId = ko.observable(data.JobTypeId);
+            self.wellId = data.WellId;
 
+            self.WfmImages = ko.observableArray();
             self.WellHistoryFiles = ko.observableArray(importWellHistoryFiles(data.WellHistoryFiles));
 
-            self.editWellHistory = function () {
-                var inputHistory = document.createElement('textarea');
-                $(inputHistory).prop({ 'rows': 5 }).val(self.History()).addClass('form-control');
+            self.isVisibleEndUnixTime = ko.computed({
+                read: function () {
+                    return ko.unwrap(self.startUnixTime) !== ko.unwrap(self.endUnixTime);
+                },
+                deferEvaluation: true
+            });
 
-                var datePattern = '(?:19|20)[0-9]{2}-(?:(?:0[1-9]|1[0-2])-(?:0[1-9]|1[0-9]|2[0-9])|(?:(?!02)(?:0[1-9]|1[0-2])-(?:30))|(?:(?:0[13578]|1[02])-31))';
+            self.putWellHistory = function () {
+                var wellHistoryData = {
+                    id: ko.unwrap(self.id),
+                    startUnixTime: ko.unwrap(self.startUnixTime),
+                    endUnixTime: ko.unwrap(self.endUnixTime),
+                    wellId: ko.unwrap(self.wellId),
+                    historyText: ko.unwrap(self.historyText),
+                    jobTypeId: ko.unwrap(self.jobTypeId)
+                };
 
-                var inputStartDate = document.createElement('input');
-                inputStartDate.type = 'text';
-                $(inputStartDate).prop({
-                    'required': true,
-                    'placeholder': 'yyyy-mm-dd',
-                    'pattern': datePattern,
-                    'title': 'Date format: yyyy-mm-dd (year, month, day)'
-                }).val(appMoment(self.StartDate()).format('YYYY-MM-DD')).addClass('datepicker');
-
-                var inputEndDate = document.createElement('input');
-                inputEndDate.type = 'text';
-                $(inputEndDate).prop({
-                    'placeholder': 'yyyy-mm-dd (not necessary)',
-                    'pattern': datePattern,
-                    'title': 'Date format: yyyy-mm-dd (year, month, day)'
-                })
-                    .val(self.EndDate() ? appMoment(self.EndDate()).format('YYYY-MM-DD') : '')
-                    .addClass('datepicker');
-
-                var innerDiv = document.createElement('div');
-                $(innerDiv).addClass('form-horizontal').append(
-                    bootstrapModal.gnrtDom('Start date', inputStartDate),
-                    bootstrapModal.gnrtDom('End date', inputEndDate),
-                    bootstrapModal.gnrtDom('History', inputHistory)
-                );
-
-                function submitFunction() {
-                    self.History($(inputHistory).val());
-                    self.StartDate($(inputStartDate).val());
-                    self.EndDate($(inputEndDate).val() || $(inputStartDate).val());
-                    datacontext.saveChangedWellHistory(self).done(function (result) {
-                        self.History(result.History);
-                        self.StartDate(result.StartDate);
-                        self.EndDate(result.EndDate);
-                    });
-                    bootstrapModal.closeModalWindow();
-                }
-
-                bootstrapModal.openModalWindow("Well history", innerDiv, submitFunction);
+                datacontext.putWellHistory(wellHistoryData);
             };
 
-            self.deleteWfmImage = function () {
-                var itemForDelete = this;
+            self.startUnixTime.subscribe(self.putWellHistory);
+            self.endUnixTime.subscribe(self.putWellHistory);
+
+            self.deleteWfmImage = function (itemForDelete) {
                 if (confirm('Are you sure you want to delete "' + itemForDelete.Name + '"?')) {
                     datacontext.deleteWfmImage(itemForDelete).done(function () {
                         self.WfmImages.remove(itemForDelete);
@@ -80,8 +57,7 @@ define(['jquery', 'knockout', 'app/datacontext', 'bootstrap-modal', 'moment', 'a
                 }
             };
 
-            self.deleteWellHistoryFile = function () {
-                var itemForDelete = this;
+            self.deleteWellHistoryFile = function (itemForDelete) {
                 if (confirm('Are you sure you want to delete this file?')) {
                     datacontext.deleteWellHistoryFile(itemForDelete).done(function () {
                         self.WellHistoryFiles.remove(itemForDelete);
@@ -102,9 +78,9 @@ define(['jquery', 'knockout', 'app/datacontext', 'bootstrap-modal', 'moment', 'a
                         // if the selected file has not been added earlier, then add to well history files
                         if ($.inArray(elemValue.Name(), existingFileNames) === -1) {
                             var itemForAdd = datacontext.createWellHistoryFile({
-                                WellHistoryId: self.Id,
+                                WellHistoryId: self.id,
                                 Comment: '',
-                                CloudFileUrl: self.WellId + '/history/work/' + elemValue.Name()
+                                CloudFileUrl: self.wellId + '/history/work/' + elemValue.Name()
                             });
 
                             datacontext.saveNewWellHistoryFile(itemForAdd).done(function (response) {
@@ -136,7 +112,7 @@ define(['jquery', 'knockout', 'app/datacontext', 'bootstrap-modal', 'moment', 'a
                     bootstrapModal.closeModalFileManager();
 
                     var urlQueryParams = {
-                        well_id: self.WellId,
+                        well_id: self.wellId,
                         purpose: 'history',
                         status: 'work',
                         file_name: checkedFile.Name()
@@ -181,7 +157,7 @@ define(['jquery', 'knockout', 'app/datacontext', 'bootstrap-modal', 'moment', 'a
                                 });
 
                                 // send coords to database = save in wfmimage
-                                datacontext.saveNewWfmImage({ wellhistory_id: self.Id }, wfmImageReady).done(function (saveResult) {
+                                datacontext.saveNewWfmImage({ wellhistory_id: self.id }, wfmImageReady).done(function (saveResult) {
                                     // add images to dom with src
                                     self.WfmImages.push(datacontext.createWfmImage(saveResult));
                                     // push to wellhistory wfmimages
@@ -199,8 +175,6 @@ define(['jquery', 'knockout', 'app/datacontext', 'bootstrap-modal', 'moment', 'a
 
                 self.getWell().showFmg(callbackFunction);
             };
-
-            self.toPlainJson = function () { return ko.toJS(self); };
 
             self.WfmImages(importWfmImagesDto(data.WfmImagesDto));
         }
