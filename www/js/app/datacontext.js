@@ -237,7 +237,7 @@ define(['jquery', 'app/ajax-request'], function ($, ajaxRequest) {
         return ajaxRequest('GET', wellHistoryUrl(urlQueryParams));
     }
 
-    function saveNewWellHistory(item) {
+    function postWellHistory(item) {
         return ajaxRequest('POST', wellHistoryUrl(), item);
     }
 
@@ -313,7 +313,7 @@ define(['jquery', 'app/ajax-request'], function ($, ajaxRequest) {
         return ajaxRequest('DELETE', wellInWellFieldMapUrl(urlQueryParams));
     }
 
-    function saveNewWellHistoryFile(item) {
+    function postWellHistoryFile(item) {
         return ajaxRequest('POST', wellHistoryFileUrl(), item);
     }
 
@@ -443,7 +443,7 @@ define(['jquery', 'app/ajax-request'], function ($, ajaxRequest) {
         getColumnAttributesLocal: getColumnAttributesLocal,
         // WellHistory
         getWellHistoryList: getWellHistoryList,
-        saveNewWellHistory: saveNewWellHistory,
+        postWellHistory: postWellHistory,
         putWellHistory: putWellHistory,
         deleteWellHistory: deleteWellHistory,
         // WfmImage
@@ -466,7 +466,7 @@ define(['jquery', 'app/ajax-request'], function ($, ajaxRequest) {
         saveChangedWellInWellFieldMap: saveChangedWellInWellFieldMap,
         deleteWellInWellFieldMap: deleteWellInWellFieldMap,
         // WellHistoryFile
-        saveNewWellHistoryFile: saveNewWellHistoryFile,
+        postWellHistoryFile: postWellHistoryFile,
         deleteWellHistoryFile: deleteWellHistoryFile,
         // section list
         getSectionList: getSectionList,

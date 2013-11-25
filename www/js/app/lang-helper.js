@@ -177,6 +177,14 @@ define([], function () {
         // 
         'nowellhistorylist': 'no well history',
         // 
+        'jobtype': 'job type',
+        // 
+        'timeperiod': 'period',
+        // 
+        'toaddjobtype': 'add new job type',
+        // 
+        'underconstruction': 'under construction',
+        // 
     };
 
     ////var signArr = /,!/g; [',', '!', '.', ':', '?', '(', ')', '[', ']', '{', '}', '\'', ';'];

@@ -6,7 +6,7 @@ define([
     'app/app-helper',
     'app/models/job-type',
     'knockout-lazy',
-    'app/models/WellRegion'
+    'app/models/well-region'
 ], function ($, ko, datacontext, bootstrapModal, appHelper, JobType) {
     'use strict';
 
@@ -82,6 +82,10 @@ define([
                 self.jobTypeList(importJobTypeList(r));
             });
         }, self);
+
+        self.goToPostingJobType = function () {
+            alert('Under construction');
+        };
 
         // Get all parameters from all groups as one dimensional array
         self.wfmParameterList = ko.computed({

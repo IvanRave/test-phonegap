@@ -4,8 +4,8 @@ define(['jquery',
     'app/app-helper',
     'app/models/well-partials/perfomance-view',
     'moment',
-    'app/models/ProductionData', // Add constructor to datacontext
-    'app/models/ForecastEvolutionDto' // Add constructor to datacontext
+    'app/models/production-data', // Add constructor to datacontext
+    'app/models/forecast-evolution' // Add constructor to datacontext
 ], function ($, ko, datacontext, appHelper, perfomanceView, appMoment) {
     'use strict';
 

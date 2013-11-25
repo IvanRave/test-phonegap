@@ -194,16 +194,16 @@ define(['jquery', 'knockout', 'moment', 'jquery.slimscroll', 'jquery.bootstrap',
                 var $input = $(element).pickadate(options);
                 var picker = $input.pickadate('picker');
 
-                var startValue = ko.unwrap(curValue);
+                var initialValue = ko.unwrap(curValue);
 
-                if (startValue) {
+                if (initialValue) {
                     // convert to ms
-                    startValue = startValue * 1000;
+                    initialValue = initialValue * 1000;
                     // convert to local time to show in input
-                    var startUtcOffset = new Date(startValue).getTimezoneOffset() * 60 * 1000;
-                    startValue -= startUtcOffset;
-                    ////console.log('set as a start value in input: with utc', new Date(startValue).toISOString());
-                    picker.set('select', startValue);
+                    var startUtcOffset = new Date(initialValue).getTimezoneOffset() * 60 * 1000;
+                    initialValue -= startUtcOffset;
+                    ////console.log('set as a start value in input: with utc', new Date(initialValue).toISOString());
+                    picker.set('select', initialValue);
                 }
 
                 picker.on({
@@ -225,6 +225,7 @@ define(['jquery', 'knockout', 'moment', 'jquery.slimscroll', 'jquery.bootstrap',
                             }
                         }
                         else if (event.hasOwnProperty('clear')) {
+                            ////console.log('clear setting');
                             // Set to null by clear event
                             // Do not set to null because of pickadate set undefined when choose year or month from select
                             curValue(null);
@@ -240,9 +241,23 @@ define(['jquery', 'knockout', 'moment', 'jquery.slimscroll', 'jquery.bootstrap',
 
                 ////$(element).pickadate(options);
             }
-        }
-        ////update: function (element, valueAccessor) {
+        },
+        update: function (element, valueAccessor) {
+            var curValue = valueAccessor();
 
+            if (ko.isObservable(curValue)) {
+                var initialValue = ko.unwrap(curValue);
+                //var setArchFunction = picker.on();
+                ////console.log('pickerOn', picker);
+
+                if (!initialValue) {
+                    var picker = $(element).pickadate('picker');
+                    // TODO: turn off onSet 
+                    // then set any value
+                    // then turn on previous onSet
+                    picker.set('clear');
+                }
+            }
         ////    var picker = $(element).pickadate('picker');
 
         ////    var curVal = ko.unwrap(valueAccessor());
@@ -262,7 +277,7 @@ define(['jquery', 'knockout', 'moment', 'jquery.slimscroll', 'jquery.bootstrap',
 
         ////    ////    picker.set('select', curVal);
         ////    ////}
-        ////}
+        }
     };
 
     // for bootstrap dropdown (wich not loaded correctly by data-toggle in external page)

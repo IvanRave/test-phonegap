@@ -338,15 +338,8 @@
   <script type="text/html" id="well-history-tpl">
   <span data-bind="ifnot: isLoadedHistoryList">Loading...</span>
   <div data-bind="if: isLoadedHistoryList">
-    <div class="row">
-      <div class="col-sm-2">
-        <div data-bind="visible: $root.isEditable">
-          <button class="btn btn-sm btn-default" data-bind="click: addWellHistory">
-            <i class="glyphicon glyphicon-plus"></i> Create new record
-          </button>
-        </div>
-      </div>
-      <div class="col-sm-10">
+    <div class="clearfix">
+      <div class="pull-left">
         <div data-bind="if: historyList().length > 0">
           <div data-bind="with: historyView">
             <span>Filter by date:</span>
@@ -356,33 +349,59 @@
             <button class="btn btn-default btn-sm" type="button" data-bind="click: changeSortByDateOrder">
               Sort by date <i class="glyphicon" data-bind="css: sortByDateCss"></i>
             </button>
-            <!--<select data-bind="options: $root.jobTypeList"></select>-->
+            <!--<select data-bind="options: $root.jobTypeList, optionsText: 'name', optionsCaption: 'filter by job type...'"></select>-->
           </div>
         </div>
         <div data-bind="if: historyList().length === 0">
           <small>No well history</small>
         </div>
       </div>
+      <div class="pull-right" data-bind="if: $root.isEditable">
+        <span data-bind="with: wellHistoryNew">
+          <input class="input-sm" type="text" size="10" data-bind="datepicker: startUnixTime, datepickerOptions: { format: 'yyyy-mm-dd', selectYears: true, selectMonths: true }" />
+          <span> - </span>
+          <input class="input-sm" type="text" size="10" data-bind="datepicker: endUnixTime, datepickerOptions: { format: 'yyyy-mm-dd', selectYears: true, selectMonths: true }" />
+        </span>
+        <button class="btn btn-sm btn-default" data-bind="click: postWellHistory, enable: isEnabledPostWellHistory">
+          <i class="glyphicon glyphicon-plus"></i> Create new record
+        </button>
+      </div>
     </div>
     <div data-bind="with: historyView">
       <div data-bind="foreach: sortedHistoryList">
         <div class="row well-history-block">
           <div class="col-md-2">
-            <div data-bind="ifnot: $root.isEditable">
-              <div>
-                <span data-bind="unix: startUnixTime"></span>
+            <div>
+              <div class="bld">Period:</div>
+              <div data-bind="ifnot: $root.isEditable">
+                <div>
+                  <span data-bind="unix: startUnixTime"></span>
+                </div>
+                <div>
+                  <span data-bind="unix: endUnixTime, visible: isVisibleEndUnixTime"></span>
+                </div>
               </div>
-              <div>
-                <span data-bind="unix: endUnixTime, visible: isVisibleEndUnixTime"></span>
+              <div data-bind="if: $root.isEditable">
+                <input class="input-sm" type="text" size="10" data-bind="datepicker: startUnixTime, datepickerOptions: { format: 'yyyy-mm-dd', selectYears: true, selectMonths: true }"></input>
+                <input class="input-sm" type="text" size="10" data-bind="datepicker: endUnixTime, datepickerOptions: { format: 'yyyy-mm-dd', selectYears: true, selectMonths: true }"></input>
               </div>
             </div>
-            <div data-bind="if: $root.isEditable">
-              <div>
-                <input class="input-sm" size="10" data-bind="datepicker: startUnixTime, datepickerOptions: { format: 'yyyy-mm-dd', selectYears: true, selectMonths: true }"></input>
+            <div>
+              <div data-bind="ifnot: $root.isEditable">
+                <div data-bind="with: jobType">
+                  <span class="bld">Job type:</span>
+                  <span data-bind="text: name"></span>
+                </div>
               </div>
-              <div>
-                <input class="input-sm" size="10" data-bind="datepicker: endUnixTime, datepickerOptions: { format: 'yyyy-mm-dd', selectYears: true, selectMonths: true }"></input>
+              <div data-bind="if: $root.isEditable">
+                <div data-bind="if: $root.jobTypeList().length > 0">
+                  <span class="bld">Job type:</span>
+                  <select class="input-sm" data-bind="options: $root.jobTypeList, optionsText: 'name', optionsValue: 'id', optionsCaption: 'No job type', value: jobTypeId"></select>
+                  <button class="btn btn-xs btn-link" data-bind="click: $root.goToPostingJobType">or add new job type</button>
+                </div>
               </div>
+            </div>
+            <div data-bind="if: $root.isEditable" style="margin-top:8px">
               <div class="btn-group-vertical btn-group-sm">
                 <button class="btn btn-default" type="button" data-bind="click: chooseWellHistoryFile">
                   <i class="glyphicon glyphicon-paperclip"></i> Attach a file
@@ -412,7 +431,7 @@
             </div>
             <div data-bind="foreach: WfmImages">
               <div>
-                <img src="" data-bind="attr: { src: dataUrl }" alt="History image" class="img-thumbnail elem-shadow" />
+                <img class="img-thumbnail elem-shadow" src="" data-bind="attr: { src: dataUrl }" alt="History image" />
                 <span data-bind="visible: $root.isEditable">
                   <i class="glyphicon glyphicon-remove link-icon" data-bind="click: $parent.deleteWfmImage"></i>
                 </span>
@@ -1096,10 +1115,16 @@
                 <div data-bind="visible: historyText">
                   <blockquote class="pre-wrap-text" data-bind="text: historyText"></blockquote>
                 </div>
-                <div data-bind="foreach: WfmImages">
-                  <img src="" data-bind="attr: { src: dataUrl }" alt="History image" class="img-thumbnail elem-shadow" />
+                <div data-bind="with: jobType">
+                  <blockquote>
+                    <span class="bld">Job type:</span>
+                    <span data-bind="text: name"></span>
+                  </blockquote>
                 </div>
-                <div data-bind="foreach: WellHistoryFiles" class="clearfix">
+                <div data-bind="foreach: WfmImages">
+                  <img class="img-thumbnail elem-shadow" src="" data-bind="attr: { src: dataUrl }" alt="History image" />
+                </div>
+                <div class="clearfix" data-bind="foreach: WellHistoryFiles">
                   <div class="img-thumbnail pull-left">
                     <a href="#" data-bind="text: FileNameWODate, click: downloadWellHistoryFile"></a>
                   </div>

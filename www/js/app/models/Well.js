@@ -8,10 +8,10 @@ define([
     'moment',
     'app/models/well-partials/perfomance-partial',
     'app/models/well-partials/history-view',
-    'app/models/WellFile',
-    'app/models/ColumnAttribute',
-    'app/models/WellHistory',
-    'app/models/TestScope'
+    'app/models/well-file',
+    'app/models/column-attribute',
+    'app/models/well-history',
+    'app/models/test-scope'
 ], function ($, ko, datacontext, fileHelper, bootstrapModal, appHelper, appMoment, wellPerfomancePartial, HistoryView) {
     'use strict';
 
@@ -51,8 +51,9 @@ define([
             return wellGroup;
         };
 
-        // Do not include to self
-        var appViewModel = self.getWellGroup().getWellField().getWellRegion().getParentViewModel();
+        self.getAppViewModel = function () {
+            return self.getWellGroup().getWellField().getWellRegion().getParentViewModel();
+        };
 
         // Persisted properties
         self.Id = data.Id;
@@ -125,17 +126,22 @@ define([
             // Previous - by default - summary self.sectionList[0].id;
             var previousSelectedSectionId;
 
+            var prevSlcWellRegion = ko.unwrap(self.getAppViewModel().selectedWellRegion);
+
             // get previous selected section (if exists)
-            if (appViewModel.selectedWellRegion()) {
-                if (appViewModel.selectedWellRegion().selectedWellField()) {
-                    if (appViewModel.selectedWellRegion().selectedWellField().selectedWellGroup()) {
+            if (prevSlcWellRegion) {
+                var prevSlcWellField = ko.unwrap(prevSlcWellRegion.selectedWellField);
+                if (prevSlcWellField) {
+                    var prevSlcWellGroup = ko.unwrap(prevSlcWellField.selectedWellGroup);
+                    if (prevSlcWellGroup) {
                         // previous selected well
-                        var previousWell = appViewModel.selectedWellRegion().selectedWellField().selectedWellGroup().selectedWell();
-                        if (previousWell) {
-                            if (previousWell.selectedSectionId()) {
-                                previousSelectedSectionId = previousWell.selectedSectionId();
+                        var prevSlcWell = ko.unwrap(prevSlcWellGroup.selectedWell);
+                        if (prevSlcWell) {
+                            var prevSlcSectionId = ko.unwrap(prevSlcWell.selectedSectionId);
+                            if (prevSlcSectionId) {
+                                previousSelectedSectionId = prevSlcSectionId;
                             }
-                            var tmpSelectedAttrGroupId = ko.unwrap(previousWell.mainPerfomanceView.selectedAttrGroupId);
+                            var tmpSelectedAttrGroupId = ko.unwrap(prevSlcWell.mainPerfomanceView.selectedAttrGroupId);
                             if (tmpSelectedAttrGroupId) {
                                 self.mainPerfomanceView.selectedAttrGroupId(tmpSelectedAttrGroupId);
                             }
@@ -326,8 +332,42 @@ define([
             }
         };
 
-        self.addWellHistory = function () {
-            alert('Under construction');
+        self.wellHistoryNew = {
+            startUnixTime: ko.observable(),
+            endUnixTime: ko.observable(),
+            wellId: self.Id,
+            historyText: ''
+        };
+
+        self.isEnabledPostWellHistory = ko.computed({
+            read: function () {
+                if (ko.unwrap(self.wellHistoryNew.startUnixTime)) {
+                    return true;
+                }
+                else {
+                    return false;
+                }
+            },
+            deferEvaluation: true
+        });
+
+        self.postWellHistory = function () {
+            if (ko.unwrap(self.isEnabledPostWellHistory)) {
+                var wellHistoryNewData = ko.toJS(self.wellHistoryNew);
+
+                if (wellHistoryNewData.startUnixTime) {
+                    if (!wellHistoryNewData.endUnixTime) {
+                        wellHistoryNewData.endUnixTime = wellHistoryNewData.startUnixTime;
+                    }
+
+                    datacontext.postWellHistory(wellHistoryNewData).done(function (result) {
+                        self.historyList.push(datacontext.createWellHistory(result, self));
+                        // Set to null for psblty creating new well history
+                        self.wellHistoryNew.startUnixTime(null);
+                        self.wellHistoryNew.endUnixTime(null);
+                    });
+                }
+            }
         };
 
         ////self.addWellHistory = function () {
@@ -387,7 +427,7 @@ define([
         ////            WellId: self.Id
         ////        }, self);
 
-        ////        datacontext.saveNewWellHistory(wellHistoryItem).done(function (result) {
+        ////        datacontext.postWellHistory(wellHistoryItem).done(function (result) {
         ////            var whi = datacontext.createWellHistory(result, self);
         ////            self.historyList.push(whi);
         ////        });
@@ -456,7 +496,7 @@ define([
 
         ////    if (self.isCompanyLogoInReport() === true) {
         ////        // get user profile
-        ////        if (!appViewModel.curUserProfile().companyLogo()) {
+        ////        if (!self.getAppViewModel().curUserProfile().companyLogo()) {
         ////            alert('No company logo. Please upload company logo in Cabinet');
         ////            return;
         ////        }
@@ -473,7 +513,7 @@ define([
 
         ////    var logoUrl = null;
         ////    if (self.isCompanyLogoInReport() === true) {
-        ////        var companyLogoByte64String = appViewModel.curUserProfile().companyLogo();
+        ////        var companyLogoByte64String = self.getAppViewModel().curUserProfile().companyLogo();
         ////        if (companyLogoByte64String) {
         ////            logoUrl = companyLogoByte64String;
         ////        }
@@ -988,7 +1028,7 @@ define([
 
             var cnvs = document.getElementById('log_cnvs');
 
-            require(['app/models/ByteImagePart'], function () {
+            require(['app/models/byte-image-part'], function () {
                 var createdByteImagePart = datacontext.createByteImagePart({
                     Base64String: cnvs.toDataURL('image/png').replace('data:image/png;base64,', ''),
                     StartY: Math.abs($('#log_img').position().top)
