@@ -70,7 +70,7 @@ define(['jquery', 'app/ajax-request'], function ($, ajaxRequest) {
     function widgetUrl(widgockId, widgetId) {
         return 'http://wfm-client.azurewebsites.net/api/widgocks/' + widgockId + '/widgets' + (widgetId ? ('/' + widgetId) : '');
     }
-    function jobTypeUrl(companyId, jobTypeId) {
+    function companyJobTypeUrl(companyId, jobTypeId) {
         return 'http://wfm-client.azurewebsites.net/api/companies/' + companyId + '/job-types' + (jobTypeId ? ('/' + jobTypeId) : '');
     }
 
@@ -549,7 +549,11 @@ define(['jquery', 'app/ajax-request'], function ($, ajaxRequest) {
     };
     
     datacontext.getJobTypeList = function (companyId) {
-        return ajaxRequest('GET', jobTypeUrl(companyId));
+        return ajaxRequest('GET', companyJobTypeUrl(companyId));
+    };
+
+    datacontext.postCompanyJobType = function (companyId, jobTypeData) {
+        return ajaxRequest('POST', companyJobTypeUrl(companyId), jobTypeData);
     };
 
     datacontext.getPossibleWidgoutList = function () {

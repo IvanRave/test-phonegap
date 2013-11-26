@@ -273,7 +273,7 @@
                 <div>
   <div class="wfm-workspace-well-top-tab clearfix">
     <div class="pull-left" style="margin-top:1px">
-      <button type="button" class="btn btn-inverse btn-sm" data-bind="click: function(){ selectedSectionId(null); }">
+      <button type="button" class="btn btn-inverse btn-sm" data-bind="click: unselectSection">
         <i class="glyphicon glyphicon-th"></i>&nbsp;&nbsp;<span>Well dashboard</span>
       </button>
     </div>
@@ -349,7 +349,7 @@
             <button class="btn btn-default btn-sm" type="button" data-bind="click: changeSortByDateOrder">
               Sort by date <i class="glyphicon" data-bind="css: sortByDateCss"></i>
             </button>
-            <!--<select data-bind="options: $root.jobTypeList, optionsText: 'name', optionsCaption: 'filter by job type...'"></select>-->
+            <select class="input-sm" data-bind="options: $root.jobTypeList, optionsText: 'name', optionsValue: 'id', value: jobTypeId, optionsCaption: 'Filter by job type...'"></select>
           </div>
         </div>
         <div data-bind="if: historyList().length === 0">
@@ -397,7 +397,7 @@
                 <div data-bind="if: $root.jobTypeList().length > 0">
                   <span class="bld">Job type:</span>
                   <select class="input-sm" data-bind="options: $root.jobTypeList, optionsText: 'name', optionsValue: 'id', optionsCaption: 'No job type', value: jobTypeId"></select>
-                  <button class="btn btn-xs btn-link" data-bind="click: $root.goToPostingJobType">or add new job type</button>
+                  <button class="btn btn-xs btn-link" data-bind="click: $root.goToPostingJobType">add job type to list</button>
                 </div>
               </div>
             </div>
@@ -1093,6 +1093,7 @@
         <button class="btn btn-default btn-sm" type="button" data-bind="click: changeSortByDateOrder">
           Sort by date <i class="glyphicon" data-bind="css: sortByDateCss"></i>
         </button>
+        <select class="input-sm" data-bind="options: $root.jobTypeList, optionsText: 'name', optionsValue: 'id', value: jobTypeId, optionsCaption: 'Filter by job type...'"></select>
       </div>
     </div>
   </div>

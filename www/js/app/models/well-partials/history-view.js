@@ -9,6 +9,8 @@ define(['jquery', 'knockout'], function ($, ko) {
         vw.startDate = ko.observable(opts['StartDate']);
         vw.endDate = ko.observable(opts['EndDate']);
 
+        vw.jobTypeId = ko.observable(opts['JobTypeId']);
+
         vw.sortByDateOrder = ko.observable(opts['SortByDateOrder'] || -1);
 
         vw.sortByDateCss = ko.computed({
@@ -39,6 +41,14 @@ define(['jquery', 'knockout'], function ($, ko) {
                     }
 
                     return true;
+                });
+            }
+
+            var tmpJobTypeId = ko.unwrap(vw.jobTypeId);
+
+            if (tmpJobTypeId) {
+                sortFilterArr = $.grep(sortFilterArr, function (elemValue) {
+                    return (ko.unwrap(elemValue.jobTypeId) === tmpJobTypeId);
                 });
             }
 

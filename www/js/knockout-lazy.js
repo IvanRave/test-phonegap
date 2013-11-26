@@ -1,5 +1,6 @@
 define(['knockout'], function (ko) {
 	// http://www.knockmeout.net/2011/06/lazy-loading-observable-in-knockoutjs.html
+    // https://gist.github.com/chadly/3711299
 
 	ko.lazyObservable = function (callback, context) {
 		var value = ko.observable();

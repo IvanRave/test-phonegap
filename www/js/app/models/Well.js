@@ -200,6 +200,17 @@ define([
             self.selectedSectionId(sectionId);
         };
 
+        self.unselectSection = function () {
+            window.location.hash = window.location.hash.split('?')[0] + '?' + $.param({
+                region: self.getWellGroup().getWellField().getWellRegion().Id,
+                field: self.getWellGroup().getWellField().Id,
+                group: self.getWellGroup().Id,
+                well: self.Id
+            });
+
+            self.selectedSectionId(null);
+        };
+
         self.filteredWellFileList = ko.computed(function () {
             if (!self.selectedFmgSectionId()) {
                 return self.WellFiles();
