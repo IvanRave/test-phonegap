@@ -26,7 +26,8 @@
             'jquery.bootstrap': { deps: ['jquery'] },
             'jquery.slimscroll': { deps: ['jquery'] },
             'angular': { deps: ['jquery'], exports: 'angular' }, // work: angular.module and other
-            'angular-route': { deps: ['angular'] }
+            'angular-route': { deps: ['angular'] },
+            'd3': { exports: 'd3' }
             ////'jspdf.plugin.addimage': { deps: ['jspdf'] },
             ////'jspdf.plugin.cell': { deps: ['jspdf'] },
             ////'jspdf.plugin.from_html': { deps: ['jspdf'] },

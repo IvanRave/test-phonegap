@@ -678,42 +678,37 @@
         </div>
         <!-- / with prfPartial  -->
         <div data-bind="ifnot: selectedAttrGroup">
-          Please choose perfomance group:
-          <ul data-bind="foreach: $root.wfmParamSquadList">
+          Please choose perfomance group
+          <!--<ul data-bind="foreach: $root.wfmParamSquadList">
             <li data-bind="with: id">
-              <a href="#" data-bind="click: $parent.selectAttrGroupId">
+              <a href="#" data-bind="click: function(){ $parents[1].selectAttrGroupId($data);}">
                 <span data-bind="text: $data"></span>
               </a>
             </li>
-          </ul>
+          </ul>-->
         </div>
         <div data-bind="if: selectedAttrGroup">
           <div>
-            <div class="clearfix pd-graph-wrap">
-  <div class="pull-right pd-graph-vscale">
-    <svg version="1.1" width="60px" data-bind="svgAxisValue: {valueBorder: filteredByDateProductionDataSetValueBorder}, attr:{ height: prfGraphHeight }">
-      <g class="axis"></g>
-    </svg>
-  </div>
-  <div class="pd-graph-grid">
-    <div>
-      <svg version="1.1" width="100%" data-bind="attr: { height: prfGraphHeight }, svgResponsive: { ratio: prfPartial.prfGraph.viewBox.ratio, tmpPrfGraphHeight: prfGraphHeight }" viewbox="0 0 1200 400">
-        <g class="svg-prf-graph-g" data-bind="foreach: {data: selectedWellGroupWfmParameterList, as: 'groupParam'}">
-          <!-- ko with: $parent.productionDataSetSvgPath -->
-          <!-- ko if: $data[groupParam.wfmParameterId] -->
-          <path d="M0 0" data-bind="attr:{d: $data[groupParam.wfmParameterId], stroke: groupParam.color }" style="stroke-width:1; fill: none"></path>
-          <!-- /ko -->
-          <!-- /ko -->
-        </g>
-      </svg>
-    </div>
-    <div>
-      <!--svg-path-line-->
-      <svg version="1.1" width="100%" height="20px" data-bind="svgAxisTime: {timeBorder: filteredByDateProductionDataSetTimeBorder, windowSize: $root.windowWidth }">
-        <g class="axis"></g>
-      </svg>
-    </div>
-  </div>
+            <div class="pd-graph-wrap">
+  <!-- viewbox = prfGraph.viewBox.size + all margins -->
+  <svg version="1.1" width="100%" data-bind="attr: { height: prfGraph.height }, svgResponsive: { tmpPrfGraphWidth: prfGraph.width, tmpIsVisibleMenu: $root.isVisibleMenu }" viewbox="0 0 1200 400">
+    <g data-bind="attr: { transform: 'translate(' + prfGraph.viewBox.margin.left + ', ' + prfGraph.viewBox.margin.top + ')' }, svgZoomGraph: { prfAltX: prfAltX, prfAltY: prfAltY}">
+      <rect data-bind="attr: { width: prfGraph.viewBox.width, height: prfGraph.viewBox.height }" fill="#fcfcfc"></rect>
+      <g class="svg-prf-graph-g">
+        <!-- ko foreach: {data: selectedWellGroupWfmParameterList, as: 'groupParam'} -->
+        <!-- ko with: $parent.productionDataSetSvgPath -->
+        <!-- ko if: $data[groupParam.wfmParameterId] -->
+        <path d="M0 0" data-bind="attr:{d: $data[groupParam.wfmParameterId], stroke: groupParam.color }" style="stroke-width:1; fill: none"></path>
+        <!-- /ko -->
+        <!-- /ko -->
+        <!-- /ko -->
+      </g>
+      <g class="axis x" data-bind="attr: { transform: 'translate(0,' + prfGraph.viewBox.height + ')' }"></g>
+      <!--, svgAxisTime: { prfAltX: prfAltX, timeBorder: filteredByDateProductionDataSetTimeBorder, tmpPrfGraphViewBoxWidth: prfGraph.viewBox.width }-->
+      <g class="axis y"></g>
+      <!--data-bind="svgAxisValue: {prfAltY: prfAltY, valueBorder: filteredByDateProductionDataSetValueBorder, tmpPrfGraphViewBoxHeight: prfGraph.viewBox.height}"-->
+    </g>
+  </svg>
 </div>
             <div class="clearfix" style="margin-top:4px">
               <div class="text-center">
@@ -1002,31 +997,26 @@
                 <div data-bind="if: prfPartial.hstProductionDataSet().length === 0">No data. Import files from "File manager" to view production data.</div>
                 <div data-bind="if: prfPartial.hstProductionDataSet().length > 0">
                     <div data-bind="if: selectedAttrGroup">
-                        <div class="clearfix pd-graph-wrap">
-  <div class="pull-right pd-graph-vscale">
-    <svg version="1.1" width="60px" data-bind="svgAxisValue: {valueBorder: filteredByDateProductionDataSetValueBorder}, attr:{ height: prfGraphHeight }">
-      <g class="axis"></g>
-    </svg>
-  </div>
-  <div class="pd-graph-grid">
-    <div>
-      <svg version="1.1" width="100%" data-bind="attr: { height: prfGraphHeight }, svgResponsive: { ratio: prfPartial.prfGraph.viewBox.ratio, tmpPrfGraphHeight: prfGraphHeight }" viewbox="0 0 1200 400">
-        <g class="svg-prf-graph-g" data-bind="foreach: {data: selectedWellGroupWfmParameterList, as: 'groupParam'}">
-          <!-- ko with: $parent.productionDataSetSvgPath -->
-          <!-- ko if: $data[groupParam.wfmParameterId] -->
-          <path d="M0 0" data-bind="attr:{d: $data[groupParam.wfmParameterId], stroke: groupParam.color }" style="stroke-width:1; fill: none"></path>
-          <!-- /ko -->
-          <!-- /ko -->
-        </g>
-      </svg>
-    </div>
-    <div>
-      <!--svg-path-line-->
-      <svg version="1.1" width="100%" height="20px" data-bind="svgAxisTime: {timeBorder: filteredByDateProductionDataSetTimeBorder, windowSize: $root.windowWidth }">
-        <g class="axis"></g>
-      </svg>
-    </div>
-  </div>
+                        <div class="pd-graph-wrap">
+  <!-- viewbox = prfGraph.viewBox.size + all margins -->
+  <svg version="1.1" width="100%" data-bind="attr: { height: prfGraph.height }, svgResponsive: { tmpPrfGraphWidth: prfGraph.width, tmpIsVisibleMenu: $root.isVisibleMenu }" viewbox="0 0 1200 400">
+    <g data-bind="attr: { transform: 'translate(' + prfGraph.viewBox.margin.left + ', ' + prfGraph.viewBox.margin.top + ')' }, svgZoomGraph: { prfAltX: prfAltX, prfAltY: prfAltY}">
+      <rect data-bind="attr: { width: prfGraph.viewBox.width, height: prfGraph.viewBox.height }" fill="#fcfcfc"></rect>
+      <g class="svg-prf-graph-g">
+        <!-- ko foreach: {data: selectedWellGroupWfmParameterList, as: 'groupParam'} -->
+        <!-- ko with: $parent.productionDataSetSvgPath -->
+        <!-- ko if: $data[groupParam.wfmParameterId] -->
+        <path d="M0 0" data-bind="attr:{d: $data[groupParam.wfmParameterId], stroke: groupParam.color }" style="stroke-width:1; fill: none"></path>
+        <!-- /ko -->
+        <!-- /ko -->
+        <!-- /ko -->
+      </g>
+      <g class="axis x" data-bind="attr: { transform: 'translate(0,' + prfGraph.viewBox.height + ')' }"></g>
+      <!--, svgAxisTime: { prfAltX: prfAltX, timeBorder: filteredByDateProductionDataSetTimeBorder, tmpPrfGraphViewBoxWidth: prfGraph.viewBox.width }-->
+      <g class="axis y"></g>
+      <!--data-bind="svgAxisValue: {prfAltY: prfAltY, valueBorder: filteredByDateProductionDataSetValueBorder, tmpPrfGraphViewBoxHeight: prfGraph.viewBox.height}"-->
+    </g>
+  </svg>
 </div>
                     </div>
                 </div>

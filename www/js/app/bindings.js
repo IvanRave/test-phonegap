@@ -55,7 +55,7 @@ define(['jquery', 'knockout', 'moment', 'jquery.slimscroll', 'jquery.bootstrap',
             }
         }
     };
-    
+
     ko.bindingHandlers.unix = {
         update: function (element, valueAccessor) {
             if (ko.unwrap(valueAccessor())) {
@@ -209,7 +209,7 @@ define(['jquery', 'knockout', 'moment', 'jquery.slimscroll', 'jquery.bootstrap',
                 picker.on({
                     set: function (event) {
                         ////console.log('on Set call with event: ', event);
-                        
+
                         ////var selectedObj = picker.get('select');
                         ////console.log('slcObj', selectedObj);
                         // select - UTC unix time
@@ -258,25 +258,25 @@ define(['jquery', 'knockout', 'moment', 'jquery.slimscroll', 'jquery.bootstrap',
                     picker.set('clear');
                 }
             }
-        ////    var picker = $(element).pickadate('picker');
+            ////    var picker = $(element).pickadate('picker');
 
-        ////    var curVal = ko.unwrap(valueAccessor());
+            ////    var curVal = ko.unwrap(valueAccessor());
 
-        ////    console.log('picker', picker);
-        ////    console.log(curVal);
+            ////    console.log('picker', picker);
+            ////    console.log(curVal);
 
-        ////    ////if (curVal) {
-        ////    ////    // Convert to unit time miliseconds
-        ////    ////    curVal = curVal * 1000;
-        ////    ////    console.log('curval', new Date(curVal).toISOString());
-        ////    ////    // Get utc offset
+            ////    ////if (curVal) {
+            ////    ////    // Convert to unit time miliseconds
+            ////    ////    curVal = curVal * 1000;
+            ////    ////    console.log('curval', new Date(curVal).toISOString());
+            ////    ////    // Get utc offset
 
-        ////    ////    //var utcOffset = new Date(curVal).getTimezoneOffset() * 60;
-        ////    ////    // Diff UTC
-        ////    ////    //curVal = curVal - utcOffset;
+            ////    ////    //var utcOffset = new Date(curVal).getTimezoneOffset() * 60;
+            ////    ////    // Diff UTC
+            ////    ////    //curVal = curVal - utcOffset;
 
-        ////    ////    picker.set('select', curVal);
-        ////    ////}
+            ////    ////    picker.set('select', curVal);
+            ////    ////}
         }
     };
 
@@ -339,51 +339,46 @@ define(['jquery', 'knockout', 'moment', 'jquery.slimscroll', 'jquery.bootstrap',
     // svg graph (like perfomance)
     ko.bindingHandlers.svgResponsive = {
         init: function (element, valueAccessor) {
-            var ratio = ko.unwrap(valueAccessor().ratio);
-
-            ////var elemStyle = getComputedStyle(element, '');
-            ////console.log(elemStyle.width);
-
-            var $elem = $(element);
-            ////console.log('asdf3');
-            ////console.log($elem.parent().width());
-
-            function updateHeight() {
-                //$elem.attr('height', hght);
-                valueAccessor().tmpPrfGraphHeight($elem.parent().width() * ratio);
+            function updateWidth() {
+                valueAccessor().tmpPrfGraphWidth($(element).parent().width());
             }
 
-            $(window).resize(function () {
-                updateHeight();
-            });
+            // When change window size - update graph size
+            $(window).resize(updateWidth);
 
-            updateHeight();
+            // When toggle left menu - update graph size
+            valueAccessor().tmpIsVisibleMenu.subscribe(updateWidth);
+
+            // Update initial
+            updateWidth();
             // svg viewbox size need to init before creating of this element
         }
     };
 
     ko.bindingHandlers.svgAxisTime = {
         update: function (element, valueAccessor) {
-            var timeBorder = ko.unwrap(valueAccessor().timeBorder);
-            if ($.isNumeric(timeBorder[0]) && $.isNumeric(timeBorder[1])) {
+            ////var timeBorder = ko.unwrap(valueAccessor().timeBorder);
+            ////if (!$.isNumeric(timeBorder[0]) || !$.isNumeric(timeBorder[1])) { return; }
+
+            var prfAltX = ko.unwrap(valueAccessor().prfAltX);
+            if (prfAltX) {
                 require(['d3'], function (d3) {
-                    var t1 = new Date(timeBorder[0] * 1000),
-                        t2 = new Date(timeBorder[1] * 1000);
+                    ////var t1 = new Date(timeBorder[0] * 1000),
+                    ////    t2 = new Date(timeBorder[1] * 1000);
 
-                    var x = d3.time.scale()
-                            .domain([t1, t2])
-                            .range([t1, t2].map(d3.time.scale()
-                            .domain([t1, t2])
-                            .range([0, $(element).parent().width()])));
+                    ////var x = d3.time.scale()
+                    ////        .domain([t1, t2])
+                    ////        .range([t1, t2].map(d3.time.scale()
+                    ////        .domain([t1, t2])
+                    ////        .range([0, tmpPrfGraphViewBoxWidth])));
+                    ////var axisX = d3.svg.axis().scale(x);
 
-                    var axisX = d3.svg.axis().scale(x);
-
-                    d3.select(element).select("g")
-                            .call(axisX)
-                            .selectAll("text")
-                            .attr("y", 8)
-                            .attr("x", -6)
-                            .style("text-anchor", "start");
+                    var altAxisX = d3.svg.axis().scale(prfAltX);
+                    d3.select(element).call(altAxisX);
+                    ////.selectAll("text")
+                    ////.attr("y", 8)
+                    ////.attr("x", -6)
+                    ////.style("text-anchor", "start");
                 });
             }
         }
@@ -391,21 +386,63 @@ define(['jquery', 'knockout', 'moment', 'jquery.slimscroll', 'jquery.bootstrap',
 
     ko.bindingHandlers.svgAxisValue = {
         update: function (element, valueAccessor) {
-            var valueBorder = ko.unwrap(valueAccessor().valueBorder);
+            var prfAltY = ko.unwrap(valueAccessor().prfAltY);
+            ////var tmpPrfGraphViewBoxHeight = ko.unwrap(valueAccessor().tmpPrfGraphViewBoxHeight);
+            ////if (!$.isNumeric(tmpPrfGraphViewBoxHeight)) { return; }
 
-            if ($.isNumeric(valueBorder[0]) && $.isNumeric(valueBorder[1])) {
+            ////var valueBorder = ko.unwrap(valueAccessor().valueBorder);
+            ////if (!$.isNumeric(valueBorder[0]) || !$.isNumeric(valueBorder[1])) { return; }
+            if (prfAltY) {
                 require(['d3'], function (d3) {
-                    var y = d3.scale.linear().range([$(element).height(), 0]);
-                    // [123,123]
-                    y.domain(valueBorder);
-
-                    var axisY = d3.svg.axis().scale(y).orient('right');
-                    d3.select(element).select('g')
-                        .call(axisY)
-                        .selectAll('text')
-                        .attr('y', 0);
+                    ////var y = d3.scale.linear().range([tmpPrfGraphViewBoxHeight, 0]);
+                    ////// [123,123]
+                    ////y.domain(valueBorder);
+                    ////var axisY = d3.svg.axis().scale(y).orient('left');
+                    var altAxisY = d3.svg.axis().scale(prfAltY).orient('left');
+                    d3.select(element).call(altAxisY);
+                    ////.selectAll('text')
+                    ////.attr('y', 0);
                 });
             }
+        }
+    };
+
+    ko.bindingHandlers.svgZoomGraph = {
+        update: function (element, valueAccessor) {
+            var prfAltX = ko.unwrap(valueAccessor().prfAltX),
+                prfAltY = ko.unwrap(valueAccessor().prfAltY);
+
+            if (!prfAltX || !prfAltY) { return; }
+
+            require(['d3'], function (d3) {
+                ////var y = d3.scale.linear().range([tmpPrfGraphViewBoxHeight, 0]);
+                ////// [123,123]
+                ////y.domain(valueBorder);
+
+                var altAxisX = d3.svg.axis().scale(prfAltX);
+                var altAxisY = d3.svg.axis().scale(prfAltY).orient('left');
+                
+                function zoomed() {
+                    console.log('zoomed event');
+                    d3.select(element).select('.axis.x').call(altAxisX);
+                    d3.select(element).select('.axis.y').call(altAxisY);
+                }
+
+                // tmp for zoom ========================================
+                var altZoom = d3.behavior.zoom()
+                    .x(prfAltX)
+                    .y(prfAltY)
+                    .scaleExtent([0.5, 10])
+                    .on('zoom', zoomed);
+                // end tmp
+
+                ////var axisY = d3.svg.axis().scale(y).orient('left');
+                d3.select(element).call(altZoom);
+
+                zoomed();
+                ////.selectAll('text')
+                ////.attr('y', 0);
+            });
         }
     };
 });

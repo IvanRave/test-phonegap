@@ -20,7 +20,7 @@ define(['jquery',
             // Script collection for rjs optimization (bundle or debug)
             var workspaceWrapUrl = '';
             // 
-            workspaceWrapUrl = 'app/workspace-wrap-bundle-0.5.7';
+            workspaceWrapUrl = 'app/workspace-wrap-bundle-0.6.0';
             // 
 
             require([workspaceWrapUrl], function () {

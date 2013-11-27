@@ -560,7 +560,7 @@ footer {
 }
 
 .axis text {
-    font: 10px sans-serif;
+    font-size: 0.9em;
 }
 
 .axis line,
@@ -633,16 +633,7 @@ footer {
 
 /* workspace/well/pd/graph */
 .pd-graph-wrap {
-    line-height: 0;
 }
-
-    .pd-graph-wrap .pd-graph-vscale {
-        width: 60px;
-    }
-
-    .pd-graph-wrap .pd-graph-grid {
-        margin-right: 60px;
-    }
 
 .step-1 {
     background: url(../img/orderedList1.png) no-repeat center;

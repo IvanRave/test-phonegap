@@ -27,16 +27,6 @@ define(['jquery',
 
         prtl.prdColumnAttributeList = ko.observableArray();
 
-        // namespace for graph
-        prtl.prfGraph = {
-            viewBox: {
-                width: 1200,
-                height: 400,
-                ratio: 1 / 3
-            },
-            axisSize: 10
-        };
-
         // ================================ FORECAST ===============================
 
         // forecast parameters to build graph

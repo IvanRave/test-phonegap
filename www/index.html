@@ -18,6 +18,8 @@
     <link href="css/default.date.css" rel="stylesheet" />
     <link href="css/default.time.css" rel="stylesheet" />
     <!-- /date picker-->
+    <!-- blueimp gallery -->
+    <link href="css/blueimp-gallery.css" rel="stylesheet" />
 </head>
 <body>
     <!--[if lt IE 9]><p class="chromeframe">You are using an <strong>outdated</strong> browser. Please upgrade your browser.</p><![endif]-->
@@ -33,6 +35,23 @@
             </div>
         </nav>
         <div class="wfm-content-wrap">
+            <div id="blueimp-gallery" class="blueimp-gallery">
+                <div class="slides"></div>
+                <h3 class="title"></h3>
+                <a class="prev">‹</a>
+                <a class="next">›</a>
+                <a class="close">×</a>
+                <a class="play-pause"></a>
+                <ol class="indicator"></ol>
+            </div>
+            <!--<div id="links">
+                <a href="img/carousel-wfm-1.jpg" title="Banana">
+                    <img src="img/question.jpg" alt="Banana">
+                </a>
+                <a href="img/carousel-wfm-2.jpg" title="Banana">
+                    <img src="img/question.jpg" alt="Banana">
+                </a>
+            </div>-->
             <div id="modal-standard-block" class="modal fade" role="dialog" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
@@ -60,7 +79,7 @@
     </footer>
     <!-- Load main script file for page or default (with auth logic only) -->
     
-    <script data-main="js/main-bundle-0.5.7" src="js/require.js"></script>
+    <script data-main="js/main-bundle-0.6.0" src="js/require.js"></script>
     
 </body>
 </html>
