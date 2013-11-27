@@ -1,6 +1,4 @@
-test-phonegap
+wfm-mobile
 =============
 
-test-phonegap
-
-version 1.2.0
+Well file manager
