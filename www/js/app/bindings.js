@@ -108,7 +108,7 @@ define(['jquery', 'knockout', 'moment', 'jquery.slimscroll', 'jquery.bootstrap',
                 alwaysVisible: true,
                 color: '#fcfcfc',
                 //distance: '0',
-                position: 'left',
+                position: 'right',
                 ////width: 210,
                 // move page scroll with this scroll
                 allowPageScroll: true
@@ -355,57 +355,57 @@ define(['jquery', 'knockout', 'moment', 'jquery.slimscroll', 'jquery.bootstrap',
         }
     };
 
-    ko.bindingHandlers.svgAxisTime = {
-        update: function (element, valueAccessor) {
-            ////var timeBorder = ko.unwrap(valueAccessor().timeBorder);
-            ////if (!$.isNumeric(timeBorder[0]) || !$.isNumeric(timeBorder[1])) { return; }
+    ////ko.bindingHandlers.svgAxisTime = {
+    ////    update: function (element, valueAccessor) {
+    ////        ////var timeBorder = ko.unwrap(valueAccessor().timeBorder);
+    ////        ////if (!$.isNumeric(timeBorder[0]) || !$.isNumeric(timeBorder[1])) { return; }
 
-            var prfAltX = ko.unwrap(valueAccessor().prfAltX);
-            if (prfAltX) {
-                require(['d3'], function (d3) {
-                    ////var t1 = new Date(timeBorder[0] * 1000),
-                    ////    t2 = new Date(timeBorder[1] * 1000);
+    ////        var prfAltX = ko.unwrap(valueAccessor().prfAltX);
+    ////        if (prfAltX) {
+    ////            require(['d3'], function (d3) {
+    ////                ////var t1 = new Date(timeBorder[0] * 1000),
+    ////                ////    t2 = new Date(timeBorder[1] * 1000);
 
-                    ////var x = d3.time.scale()
-                    ////        .domain([t1, t2])
-                    ////        .range([t1, t2].map(d3.time.scale()
-                    ////        .domain([t1, t2])
-                    ////        .range([0, tmpPrfGraphViewBoxWidth])));
-                    ////var axisX = d3.svg.axis().scale(x);
+    ////                ////var x = d3.time.scale()
+    ////                ////        .domain([t1, t2])
+    ////                ////        .range([t1, t2].map(d3.time.scale()
+    ////                ////        .domain([t1, t2])
+    ////                ////        .range([0, tmpPrfGraphViewBoxWidth])));
+    ////                ////var axisX = d3.svg.axis().scale(x);
 
-                    var altAxisX = d3.svg.axis().scale(prfAltX);
-                    d3.select(element).call(altAxisX);
-                    ////.selectAll("text")
-                    ////.attr("y", 8)
-                    ////.attr("x", -6)
-                    ////.style("text-anchor", "start");
-                });
-            }
-        }
-    };
+    ////                var altAxisX = d3.svg.axis().scale(prfAltX);
+    ////                d3.select(element).call(altAxisX);
+    ////                ////.selectAll("text")
+    ////                ////.attr("y", 8)
+    ////                ////.attr("x", -6)
+    ////                ////.style("text-anchor", "start");
+    ////            });
+    ////        }
+    ////    }
+    ////};
 
-    ko.bindingHandlers.svgAxisValue = {
-        update: function (element, valueAccessor) {
-            var prfAltY = ko.unwrap(valueAccessor().prfAltY);
-            ////var tmpPrfGraphViewBoxHeight = ko.unwrap(valueAccessor().tmpPrfGraphViewBoxHeight);
-            ////if (!$.isNumeric(tmpPrfGraphViewBoxHeight)) { return; }
+    ////ko.bindingHandlers.svgAxisValue = {
+    ////    update: function (element, valueAccessor) {
+    ////        var prfAltY = ko.unwrap(valueAccessor().prfAltY);
+    ////        ////var tmpPrfGraphViewBoxHeight = ko.unwrap(valueAccessor().tmpPrfGraphViewBoxHeight);
+    ////        ////if (!$.isNumeric(tmpPrfGraphViewBoxHeight)) { return; }
 
-            ////var valueBorder = ko.unwrap(valueAccessor().valueBorder);
-            ////if (!$.isNumeric(valueBorder[0]) || !$.isNumeric(valueBorder[1])) { return; }
-            if (prfAltY) {
-                require(['d3'], function (d3) {
-                    ////var y = d3.scale.linear().range([tmpPrfGraphViewBoxHeight, 0]);
-                    ////// [123,123]
-                    ////y.domain(valueBorder);
-                    ////var axisY = d3.svg.axis().scale(y).orient('left');
-                    var altAxisY = d3.svg.axis().scale(prfAltY).orient('left');
-                    d3.select(element).call(altAxisY);
-                    ////.selectAll('text')
-                    ////.attr('y', 0);
-                });
-            }
-        }
-    };
+    ////        ////var valueBorder = ko.unwrap(valueAccessor().valueBorder);
+    ////        ////if (!$.isNumeric(valueBorder[0]) || !$.isNumeric(valueBorder[1])) { return; }
+    ////        if (prfAltY) {
+    ////            require(['d3'], function (d3) {
+    ////                ////var y = d3.scale.linear().range([tmpPrfGraphViewBoxHeight, 0]);
+    ////                ////// [123,123]
+    ////                ////y.domain(valueBorder);
+    ////                ////var axisY = d3.svg.axis().scale(y).orient('left');
+    ////                var altAxisY = d3.svg.axis().scale(prfAltY).orient('left');
+    ////                d3.select(element).call(altAxisY);
+    ////                ////.selectAll('text')
+    ////                ////.attr('y', 0);
+    ////            });
+    ////        }
+    ////    }
+    ////};
 
     ko.bindingHandlers.svgZoomGraph = {
         update: function (element, valueAccessor) {
@@ -414,32 +414,39 @@ define(['jquery', 'knockout', 'moment', 'jquery.slimscroll', 'jquery.bootstrap',
 
             if (!prfAltX || !prfAltY) { return; }
 
-            require(['d3'], function (d3) {
-                ////var y = d3.scale.linear().range([tmpPrfGraphViewBoxHeight, 0]);
-                ////// [123,123]
-                ////y.domain(valueBorder);
+            var dataSet = ko.unwrap(valueAccessor().filteredByDateProductionDataSet);
+            if (dataSet.length === 0) { return; }
 
-                var altAxisX = d3.svg.axis().scale(prfAltX);
-                var altAxisY = d3.svg.axis().scale(prfAltY).orient('left');
-                
-                function zoomed() {
-                    console.log('zoomed event');
-                    d3.select(element).select('.axis.x').call(altAxisX);
-                    d3.select(element).select('.axis.y').call(altAxisY);
+            var productionDataSetSvgPath = ko.unwrap(valueAccessor().productionDataSetSvgPath);
+
+            var prfGraphViewBox = ko.unwrap(valueAccessor().prfGraphViewBox);
+
+            require(['d3'], function (d3) {
+                var altAxisX = d3.svg.axis().scale(prfAltX).tickSize(-prfGraphViewBox.height);
+                var altAxisY = d3.svg.axis().scale(prfAltY).orient('left').tickSize(-prfGraphViewBox.width);
+
+                var graphWrap = d3.select(element);
+
+                function redrawGraph() {
+                    //d3.select(element).select('.svg-prf-graph-g').select('path').remove();
+                    $.each(productionDataSetSvgPath, function (elemKey, elemVal) {
+                        graphWrap.select('.svg-prf-graph-g').select('#grp-' + elemKey).attr('d', elemVal(dataSet));
+                    });
+
+                    graphWrap.select('.axis.x').call(altAxisX);
+                    graphWrap.select('.axis.y').call(altAxisY);
                 }
 
-                // tmp for zoom ========================================
                 var altZoom = d3.behavior.zoom()
                     .x(prfAltX)
                     .y(prfAltY)
-                    .scaleExtent([0.5, 10])
-                    .on('zoom', zoomed);
-                // end tmp
+                    .scaleExtent([1, 10000])
+                    .on('zoom', redrawGraph);
 
                 ////var axisY = d3.svg.axis().scale(y).orient('left');
-                d3.select(element).call(altZoom);
+                graphWrap.select('.graph-zoom-rect').call(altZoom);
 
-                zoomed();
+                redrawGraph();
                 ////.selectAll('text')
                 ////.attr('y', 0);
             });

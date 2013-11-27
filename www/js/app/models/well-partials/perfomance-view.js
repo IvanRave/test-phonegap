@@ -216,6 +216,13 @@ define(['jquery',
                         }
                     });
                 });
+
+                // Plus (top and bottom) margin 5% - monotone function can be overdrawen out of graph wrap border
+                if (typeof (minValue) !== 'undefined') {
+                    minValue -= minValue / 20;
+                    maxValue += maxValue / 20;
+                }
+
                 // Still can be undefined
                 return [minValue, maxValue];
             },
@@ -225,69 +232,60 @@ define(['jquery',
         prfv.prfAltX = ko.observable();
         prfv.prfAltY = ko.observable();
 
-        function getSvgPath(dataSet, paramList, timeBorder, valueBorder) {
+        function getSvgPath(paramList, timeBorder, valueBorder) {
             var resultJson = {};
 
             // Check parameter and data existence
-            if (dataSet.length > 0 &&
-                paramList.length > 0 &&
+            // dataSet.length > 0 &&
+            if (paramList.length > 0 &&
                 $.isNumeric(timeBorder[0]) &&
                 $.isNumeric(timeBorder[1]) &&
                 $.isNumeric(valueBorder[0]) &&
                 $.isNumeric(valueBorder[1])) {
 
-                var x = d3.time.scale().range([0, prfv.prfGraph.viewBox.width]),
-                    y = d3.scale.linear().range([prfv.prfGraph.viewBox.height, 0]);
+                var x = d3.time.scale()
+                    .range([0, prfv.prfGraph.viewBox.width])
+                    .domain([new Date(timeBorder[0] * 1000), new Date(timeBorder[1] * 1000)]);
 
-                var line = d3.svg.line()
-                    .interpolate('linear')
-                    ////monotone
-                    .x(function (d) { return x(new Date(d.unixTime * 1000)); });
+                var y = d3.scale.linear()
+                    .range([prfv.prfGraph.viewBox.height, 0])
+                    .domain(valueBorder);
 
-                var t1 = new Date(timeBorder[0] * 1000),
-                    t2 = new Date(timeBorder[1] * 1000);
-
-                x.domain([t1, t2]);
-                y.domain(valueBorder);
+                prfv.prfAltX(x);
+                prfv.prfAltY(y);
 
                 // tmp for axis ====================================
-                var altX = d3.time.scale()
-                        .domain([t1, t2])
-                        .range([t1, t2].map(d3.time.scale()
-                        .domain([t1, t2])
-                        .range([0, prfv.prfGraph.viewBox.width])));
-
-                prfv.prfAltX(altX);
+                ////var altX = d3.time.scale()
+                ////        .domain([t1, t2])
+                ////        .range([t1, t2].map(d3.time.scale()
+                ////        .domain([t1, t2])
+                ////        .range([0, prfv.prfGraph.viewBox.width])));
                 // end tmp =================================
 
-                // tmp for axis Y ====================================
-                var altY = d3.scale.linear()
-                        .range([prfv.prfGraph.viewBox.height, 0])
-                        .domain(valueBorder);
-
-                prfv.prfAltY(altY);
-                // end tmp ===================================
-
                 $.each(paramList, function (paramIndex, paramElem) {
-                    if (ko.unwrap(paramElem.isVisible) === true) {
-                        line.y(function (d) {
-                            return y(
-                                $.isNumeric(ko.unwrap(d[paramElem.wfmParameterId])) ? (ko.unwrap(d[paramElem.wfmParameterId]) * ko.unwrap(ko.unwrap(paramElem.wfmParameter).uomCoef)) : null
-                            );
-                        });
+                    var line = d3.svg.line()
+                            .interpolate('monotone') ////monotone //linear
+                            .x(function (d) { return x(new Date(d.unixTime * 1000)); })
+                            .y(function (d) {
+                                return y(
+                                    $.isNumeric(ko.unwrap(d[paramElem.wfmParameterId])) ? (ko.unwrap(d[paramElem.wfmParameterId]) * ko.unwrap(ko.unwrap(paramElem.wfmParameter).uomCoef)) : null
+                                );
+                            });
 
-                        resultJson[paramElem.wfmParameterId] = line(dataSet);
-                    }
+                    resultJson[paramElem.wfmParameterId] = line;
+                    ////resultJson[paramElem.wfmParameterId] = line(dataSet);
+                    ////if (ko.unwrap(paramElem.isVisible) === true) {
+                    //}
                 });
             }
 
             return resultJson;
         }
 
-        // Update perfomance graph data: graph path for selected regions
+        // Update perfomance graph data: graph path for selected regions (d3 line objects in one json object)
+        ///<return>{'WaterRate': d3Line, ...}</return>
         prfv.productionDataSetSvgPath = ko.computed(function () {
             return getSvgPath(
-                    ko.unwrap(prfv.filteredByDateProductionDataSet),
                     ko.unwrap(prfv.selectedWellGroupWfmParameterList),
                     ko.unwrap(prfv.filteredByDateProductionDataSetTimeBorder),
                     ko.unwrap(prfv.filteredByDateProductionDataSetValueBorder));
@@ -296,7 +294,6 @@ define(['jquery',
         prfv.joinedYearList = ko.computed({
             read: function () {
                 if (ko.unwrap(prfv.isVisibleForecastData)) {
-                    console.log('fyear', ko.unwrap(prfPartial.forecastYearList));
                     return ko.unwrap(prfPartial.forecastYearList).concat(ko.unwrap(prfPartial.histYearList));
                 }
                 else {

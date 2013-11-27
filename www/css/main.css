@@ -559,20 +559,28 @@ footer {
     padding: 7px;
 }
 
-.axis text {
-    font-size: 0.9em;
+.axis {
 }
 
-.axis line,
-.axis path {
-    fill: none;
-    stroke: #000;
-    stroke-width: 1px;
-}
+    .axis text {
+        font-size: 1em;
+    }
+
+    .axis line {
+        fill: none;
+        stroke: #efefef;
+        stroke-width: 1px;
+    }
+
+    .axis path {
+        fill: none;
+        stroke: #888;
+        stroke-width: 1px;
+    }
 
 .svg-prf-graph-g path {
     fill: none;
-    stroke-width: 1px;
+    stroke-width: 2px;
 }
 
 .input-narrow {
@@ -678,4 +686,10 @@ footer {
     padding-bottom: 8px;
     border-bottom: 1px dashed #ccc;
     border-top: 1px dashed #ccc;
+}
+
+.graph-zoom-rect {
+    fill: none;
+    pointer-events: all;
+    cursor: move;
 }
