@@ -3,12 +3,7 @@
         //baseUrl: '.',
         paths: {
             'jquery.bootstrap': 'bootstrap',
-            // The jQuery UI widget factory, can be omitted if jQuery UI is already included 
-            'jquery.ui.widget': 'ajaxupload/vendor/jquery.ui.widget',
-            // The Iframe Transport is required for browsers without support for XHR file uploads 
-            'jquery.iframe-transport': 'ajaxupload/jquery.iframe-transport',
             // The basic File Upload plugin
-            'jquery.fileupload': 'ajaxupload/jquery.fileupload',
             'yandex-map': 'http://api-maps.yandex.ru/2.0/?load=package.full&lang=en-US'
             ////'blob-js': 'blobjs/Blob.min',
             ////'blob-builder': 'blobjs/BlobBuilder.min',
@@ -31,7 +26,8 @@
             'jquery.bootstrap': { deps: ['jquery'] },
             'jquery.slimscroll': { deps: ['jquery'] },
             'angular': { deps: ['jquery'], exports: 'angular' }, // work: angular.module and other
-            'angular-route': { deps: ['angular'] }
+            'angular-route': { deps: ['angular'] },
+            'd3': { exports: 'd3' }
             ////'jspdf.plugin.addimage': { deps: ['jspdf'] },
             ////'jspdf.plugin.cell': { deps: ['jspdf'] },
             ////'jspdf.plugin.from_html': { deps: ['jspdf'] },

@@ -55,7 +55,7 @@ define(['jquery', 'knockout', 'moment', 'jquery.slimscroll', 'jquery.bootstrap',
             }
         }
     };
-    
+
     ko.bindingHandlers.unix = {
         update: function (element, valueAccessor) {
             if (ko.unwrap(valueAccessor())) {
@@ -108,7 +108,7 @@ define(['jquery', 'knockout', 'moment', 'jquery.slimscroll', 'jquery.bootstrap',
                 alwaysVisible: true,
                 color: '#fcfcfc',
                 //distance: '0',
-                position: 'left',
+                position: 'right',
                 ////width: 210,
                 // move page scroll with this scroll
                 allowPageScroll: true
@@ -194,22 +194,22 @@ define(['jquery', 'knockout', 'moment', 'jquery.slimscroll', 'jquery.bootstrap',
                 var $input = $(element).pickadate(options);
                 var picker = $input.pickadate('picker');
 
-                var startValue = ko.unwrap(curValue);
+                var initialValue = ko.unwrap(curValue);
 
-                if (startValue) {
+                if (initialValue) {
                     // convert to ms
-                    startValue = startValue * 1000;
+                    initialValue = initialValue * 1000;
                     // convert to local time to show in input
-                    var startUtcOffset = new Date(startValue).getTimezoneOffset() * 60 * 1000;
-                    startValue -= startUtcOffset;
-                    ////console.log('set as a start value in input: with utc', new Date(startValue).toISOString());
-                    picker.set('select', startValue);
+                    var startUtcOffset = new Date(initialValue).getTimezoneOffset() * 60 * 1000;
+                    initialValue -= startUtcOffset;
+                    ////console.log('set as a start value in input: with utc', new Date(initialValue).toISOString());
+                    picker.set('select', initialValue);
                 }
 
                 picker.on({
                     set: function (event) {
                         ////console.log('on Set call with event: ', event);
-                        
+
                         ////var selectedObj = picker.get('select');
                         ////console.log('slcObj', selectedObj);
                         // select - UTC unix time
@@ -225,6 +225,7 @@ define(['jquery', 'knockout', 'moment', 'jquery.slimscroll', 'jquery.bootstrap',
                             }
                         }
                         else if (event.hasOwnProperty('clear')) {
+                            ////console.log('clear setting');
                             // Set to null by clear event
                             // Do not set to null because of pickadate set undefined when choose year or month from select
                             curValue(null);
@@ -240,29 +241,43 @@ define(['jquery', 'knockout', 'moment', 'jquery.slimscroll', 'jquery.bootstrap',
 
                 ////$(element).pickadate(options);
             }
+        },
+        update: function (element, valueAccessor) {
+            var curValue = valueAccessor();
+
+            if (ko.isObservable(curValue)) {
+                var initialValue = ko.unwrap(curValue);
+                //var setArchFunction = picker.on();
+                ////console.log('pickerOn', picker);
+
+                if (!initialValue) {
+                    var picker = $(element).pickadate('picker');
+                    // TODO: turn off onSet 
+                    // then set any value
+                    // then turn on previous onSet
+                    picker.set('clear');
+                }
+            }
+            ////    var picker = $(element).pickadate('picker');
+
+            ////    var curVal = ko.unwrap(valueAccessor());
+
+            ////    console.log('picker', picker);
+            ////    console.log(curVal);
+
+            ////    ////if (curVal) {
+            ////    ////    // Convert to unit time miliseconds
+            ////    ////    curVal = curVal * 1000;
+            ////    ////    console.log('curval', new Date(curVal).toISOString());
+            ////    ////    // Get utc offset
+
+            ////    ////    //var utcOffset = new Date(curVal).getTimezoneOffset() * 60;
+            ////    ////    // Diff UTC
+            ////    ////    //curVal = curVal - utcOffset;
+
+            ////    ////    picker.set('select', curVal);
+            ////    ////}
         }
-        ////update: function (element, valueAccessor) {
-
-        ////    var picker = $(element).pickadate('picker');
-
-        ////    var curVal = ko.unwrap(valueAccessor());
-
-        ////    console.log('picker', picker);
-        ////    console.log(curVal);
-
-        ////    ////if (curVal) {
-        ////    ////    // Convert to unit time miliseconds
-        ////    ////    curVal = curVal * 1000;
-        ////    ////    console.log('curval', new Date(curVal).toISOString());
-        ////    ////    // Get utc offset
-
-        ////    ////    //var utcOffset = new Date(curVal).getTimezoneOffset() * 60;
-        ////    ////    // Diff UTC
-        ////    ////    //curVal = curVal - utcOffset;
-
-        ////    ////    picker.set('select', curVal);
-        ////    ////}
-        ////}
     };
 
     // for bootstrap dropdown (wich not loaded correctly by data-toggle in external page)
@@ -324,73 +339,139 @@ define(['jquery', 'knockout', 'moment', 'jquery.slimscroll', 'jquery.bootstrap',
     // svg graph (like perfomance)
     ko.bindingHandlers.svgResponsive = {
         init: function (element, valueAccessor) {
-            var ratio = ko.unwrap(valueAccessor().ratio);
-
-            ////var elemStyle = getComputedStyle(element, '');
-            ////console.log(elemStyle.width);
-
-            var $elem = $(element);
-            ////console.log('asdf3');
-            ////console.log($elem.parent().width());
-
-            function updateHeight() {
-                //$elem.attr('height', hght);
-                valueAccessor().tmpPrfGraphHeight($elem.parent().width() * ratio);
+            function updateWidth() {
+                valueAccessor().tmpPrfGraphWidth($(element).parent().width());
             }
 
-            $(window).resize(function () {
-                updateHeight();
-            });
+            // When change window size - update graph size
+            $(window).resize(updateWidth);
 
-            updateHeight();
+            // When toggle left menu - update graph size
+            valueAccessor().tmpIsVisibleMenu.subscribe(updateWidth);
+
+            // Update initial
+            updateWidth();
             // svg viewbox size need to init before creating of this element
         }
     };
 
-    ko.bindingHandlers.svgAxisTime = {
+    ko.bindingHandlers.svgZoomGraph = {
         update: function (element, valueAccessor) {
-            var timeBorder = ko.unwrap(valueAccessor().timeBorder);
-            if ($.isNumeric(timeBorder[0]) && $.isNumeric(timeBorder[1])) {
-                require(['d3'], function (d3) {
-                    var t1 = new Date(timeBorder[0] * 1000),
-                        t2 = new Date(timeBorder[1] * 1000);
+            var dataSet = ko.unwrap(valueAccessor().filteredByDateProductionDataSet);
+            if (dataSet.length === 0) { return; }
 
-                    var x = d3.time.scale()
-                            .domain([t1, t2])
-                            .range([t1, t2].map(d3.time.scale()
-                            .domain([t1, t2])
-                            .range([0, $(element).parent().width()])));
+            var graph = {
+                axis: ko.unwrap(valueAccessor().prfGraphAxis),
+                zoom: ko.unwrap(valueAccessor().prfGraphZoom),
+                viewBox: ko.unwrap(valueAccessor().prfGraphViewBox),
+                svgPath: ko.unwrap(valueAccessor().productionDataSetSvgPath)
+            };
 
-                    var axisX = d3.svg.axis().scale(x);
+            // Zoom coefficient for plus/minus buttons
+            var scaleCoef = 1.1;
+            var diffX = (graph.viewBox.width / 2) * (scaleCoef - 1),
+                diffY = (graph.viewBox.height / 2) * (scaleCoef - 1);
 
-                    d3.select(element).select("g")
-                            .call(axisX)
-                            .selectAll("text")
-                            .attr("y", 8)
-                            .attr("x", -6)
-                            .style("text-anchor", "start");
+            require(['d3'], function (d3) {
+
+                var graphWrap = d3.select(element);
+
+                function redrawGraph() {
+                    // Redraw each curve (JSON obj)
+                    $.each(graph.svgPath, function (elemKey, elemVal) {
+                        graphWrap.select('.svg-prf-graph-g').select('#grp-' + elemKey).attr('d', elemVal(dataSet));
+                    });
+
+                    // Redraw x axis
+                    graphWrap.select('.axis.x').call(graph.axis.x);
+
+                    // Redraw y axis
+                    graphWrap.select('.axis.y').call(graph.axis.y);
+                }
+
+                // When zooming redraw graph
+                graph.zoom.on('zoom', redrawGraph);
+
+                // Apply zoom to whole graph (axis + lines)
+                graphWrap.select('.graph-zoom-rect').call(graph.zoom);
+
+                graphWrap.select('.zoom-in').on('click', function () {
+                    graph.zoom.scale(graph.zoom.scale() * scaleCoef);
+
+                    var tmpTr = graph.zoom.translate();
+                    tmpTr[0] -= diffX;
+                    tmpTr[1] -= diffY;
+                    graph.zoom.translate(tmpTr);
+
+                    redrawGraph();
+
+                    // Previous graph state - before click
+                    ////var prevGraph = {
+                    ////    // by default = 1
+                    ////    scale: graph.zoom.scale(),
+                    ////    // by default = [0,0]
+                    ////    translate: graph.zoom.translate()
+                    ////};
+
+                    ////// Previous width of graph = Initial width * previous zoom
+                    ////prevGraph.width = graph.viewBox.width / prevGraph.scale;
+                    ////prevGraph.height = graph.viewBox.height / prevGraph.scale;
+
+                    ////// 1 -> 2 -> 4 -> 8 -> 16
+                    ////// Current graph state - after click
+                    ////var curGraph = {
+                    ////    scale: prevGraph.scale + scaleCoef,
+                    ////    translate: []
+                    ////};
+
+                    ////graph.zoom.scale(curGraph.scale);
+
+                    ////curGraph.width = prevGraph.width / curGraph.scale;
+                    ////curGraph.height = prevGraph.height / curGraph.scale;
+
+                    ////curGraph.translate[0] = prevGraph.translate[0] - ((prevGraph.width - curGraph.width) / 2);
+                    ////curGraph.translate[1] = prevGraph.translate[1] - ((prevGraph.height - curGraph.height) / 2);
+
+                    ////graph.zoom.translate(curGraph.translate);
+                    //////    // dx = (x * cf - x)/2
+
+                    //////    tmpTranslate[0] -= (prfGraphViewBox.width * tmpZoom - prfGraphViewBox.width) / 2;
+                    //////    tmpTranslate[1] -= (prfGraphViewBox.height * tmpZoom - prfGraphViewBox.height) / 2;
+                    //////    prfGraphZoom.translate(tmpTranslate);
+
                 });
-            }
-        }
-    };
 
-    ko.bindingHandlers.svgAxisValue = {
-        update: function (element, valueAccessor) {
-            var valueBorder = ko.unwrap(valueAccessor().valueBorder);
+                graphWrap.select('.zoom-out').on('click', function () {
+                    ////if (tmpSc > 1) {
+                    graph.zoom.scale(graph.zoom.scale() / scaleCoef);
 
-            if ($.isNumeric(valueBorder[0]) && $.isNumeric(valueBorder[1])) {
-                require(['d3'], function (d3) {
-                    var y = d3.scale.linear().range([$(element).height(), 0]);
-                    // [123,123]
-                    y.domain(valueBorder);
+                    var tmpTr = graph.zoom.translate();
+                    tmpTr[0] += diffX;
+                    tmpTr[1] += diffY;
+                    graph.zoom.translate(tmpTr);
 
-                    var axisY = d3.svg.axis().scale(y).orient('right');
-                    d3.select(element).select('g')
-                        .call(axisY)
-                        .selectAll('text')
-                        .attr('y', 0);
+                    redrawGraph();
+                    ////}
+                    ////var tmpZoom = prfGraphZoom.scale();
+                    ////// 1 -> 1/2 -> 1/4 -> 1/8 -> 1/16
+                    ////if ($.isNumeric(tmpZoom)) {
+                    ////    tmpZoom = tmpZoom / zoomCoef;
+                    ////    prfGraphZoom.scale(tmpZoom);
+
+                    ////    var tmpTranslate = prfGraphZoom.translate();
+                    ////    tmpTranslate[0] += (1110 * (zoomCoef - 1)) / 2;
+                    ////    tmpTranslate[1] += (370 * (zoomCoef - 1)) / 2;
+
+                    ////    prfGraphZoom.translate(tmpTranslate);
+
+                    ////    redrawGraph();
+                    ////    console.log(tmpZoom);
+                    ////}
                 });
-            }
+
+                // Redraw graph once like initial zoom event
+                redrawGraph();
+            });
         }
     };
 });

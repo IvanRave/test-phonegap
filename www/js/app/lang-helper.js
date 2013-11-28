@@ -173,9 +173,35 @@ define([], function () {
         // 
         'filterbydate': 'filter by date',
         // 
+        'filterbyjobtype': 'filter by job type',
+        // 
         'sortbydate': 'sort by date',
         // 
         'nowellhistorylist': 'no well history',
+        // 
+        'jobtype': 'job type',
+        // 
+        'timeperiod': 'period',
+        // 
+        'toaddjobtypetolist': 'add job type to list',
+        // 
+        'underconstruction': 'under construction',
+        // 
+        'todeletewell': 'delete well',
+        // 
+        'well': 'well',
+        // 
+        'dashboard': 'dashboard',
+        // 
+        'group': 'group',
+        // 
+        'region': 'region',
+        // 
+        'field': 'field',
+        // 
+        'filemanager': 'file manager',
+        // 
+        'volume': 'volume',
         // 
     };
 

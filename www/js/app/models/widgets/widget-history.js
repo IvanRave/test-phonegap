@@ -12,7 +12,8 @@ define(['knockout', 'app/models/well-partials/history-view'], function (ko, Hist
             return {
                 'StartDate': ko.unwrap(self.historyView['startDate']),
                 'EndDate': ko.unwrap(self.historyView['endDate']),
-                'SortByDateOrder': ko.unwrap(self.historyView['sortByDateOrder'])
+                'SortByDateOrder': ko.unwrap(self.historyView['sortByDateOrder']),
+                'JobTypeId': ko.unwrap(self.historyView['jobTypeId'])
             };
         };
     }

@@ -70,7 +70,7 @@ define(['jquery', 'app/ajax-request'], function ($, ajaxRequest) {
     function widgetUrl(widgockId, widgetId) {
         return 'http://wfm-client.azurewebsites.net/api/widgocks/' + widgockId + '/widgets' + (widgetId ? ('/' + widgetId) : '');
     }
-    function jobTypeUrl(companyId, jobTypeId) {
+    function companyJobTypeUrl(companyId, jobTypeId) {
         return 'http://wfm-client.azurewebsites.net/api/companies/' + companyId + '/job-types' + (jobTypeId ? ('/' + jobTypeId) : '');
     }
 
@@ -237,7 +237,7 @@ define(['jquery', 'app/ajax-request'], function ($, ajaxRequest) {
         return ajaxRequest('GET', wellHistoryUrl(urlQueryParams));
     }
 
-    function saveNewWellHistory(item) {
+    function postWellHistory(item) {
         return ajaxRequest('POST', wellHistoryUrl(), item);
     }
 
@@ -313,7 +313,7 @@ define(['jquery', 'app/ajax-request'], function ($, ajaxRequest) {
         return ajaxRequest('DELETE', wellInWellFieldMapUrl(urlQueryParams));
     }
 
-    function saveNewWellHistoryFile(item) {
+    function postWellHistoryFile(item) {
         return ajaxRequest('POST', wellHistoryFileUrl(), item);
     }
 
@@ -443,7 +443,7 @@ define(['jquery', 'app/ajax-request'], function ($, ajaxRequest) {
         getColumnAttributesLocal: getColumnAttributesLocal,
         // WellHistory
         getWellHistoryList: getWellHistoryList,
-        saveNewWellHistory: saveNewWellHistory,
+        postWellHistory: postWellHistory,
         putWellHistory: putWellHistory,
         deleteWellHistory: deleteWellHistory,
         // WfmImage
@@ -466,7 +466,7 @@ define(['jquery', 'app/ajax-request'], function ($, ajaxRequest) {
         saveChangedWellInWellFieldMap: saveChangedWellInWellFieldMap,
         deleteWellInWellFieldMap: deleteWellInWellFieldMap,
         // WellHistoryFile
-        saveNewWellHistoryFile: saveNewWellHistoryFile,
+        postWellHistoryFile: postWellHistoryFile,
         deleteWellHistoryFile: deleteWellHistoryFile,
         // section list
         getSectionList: getSectionList,
@@ -549,7 +549,11 @@ define(['jquery', 'app/ajax-request'], function ($, ajaxRequest) {
     };
     
     datacontext.getJobTypeList = function (companyId) {
-        return ajaxRequest('GET', jobTypeUrl(companyId));
+        return ajaxRequest('GET', companyJobTypeUrl(companyId));
+    };
+
+    datacontext.postCompanyJobType = function (companyId, jobTypeData) {
+        return ajaxRequest('POST', companyJobTypeUrl(companyId), jobTypeData);
     };
 
     datacontext.getPossibleWidgoutList = function () {

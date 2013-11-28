@@ -273,7 +273,7 @@
                 <div>
   <div class="wfm-workspace-well-top-tab clearfix">
     <div class="pull-left" style="margin-top:1px">
-      <button type="button" class="btn btn-inverse btn-sm" data-bind="click: function(){ selectedSectionId(null); }">
+      <button type="button" class="btn btn-inverse btn-sm" data-bind="click: unselectSection">
         <i class="glyphicon glyphicon-th"></i>&nbsp;&nbsp;<span>Well dashboard</span>
       </button>
     </div>
@@ -338,15 +338,8 @@
   <script type="text/html" id="well-history-tpl">
   <span data-bind="ifnot: isLoadedHistoryList">Loading...</span>
   <div data-bind="if: isLoadedHistoryList">
-    <div class="row">
-      <div class="col-sm-2">
-        <div data-bind="visible: $root.isEditable">
-          <button class="btn btn-sm btn-default" data-bind="click: addWellHistory">
-            <i class="glyphicon glyphicon-plus"></i> Create new record
-          </button>
-        </div>
-      </div>
-      <div class="col-sm-10">
+    <div class="clearfix">
+      <div class="pull-left">
         <div data-bind="if: historyList().length > 0">
           <div data-bind="with: historyView">
             <span>Filter by date:</span>
@@ -356,33 +349,59 @@
             <button class="btn btn-default btn-sm" type="button" data-bind="click: changeSortByDateOrder">
               Sort by date <i class="glyphicon" data-bind="css: sortByDateCss"></i>
             </button>
-            <!--<select data-bind="options: $root.jobTypeList"></select>-->
+            <select class="input-sm" data-bind="options: $root.jobTypeList, optionsText: 'name', optionsValue: 'id', value: jobTypeId, optionsCaption: 'Filter by job type...'"></select>
           </div>
         </div>
         <div data-bind="if: historyList().length === 0">
           <small>No well history</small>
         </div>
       </div>
+      <div class="pull-right" data-bind="if: $root.isEditable">
+        <span data-bind="with: wellHistoryNew">
+          <input class="input-sm" type="text" size="10" data-bind="datepicker: startUnixTime, datepickerOptions: { format: 'yyyy-mm-dd', selectYears: true, selectMonths: true }" />
+          <span> - </span>
+          <input class="input-sm" type="text" size="10" data-bind="datepicker: endUnixTime, datepickerOptions: { format: 'yyyy-mm-dd', selectYears: true, selectMonths: true }" />
+        </span>
+        <button class="btn btn-sm btn-default" data-bind="click: postWellHistory, enable: isEnabledPostWellHistory">
+          <i class="glyphicon glyphicon-plus"></i> Create new record
+        </button>
+      </div>
     </div>
     <div data-bind="with: historyView">
       <div data-bind="foreach: sortedHistoryList">
         <div class="row well-history-block">
           <div class="col-md-2">
-            <div data-bind="ifnot: $root.isEditable">
-              <div>
-                <span data-bind="unix: startUnixTime"></span>
+            <div>
+              <div class="bld">Period:</div>
+              <div data-bind="ifnot: $root.isEditable">
+                <div>
+                  <span data-bind="unix: startUnixTime"></span>
+                </div>
+                <div>
+                  <span data-bind="unix: endUnixTime, visible: isVisibleEndUnixTime"></span>
+                </div>
               </div>
-              <div>
-                <span data-bind="unix: endUnixTime, visible: isVisibleEndUnixTime"></span>
+              <div data-bind="if: $root.isEditable">
+                <input class="input-sm" type="text" size="10" data-bind="datepicker: startUnixTime, datepickerOptions: { format: 'yyyy-mm-dd', selectYears: true, selectMonths: true }"></input>
+                <input class="input-sm" type="text" size="10" data-bind="datepicker: endUnixTime, datepickerOptions: { format: 'yyyy-mm-dd', selectYears: true, selectMonths: true }"></input>
               </div>
             </div>
-            <div data-bind="if: $root.isEditable">
-              <div>
-                <input class="input-sm" size="10" data-bind="datepicker: startUnixTime, datepickerOptions: { format: 'yyyy-mm-dd', selectYears: true, selectMonths: true }"></input>
+            <div>
+              <div data-bind="ifnot: $root.isEditable">
+                <div data-bind="with: jobType">
+                  <span class="bld">Job type:</span>
+                  <span data-bind="text: name"></span>
+                </div>
               </div>
-              <div>
-                <input class="input-sm" size="10" data-bind="datepicker: endUnixTime, datepickerOptions: { format: 'yyyy-mm-dd', selectYears: true, selectMonths: true }"></input>
+              <div data-bind="if: $root.isEditable">
+                <div data-bind="if: $root.jobTypeList().length > 0">
+                  <span class="bld">Job type:</span>
+                  <select class="input-sm" data-bind="options: $root.jobTypeList, optionsText: 'name', optionsValue: 'id', optionsCaption: 'No job type', value: jobTypeId"></select>
+                  <button class="btn btn-xs btn-link" data-bind="click: $root.goToPostingJobType">add job type to list</button>
+                </div>
               </div>
+            </div>
+            <div data-bind="if: $root.isEditable" style="margin-top:8px">
               <div class="btn-group-vertical btn-group-sm">
                 <button class="btn btn-default" type="button" data-bind="click: chooseWellHistoryFile">
                   <i class="glyphicon glyphicon-paperclip"></i> Attach a file
@@ -412,7 +431,7 @@
             </div>
             <div data-bind="foreach: WfmImages">
               <div>
-                <img src="" data-bind="attr: { src: dataUrl }" alt="History image" class="img-thumbnail elem-shadow" />
+                <img class="img-thumbnail elem-shadow" src="" data-bind="attr: { src: dataUrl }" alt="History image" />
                 <span data-bind="visible: $root.isEditable">
                   <i class="glyphicon glyphicon-remove link-icon" data-bind="click: $parent.deleteWfmImage"></i>
                 </span>
@@ -659,42 +678,45 @@
         </div>
         <!-- / with prfPartial  -->
         <div data-bind="ifnot: selectedAttrGroup">
-          Please choose perfomance group:
-          <ul data-bind="foreach: $root.wfmParamSquadList">
+          Please choose perfomance group
+          <!--<ul data-bind="foreach: $root.wfmParamSquadList">
             <li data-bind="with: id">
-              <a href="#" data-bind="click: $parent.selectAttrGroupId">
+              <a href="#" data-bind="click: function(){ $parents[1].selectAttrGroupId($data);}">
                 <span data-bind="text: $data"></span>
               </a>
             </li>
-          </ul>
+          </ul>-->
         </div>
         <div data-bind="if: selectedAttrGroup">
           <div>
-            <div class="clearfix pd-graph-wrap">
-  <div class="pull-right pd-graph-vscale">
-    <svg version="1.1" width="60px" data-bind="svgAxisValue: {valueBorder: filteredByDateProductionDataSetValueBorder}, attr:{ height: prfGraphHeight }">
-      <g class="axis"></g>
-    </svg>
-  </div>
-  <div class="pd-graph-grid">
-    <div>
-      <svg version="1.1" width="100%" data-bind="attr: { height: prfGraphHeight }, svgResponsive: { ratio: prfPartial.prfGraph.viewBox.ratio, tmpPrfGraphHeight: prfGraphHeight }" viewbox="0 0 1200 400">
-        <g class="svg-prf-graph-g" data-bind="foreach: {data: selectedWellGroupWfmParameterList, as: 'groupParam'}">
-          <!-- ko with: $parent.productionDataSetSvgPath -->
-          <!-- ko if: $data[groupParam.wfmParameterId] -->
-          <path d="M0 0" data-bind="attr:{d: $data[groupParam.wfmParameterId], stroke: groupParam.color }" style="stroke-width:1; fill: none"></path>
-          <!-- /ko -->
-          <!-- /ko -->
+            <div class="pd-graph-wrap">
+  <!-- viewbox = prfGraph.viewBox.size + all margins -->
+  <svg version="1.1" width="100%" data-bind="attr: { height: prfGraph.height }, svgResponsive: { tmpPrfGraphWidth: prfGraph.width, tmpIsVisibleMenu: $root.isVisibleMenu }" viewbox="0 0 1200 400">
+    <g data-bind="attr: { transform: 'translate(' + prfGraph.viewBox.margin.left + ', ' + prfGraph.viewBox.margin.top + ')' }, svgZoomGraph: { prfGraphViewBox: prfGraph.viewBox, productionDataSetSvgPath: productionDataSetSvgPath, filteredByDateProductionDataSet: filteredByDateProductionDataSet, prfGraphZoom: prfGraph.zoom, prfGraphAxis: prfGraph.axis }">
+      <g class="axis x" data-bind="attr: { transform: 'translate(0,' + prfGraph.viewBox.height + ')' }"></g>
+      <g class="axis y"></g>
+      <g class="svg-prf-graph-g">
+        <!-- ko foreach: {data: selectedWellGroupWfmParameterList, as: 'groupParam'} -->
+        <path d="M0 0" clip-path="url(#graph-clip)" data-bind="attr: {id: 'grp-'+ groupParam.wfmParameterId, stroke: groupParam.color }, visible: groupParam.isVisible"></path>
+        <!-- /ko -->
+      </g>
+      <rect class="graph-zoom-rect" x="0" y="0" data-bind="attr: { width: prfGraph.viewBox.width, height: prfGraph.viewBox.height }"></rect>
+      <g class="graph-zoom-controls">
+        <g transform="translate(1050,10)">
+          <path  transform="scale(0.1)" d="M363.68,288.439h-76.24v76.238h-58.877v-76.238h-76.24v-58.877h76.24v-76.24h58.877v76.24h76.24V288.439z
+M462,256c0,113.771-92.229,206-206,206S50,369.771,50,256S142.229,50,256,50S462,142.229,462,256z M422,256
+c0-91.755-74.258-166-166-166c-91.755,0-166,74.259-166,166c0,91.755,74.258,166,166,166C347.755,422,422,347.741,422,256z"></path>
+          <circle class="zoom-in" cx="256" cy="256" r="256" transform="scale(0.1)"></circle>
         </g>
-      </svg>
-    </div>
-    <div>
-      <!--svg-path-line-->
-      <svg version="1.1" width="100%" height="20px" data-bind="svgAxisTime: {timeBorder: filteredByDateProductionDataSetTimeBorder, windowSize: $root.windowWidth }">
-        <g class="axis"></g>
-      </svg>
-    </div>
-  </div>
+        <g transform="translate(1050,60)">
+          <path transform="scale(0.1)" d="M363.68,288.439H152.322v-58.877H363.68V288.439z M462,256c0,113.771-92.229,206-206,206
+S50,369.771,50,256S142.229,50,256,50S462,142.229,462,256z M422,256c0-91.755-74.258-166-166-166c-91.755,0-166,74.259-166,166
+c0,91.755,74.258,166,166,166C347.755,422,422,347.741,422,256z"></path>
+          <circle class="zoom-out" cx="256" cy="256" r="256" transform="scale(0.1)"></circle>
+        </g>
+      </g>
+    </g>
+  </svg>
 </div>
             <div class="clearfix" style="margin-top:4px">
               <div class="text-center">
@@ -983,31 +1005,34 @@
                 <div data-bind="if: prfPartial.hstProductionDataSet().length === 0">No data. Import files from "File manager" to view production data.</div>
                 <div data-bind="if: prfPartial.hstProductionDataSet().length > 0">
                     <div data-bind="if: selectedAttrGroup">
-                        <div class="clearfix pd-graph-wrap">
-  <div class="pull-right pd-graph-vscale">
-    <svg version="1.1" width="60px" data-bind="svgAxisValue: {valueBorder: filteredByDateProductionDataSetValueBorder}, attr:{ height: prfGraphHeight }">
-      <g class="axis"></g>
-    </svg>
-  </div>
-  <div class="pd-graph-grid">
-    <div>
-      <svg version="1.1" width="100%" data-bind="attr: { height: prfGraphHeight }, svgResponsive: { ratio: prfPartial.prfGraph.viewBox.ratio, tmpPrfGraphHeight: prfGraphHeight }" viewbox="0 0 1200 400">
-        <g class="svg-prf-graph-g" data-bind="foreach: {data: selectedWellGroupWfmParameterList, as: 'groupParam'}">
-          <!-- ko with: $parent.productionDataSetSvgPath -->
-          <!-- ko if: $data[groupParam.wfmParameterId] -->
-          <path d="M0 0" data-bind="attr:{d: $data[groupParam.wfmParameterId], stroke: groupParam.color }" style="stroke-width:1; fill: none"></path>
-          <!-- /ko -->
-          <!-- /ko -->
+                        <div class="pd-graph-wrap">
+  <!-- viewbox = prfGraph.viewBox.size + all margins -->
+  <svg version="1.1" width="100%" data-bind="attr: { height: prfGraph.height }, svgResponsive: { tmpPrfGraphWidth: prfGraph.width, tmpIsVisibleMenu: $root.isVisibleMenu }" viewbox="0 0 1200 400">
+    <g data-bind="attr: { transform: 'translate(' + prfGraph.viewBox.margin.left + ', ' + prfGraph.viewBox.margin.top + ')' }, svgZoomGraph: { prfGraphViewBox: prfGraph.viewBox, productionDataSetSvgPath: productionDataSetSvgPath, filteredByDateProductionDataSet: filteredByDateProductionDataSet, prfGraphZoom: prfGraph.zoom, prfGraphAxis: prfGraph.axis }">
+      <g class="axis x" data-bind="attr: { transform: 'translate(0,' + prfGraph.viewBox.height + ')' }"></g>
+      <g class="axis y"></g>
+      <g class="svg-prf-graph-g">
+        <!-- ko foreach: {data: selectedWellGroupWfmParameterList, as: 'groupParam'} -->
+        <path d="M0 0" clip-path="url(#graph-clip)" data-bind="attr: {id: 'grp-'+ groupParam.wfmParameterId, stroke: groupParam.color }, visible: groupParam.isVisible"></path>
+        <!-- /ko -->
+      </g>
+      <rect class="graph-zoom-rect" x="0" y="0" data-bind="attr: { width: prfGraph.viewBox.width, height: prfGraph.viewBox.height }"></rect>
+      <g class="graph-zoom-controls">
+        <g transform="translate(1050,10)">
+          <path  transform="scale(0.1)" d="M363.68,288.439h-76.24v76.238h-58.877v-76.238h-76.24v-58.877h76.24v-76.24h58.877v76.24h76.24V288.439z
+M462,256c0,113.771-92.229,206-206,206S50,369.771,50,256S142.229,50,256,50S462,142.229,462,256z M422,256
+c0-91.755-74.258-166-166-166c-91.755,0-166,74.259-166,166c0,91.755,74.258,166,166,166C347.755,422,422,347.741,422,256z"></path>
+          <circle class="zoom-in" cx="256" cy="256" r="256" transform="scale(0.1)"></circle>
         </g>
-      </svg>
-    </div>
-    <div>
-      <!--svg-path-line-->
-      <svg version="1.1" width="100%" height="20px" data-bind="svgAxisTime: {timeBorder: filteredByDateProductionDataSetTimeBorder, windowSize: $root.windowWidth }">
-        <g class="axis"></g>
-      </svg>
-    </div>
-  </div>
+        <g transform="translate(1050,60)">
+          <path transform="scale(0.1)" d="M363.68,288.439H152.322v-58.877H363.68V288.439z M462,256c0,113.771-92.229,206-206,206
+S50,369.771,50,256S142.229,50,256,50S462,142.229,462,256z M422,256c0-91.755-74.258-166-166-166c-91.755,0-166,74.259-166,166
+c0,91.755,74.258,166,166,166C347.755,422,422,347.741,422,256z"></path>
+          <circle class="zoom-out" cx="256" cy="256" r="256" transform="scale(0.1)"></circle>
+        </g>
+      </g>
+    </g>
+  </svg>
 </div>
                     </div>
                 </div>
@@ -1074,6 +1099,7 @@
         <button class="btn btn-default btn-sm" type="button" data-bind="click: changeSortByDateOrder">
           Sort by date <i class="glyphicon" data-bind="css: sortByDateCss"></i>
         </button>
+        <select class="input-sm" data-bind="options: $root.jobTypeList, optionsText: 'name', optionsValue: 'id', value: jobTypeId, optionsCaption: 'Filter by job type...'"></select>
       </div>
     </div>
   </div>
@@ -1096,10 +1122,16 @@
                 <div data-bind="visible: historyText">
                   <blockquote class="pre-wrap-text" data-bind="text: historyText"></blockquote>
                 </div>
-                <div data-bind="foreach: WfmImages">
-                  <img src="" data-bind="attr: { src: dataUrl }" alt="History image" class="img-thumbnail elem-shadow" />
+                <div data-bind="with: jobType">
+                  <blockquote>
+                    <span class="bld">Job type:</span>
+                    <span data-bind="text: name"></span>
+                  </blockquote>
                 </div>
-                <div data-bind="foreach: WellHistoryFiles" class="clearfix">
+                <div data-bind="foreach: WfmImages">
+                  <img class="img-thumbnail elem-shadow" src="" data-bind="attr: { src: dataUrl }" alt="History image" />
+                </div>
+                <div class="clearfix" data-bind="foreach: WellHistoryFiles">
                   <div class="img-thumbnail pull-left">
                     <a href="#" data-bind="text: FileNameWODate, click: downloadWellHistoryFile"></a>
                   </div>
@@ -1330,4 +1362,10 @@
         </div>
     </div>
 </div>
+  <!--Clip path for perfomance graphs-->
+  <svg x="0" y="0" width="0" height="0">
+    <clippath id="graph-clip">
+      <rect x="0" y="0" width="1110" height="370"></rect>
+    </clippath>
+  </svg>
 </div>
