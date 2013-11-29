@@ -1,9 +1,9 @@
 require(['require-config'], function () {
     'use strict';
 
-    require(['jquery', 'angular', 'blueimp-gallery', 'app/controllers/company', 'app/controllers/auth', 'app/controllers/register',
-        'angular-route', 'jquery.bootstrap',
-        'console-shim', 'es5-shim'], function ($, angular, blueimpGallery) {
+    require(['jquery', 'angular', 'app/controllers/company', 'app/controllers/auth', 'app/controllers/register',
+        'angular-route', 'jquery.bootstrap', 'jquery.panzoom',
+        'console-shim', 'es5-shim'], function ($, angular) {
             var PRJ_MODULE_NAME = 'ang-cabinet-project';
 
             angular.module(PRJ_MODULE_NAME, ['ngRoute', 'ang-company-controllers', 'ang-auth-controllers', 'ang-register-controllers'])
@@ -44,28 +44,46 @@ require(['require-config'], function () {
                 angular.bootstrap(wfmProject, [PRJ_MODULE_NAME]);
                 $(wfmProject).removeClass('hide');
 
-                console.log('blueimp', blueimpGallery);
-                document.getElementById('links').onclick = function (event) {
-                    event = event || window.event;
-                    // event.target / event.srcElement contains a reference to the element the event was raised on.
-                    var target = event.target || event.srcElement,
-                        // get parent link or link if no image inside
-                        link = target.src ? target.parentNode : target,
-                        // all links for building gallery
-                        links = this.getElementsByTagName('a');
-                    //event.preventDefault();
-                    blueimpGallery(links, {
-                        index: link,
-                        event: event,
-                        stretchImages: false
-                    });
+                $('.panzoom').panzoom();
 
-                    //console.log(link);
-                    //console.log(links);
-                    //console.log(options);
+
+                (function () {
+
+                    var $panzoom = $('.panzoom').panzoom();
+                    $panzoom.parent().on('mousewheel.focal', function (e) {
+                        e.preventDefault();
+                        var delta = e.delta || e.originalEvent.wheelDelta;
+                        var zoomOut = delta ? delta < 0 : e.originalEvent.deltaY > 0;
+                        $panzoom.panzoom('zoom', zoomOut, {
+                            increment: 0.1,
+                            focal: e
+                        });
+                    });
+                })();
+
+
+                ////console.log('blueimp', blueimpGallery);
+                ////document.getElementById('links').onclick = function (event) {
+                ////    event = event || window.event;
+                ////    // event.target / event.srcElement contains a reference to the element the event was raised on.
+                ////    var target = event.target || event.srcElement,
+                ////        // get parent link or link if no image inside
+                ////        link = target.src ? target.parentNode : target,
+                ////        // all links for building gallery
+                ////        links = this.getElementsByTagName('a');
+                ////    //event.preventDefault();
+                ////    blueimpGallery(links, {
+                ////        index: link,
+                ////        event: event,
+                ////        stretchImages: false
+                ////    });
+
+                ////    //console.log(link);
+                ////    //console.log(links);
+                ////    //console.log(options);
                     
-                    return false;
-                };
+                ////    return false;
+                ////};
             });
         });
 });
