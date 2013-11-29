@@ -431,7 +431,9 @@
             </div>
             <div data-bind="foreach: WfmImages">
               <div>
-                <img class="img-thumbnail elem-shadow" src="" data-bind="attr: { src: dataUrl }" alt="History image" />
+                <span class="pointer" data-bind="panzoomImg: {src: dataUrl}">
+                  <img class="img-thumbnail elem-shadow" src="" data-bind="attr: { src: dataUrl }" alt="History image" />
+                </span>
                 <span data-bind="visible: $root.isEditable">
                   <i class="glyphicon glyphicon-remove link-icon" data-bind="click: $parent.deleteWfmImage"></i>
                 </span>
@@ -806,12 +808,12 @@ c0,91.755,74.258,166,166,166C347.755,422,422,347.741,422,256z"></path>
   <div class="row">
     <div class="col-sm-4 text-center">
       <div>
-        <button class="btn btn-default btn-sm" style="width:100%" data-bind="click: function(){ chooseMainFile('sketch'); }">Choose sketch...</button>
+        <button class="btn btn-default btn-sm btn-block" data-bind="click: function(){ chooseMainFile('sketch'); }">Choose sketch...</button>
       </div>
       <div>
-        <a href="#" data-bind="attr: { href: MainSketchUrl }" data-lightbox="image-sketch" title="Sketch">
+        <span class="pointer" data-bind="panzoomImg: {src: MainSketchUrl}">
           <img src="#" class="img-responsive" data-bind="attr: { src: MainSketchUrl }" alt="Sketch image" />
-        </a>
+        </span>
       </div>
     </div>
     <div class="col-sm-8">
@@ -964,11 +966,11 @@ c0,91.755,74.258,166,166,166C347.755,422,422,347.741,422,256z"></path>
   <div class="row">
     <div class="col-sm-4 text-center">
       <div>
-        <button class="btn" style="width:100%" data-bind="click: function(){ chooseMainFile('volume'); }">Choose volume...</button>
+        <button class="btn btn-default btn-sm btn-block" data-bind="click: function(){ chooseMainFile('volume'); }">Choose volume...</button>
       </div>
-      <a href="#" data-bind="attr: { href: MainVolumeUrl }" data-lightbox="image-volume" title="Volume">
-        <img src="#" class="img-responsive" data-bind="attr: { src: MainVolumeUrl }" alt="Volume image" />
-      </a>
+      <span class="pointer" data-bind="panzoomImg: {src: MainVolumeUrl}">
+        <img class="img-responsive" src="#" data-bind="attr: { src: MainVolumeUrl }" alt="Volume image" />
+      </span>
     </div>
   </div>
 </script>
@@ -1041,26 +1043,29 @@ c0,91.755,74.258,166,166,166C347.755,422,422,347.741,422,256z"></path>
     </div>
 </script>
 <script type="text/html" id="sketch-widget-tpl">
-    <div data-bind="if: widget.isVisSettingPanel">
-        <div class="widget-setting-panel">
-            <label>
-                <input type="checkbox" data-bind="checked: widget.isVisImg" /> Image
-            </label>
-            <label>
-                <input type="checkbox" data-bind="checked: widget.isVisDescription" /> Description
-            </label>
-        </div>
+  <div data-bind="if: widget.isVisSettingPanel">
+    <div class="widget-setting-panel">
+      <label>
+        <input type="checkbox" data-bind="checked: widget.isVisImg" /> Image
+      </label>
+      <label>
+        <input type="checkbox" data-bind="checked: widget.isVisDescription" /> Description
+      </label>
     </div>
-    <div class="widget-content">
-        <div data-bind="with: $parents[3]">
-            <div data-bind="if: widget.isVisImg">
-                <img src="#" class="img-responsive" data-bind="attr: { src: MainSketchUrl }" alt="Sketch image" />
-            </div>
-            <div data-bind="if: widget.isVisDescription">
-                <div data-bind="html: SketchDesc" style="-ms-word-wrap: break-word; word-wrap: break-word; padding: 8px 2px;"></div>
-            </div>
-        </div>
+  </div>
+  <div class="widget-content">
+    <div data-bind="with: $parents[3]">
+      <div data-bind="if: widget.isVisImg">
+        <!--attr: { src: MainSketchUrl }-->
+        <span class="pointer" data-bind="panzoomImg: { src: MainSketchUrl}">
+          <img class="img-responsive" src="#" data-bind="attr: { src: MainSketchUrl }" alt="Sketch image" />
+        </span>
+      </div>
+      <div data-bind="if: widget.isVisDescription">
+        <div data-bind="html: SketchDesc" style="-ms-word-wrap: break-word; word-wrap: break-word; padding: 8px 2px;"></div>
+      </div>
     </div>
+  </div>
 </script>
 <script type="text/html" id="summary-widget-tpl">
   <div data-bind="if: widget.isVisSettingPanel">
@@ -1129,7 +1134,9 @@ c0,91.755,74.258,166,166,166C347.755,422,422,347.741,422,256z"></path>
                   </blockquote>
                 </div>
                 <div data-bind="foreach: WfmImages">
-                  <img class="img-thumbnail elem-shadow" src="" data-bind="attr: { src: dataUrl }" alt="History image" />
+                  <span class="pointer" data-bind="panzoomImg: {src: dataUrl}">
+                    <img class="img-thumbnail elem-shadow" src="" data-bind="attr: { src: dataUrl }" alt="History image" />
+                  </span>
                 </div>
                 <div class="clearfix" data-bind="foreach: WellHistoryFiles">
                   <div class="img-thumbnail pull-left">

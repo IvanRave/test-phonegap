@@ -1,8 +1,9 @@
 ﻿/*z-index:
     9999: spinner
-    1030: top and bottom fixed panel 
+    1030: top and bottom fixed panel, fixed wfm-nav menu
     1040: modal window has
-    99: workspace sidebar trailer       
+    99: workspace sidebar trailer
+    -1: body
 */
 
 html, body {
@@ -173,6 +174,10 @@ footer {
     color: #e80c4d;
 }
 
+.pointer {
+    cursor: pointer;
+}
+
 .link-icon {
     cursor: pointer;
     color: #1F98C7;
@@ -269,10 +274,28 @@ footer {
     }
 
 .modal-wide {
-    width: 90%;
-    left: 5%;
-    margin: auto auto auto auto;
+    width: 98% !important;
+    /*height: 95% !important;*/
+    /*padding: 0 !important;*/
+    margin: auto;
 }
+
+    .modal-wide .modal-content {
+        /*height: 100% !important;*/
+        border-radius: 0 !important;
+    }
+
+.modal-fullscreen {
+    width: 99% !important;
+    height: 99% !important;
+    padding: 0 !important;
+    margin: auto !important;
+}
+
+    .modal-fullscreen .modal-content {
+        height: 100% !important;
+        /*border-radius: 0 !important;*/
+    }
 
 .workspace-container {
     padding-left: 21px;
@@ -281,27 +304,6 @@ footer {
 .sidebar-wrap {
     background-color: #333;
 }
-
-/*svg.wfm-icon {
-    width: 28px;
-    height: 28px;
-    cursor: pointer;
-    stroke: #86ee10;
-    fill: #333;
-}*/
-
-/*svg.wfm-home-icon {
-    width: 28px;
-    height: 28px;
-    cursor: pointer;
-    stroke: #86ee10;
-    fill: #fff;
-}
-
-    svg.wfm-home-icon:hover {
-        fill: #86ee10;
-        stroke: #333;
-    }*/
 
 .wfm-workspace-well-tab {
     background-color: #222;
@@ -713,3 +715,30 @@ footer {
     .graph-zoom-controls path {
         fill: #bbb;
     }
+
+
+.btn-modal-close {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+}
+
+.panzoom-controls {
+    position: absolute;
+    font-size: 1.5em;
+    font-weight: normal;
+    right: 10px;
+    line-height: 1;
+}
+
+.panzoom-in {
+    top: 70px;
+}
+
+.panzoom-out {
+    top: 100px;
+}
+
+.panzoom-reset {
+    top: 130px;
+}

@@ -1,4 +1,4 @@
-define(['jquery', 'knockout', 'moment', 'jquery.slimscroll', 'jquery.bootstrap', 'bootstrap-datepicker', 'picker.date'], function ($, ko, appMoment) {
+define(['jquery', 'knockout', 'moment', 'bootstrap-modal', 'jquery.slimscroll', 'jquery.bootstrap', 'bootstrap-datepicker', 'picker.date'], function ($, ko, appMoment, bootstrapModal) {
     'use strict';
 
     // Hooks up a form to jQuery Validation
@@ -352,6 +352,16 @@ define(['jquery', 'knockout', 'moment', 'jquery.slimscroll', 'jquery.bootstrap',
             // Update initial
             updateWidth();
             // svg viewbox size need to init before creating of this element
+        }
+    };
+
+    ko.bindingHandlers.panzoomImg = {
+        init: function (element, valueAccessor) {
+            var imgSrc = ko.unwrap(valueAccessor().src);
+            $(element).on('click', function (e) {
+                e.preventDefault();
+                bootstrapModal.openModalPanzoomWindow(imgSrc);
+            });
         }
     };
 

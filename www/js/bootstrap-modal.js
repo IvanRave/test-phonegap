@@ -55,7 +55,19 @@
 
     bootstrapModal.closeModalFileManager = function () {
         $('#modal-file-manager').modal('hide');
-    }
+    };
+
+    bootstrapModal.openModalPanzoomWindow = function (imgSrc) {
+        var $modalBlock = $('#modal-panzoom-block');
+        $modalBlock.find('img').attr('src', imgSrc);
+        $modalBlock.find('.btn-modal-close').off('click').on('click', function () {
+            $modalBlock.modal('hide');
+        });
+
+        $modalBlock.find('.panzoom-reset').click();
+
+        $modalBlock.modal('show');
+    };
 
     return bootstrapModal;
 });

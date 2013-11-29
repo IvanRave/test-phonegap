@@ -8,7 +8,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link href="css/bootstrap.css" rel="stylesheet" media="screen">
     <link href="css/bootstrap-theme.css" rel="stylesheet" media="screen">
-    <link href="css/lightbox.css" rel="stylesheet" />
     <link href="css/main.css" rel="stylesheet" />
     <link href="css/jquery.fileupload.css" rel="stylesheet" />
     <link href="css/bootstrap-datepicker.css" rel="stylesheet" />
@@ -18,8 +17,6 @@
     <link href="css/default.date.css" rel="stylesheet" />
     <link href="css/default.time.css" rel="stylesheet" />
     <!-- /date picker-->
-    <!-- blueimp gallery -->
-    <link href="css/blueimp-gallery.css" rel="stylesheet" />
 </head>
 <body>
     <!--[if lt IE 9]><p class="chromeframe">You are using an <strong>outdated</strong> browser. Please upgrade your browser.</p><![endif]-->
@@ -35,29 +32,9 @@
             </div>
         </nav>
         <div class="wfm-content-wrap">
-            <div id="blueimp-gallery" class="blueimp-gallery">
-                <div class="slides"></div>
-                <h3 class="title"></h3>
-                <a class="prev">‹</a>
-                <a class="next">›</a>
-                <a class="close">×</a>
-                <a class="play-pause"></a>
-                <ol class="indicator"></ol>
-            </div>
-            <div id="links">
-                <a href="img/carousel-wfm-1.jpg" title="Banana">
-                    <img src="img/question.jpg" alt="Banana">
-                </a>
-                <a href="img/carousel-wfm-2.jpg" title="Banana">
-                    <img src="img/question.jpg" alt="Banana">
-                </a>
-            </div>
-            <div style="overflow: hidden; position: relative">
-                <div class="panzoom">
-                    <img src="img/620x300.jpg" />
-                </div>
-            </div>
-            <div id="modal-standard-block" class="modal fade" role="dialog" tabindex="-1" aria-hidden="true">
+            <div ng-view></div>
+        </div>
+		<div id="modal-standard-block" class="modal fade" role="dialog" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
@@ -74,8 +51,27 @@
         </div><!-- /.modal-content -->
     </div><!-- /.modal-dialog -->
 </div><!-- /.modal -->
-            <div ng-view></div>
-        </div>
+		<div id="modal-panzoom-block" class="modal fade" role="dialog" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-fullscreen">
+    <div class="modal-content clearfix">
+      <div class="modal-body panzoom text-center">
+        <img src="#"></img>
+      </div>
+      <button class="btn btn-xs btn-link btn-modal-close" type="button" aria-hidden="true">
+        <i class="glyphicon glyphicon-remove"></i>
+      </button>
+      <button class="btn btn-xs btn-link panzoom-controls panzoom-in">
+        <i class="glyphicon glyphicon-plus-sign"></i>
+      </button>
+      <button class="btn btn-xs btn-link panzoom-controls panzoom-out">
+        <i class="glyphicon glyphicon-minus-sign"></i>
+      </button>
+      <button class="btn btn-xs btn-link panzoom-controls panzoom-reset">
+        <i class="glyphicon glyphicon-refresh"></i>
+      </button>
+    </div>
+  </div>
+</div>
     </div>
     <footer class="navbar-fixed-bottom navbar-inverse">
         <div class="footer-logo-wrap">
@@ -84,7 +80,7 @@
     </footer>
     <!-- Load main script file for page or default (with auth logic only) -->
     
-    <script data-main="js/main-bundle-0.7.1" src="js/require.js"></script>
+    <script data-main="js/main-bundle-0.7.3" src="js/require.js"></script>
     
 </body>
 </html>
