@@ -45,27 +45,27 @@ require(['require-config'], function () {
                 $(wfmProject).removeClass('hide');
 
                 console.log('blueimp', blueimpGallery);
-                ////document.getElementById('links').onclick = function (event) {
-                ////    event = event || window.event;
-                ////    // event.target / event.srcElement contains a reference to the element the event was raised on.
-                ////    var target = event.target || event.srcElement,
-                ////        // get parent link or link if no image inside
-                ////        link = target.src ? target.parentNode : target,
-                ////        // all links for building gallery
-                ////        links = this.getElementsByTagName('a');
-                ////    //event.preventDefault();
-                ////    blueimpGallery(links, {
-                ////        index: link,
-                ////        event: event,
-                ////        stretchImages: false
-                ////    });
+                document.getElementById('links').onclick = function (event) {
+                    event = event || window.event;
+                    // event.target / event.srcElement contains a reference to the element the event was raised on.
+                    var target = event.target || event.srcElement,
+                        // get parent link or link if no image inside
+                        link = target.src ? target.parentNode : target,
+                        // all links for building gallery
+                        links = this.getElementsByTagName('a');
+                    //event.preventDefault();
+                    blueimpGallery(links, {
+                        index: link,
+                        event: event,
+                        stretchImages: false
+                    });
 
-                ////    //console.log(link);
-                ////    //console.log(links);
-                ////    //console.log(options);
+                    //console.log(link);
+                    //console.log(links);
+                    //console.log(options);
                     
-                ////    return false;
-                ////};
+                    return false;
+                };
             });
         });
 });
