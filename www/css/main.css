@@ -498,8 +498,13 @@ footer {
     content: "\e010";
 }
 
+/*frequent margins for blocks*/
 .min-top-margin {
     margin-top: 8px;
+}
+
+.min-left-margin {
+    margin-left: 8px;
 }
 
 .btn-tile {

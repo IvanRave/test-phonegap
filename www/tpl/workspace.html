@@ -12,7 +12,7 @@
         </button>
       </div>
       <div class="sidebar-wrap" data-bind="css: $root.sidebarWrapCss">
-        <div data-bind="scroller: { height: windowHeight, width: windowWidth }">
+        <div data-bind="scroller: { }">
           <div class="wfm-list">
   <ul class="list-unstyled">
     <!-- ko foreach: wellRegionList -->
@@ -79,25 +79,25 @@
                   </div>
                 </li>
                 <!-- /ko -->
-                <li data-bind="if: $root.isEditable">
+                <li data-ng-if="isEdt">
                   <button class="btn btn-xs" data-bind="click: addWell" type="button">Add well</button>
                 </li>
               </ul>
             </li>
             <!-- /ko -->
-            <li data-bind="if: $root.isEditable">
+            <li data-ng-if="isEdt">
               <button class="btn btn-xs" data-bind="click: addWellGroup" type="button">Add group</button>
             </li>
           </ul>
         </li>
         <!-- /ko -->
-        <li data-bind="if: $root.isEditable">
+        <li data-ng-if="isEdt">
           <button class="btn btn-xs" data-bind="click: addWellField" type="button">Add field</button>
         </li>
       </ul>
     </li>
     <!-- /ko -->
-    <li data-bind="if: $root.isEditable">
+    <li data-ng-if="isEdt">
       <button class="btn btn-xs" data-bind="click: addWellRegion" type="button">Add region</button>
     </li>
   </ul>
@@ -110,7 +110,7 @@
             
 <h4>
     <span data-bind="text: Name"></span>
-    <small data-bind="if: $root.isEditable">
+    <small data-ng-if="isEdt">
         <button type="button" class="btn btn-xs btn-default" data-bind="click: editWellRegion">
             <i class="glyphicon glyphicon-edit"></i>
         </button>
@@ -137,7 +137,7 @@
         <div class="clearfix">
             <h4 class="pull-left">
                 <span data-bind="text: Name"></span>
-                <small data-bind="if: $root.isEditable">
+                <small data-ng-if="isEdt">
                     <button class="btn btn-xs btn-default" data-bind="click: editWellField">
                         <i class="glyphicon glyphicon-edit"></i>
                     </button>
@@ -215,11 +215,11 @@
               <div data-bind="ifnot: selectedWell">
                 <h4>
     <span data-bind="text: Name"></span>
-    <small data-bind="if: $root.isEditable">
-        <button type="button" class="btn btn-xs btn-default" data-bind="click: editWellGroup">
+    <small data-ng-if="isEdt">
+        <button class="btn btn-xs btn-default" type="button" data-bind="click: editWellGroup">
             <i class="glyphicon glyphicon-edit"></i>
         </button>
-        <button type="button" class="btn btn-xs btn-default" data-bind="click: $parent.deleteWellGroup">
+        <button class="btn btn-xs btn-default" type="button" data-bind="click: $parent.deleteWellGroup">
             <i class="glyphicon glyphicon-remove"></i>
         </button>
     </small>
@@ -273,12 +273,12 @@
                 <div>
   <div class="wfm-workspace-well-top-tab clearfix">
     <div class="pull-left" style="margin-top:1px">
-      <button type="button" class="btn btn-inverse btn-sm" data-bind="click: unselectSection">
+      <button class="btn btn-inverse btn-sm" type="button" data-bind="click: unselectSection">
         <i class="glyphicon glyphicon-th"></i>&nbsp;&nbsp;<span>Well dashboard</span>
       </button>
     </div>
     <div class="pull-left" style="margin-top:1px">
-      <button type="button" class="btn btn-inverse btn-sm" data-bind="click: showFmg">
+      <button class="btn btn-inverse btn-sm" type="button" data-bind="click: showFmg">
         <i class="glyphicon glyphicon-folder-open"></i>&nbsp;&nbsp;<span>File manager</span>
       </button>
     </div>
@@ -335,7 +335,8 @@
     </div>
   </div>
 
-  <script type="text/html" id="well-history-tpl">
+  <div class="well-content-pad">
+    <div data-bind="if: selectedSectionId() === 'history'">
   <span data-bind="ifnot: isLoadedHistoryList">Loading...</span>
   <div data-bind="if: isLoadedHistoryList">
     <div class="clearfix">
@@ -356,7 +357,7 @@
           <small>No well history</small>
         </div>
       </div>
-      <div class="pull-right" data-bind="if: $root.isEditable">
+      <div class="pull-right" data-ng-if="isEdt">
         <span data-bind="with: wellHistoryNew">
           <input class="input-sm" type="text" size="10" data-bind="datepicker: startUnixTime, datepickerOptions: { format: 'yyyy-mm-dd', selectYears: true, selectMonths: true }" />
           <span> - </span>
@@ -373,7 +374,7 @@
           <div class="col-md-2">
             <div>
               <div class="bld">Period:</div>
-              <div data-bind="ifnot: $root.isEditable">
+              <div data-ng-if="!isEdt">
                 <div>
                   <span data-bind="unix: startUnixTime"></span>
                 </div>
@@ -381,19 +382,19 @@
                   <span data-bind="unix: endUnixTime, visible: isVisibleEndUnixTime"></span>
                 </div>
               </div>
-              <div data-bind="if: $root.isEditable">
+              <div data-ng-if="isEdt">
                 <input class="input-sm" type="text" size="10" data-bind="datepicker: startUnixTime, datepickerOptions: { format: 'yyyy-mm-dd', selectYears: true, selectMonths: true }"></input>
                 <input class="input-sm" type="text" size="10" data-bind="datepicker: endUnixTime, datepickerOptions: { format: 'yyyy-mm-dd', selectYears: true, selectMonths: true }"></input>
               </div>
             </div>
             <div>
-              <div data-bind="ifnot: $root.isEditable">
+              <div data-ng-if="!isEdt">
                 <div data-bind="with: jobType">
                   <span class="bld">Job type:</span>
                   <span data-bind="text: name"></span>
                 </div>
               </div>
-              <div data-bind="if: $root.isEditable">
+              <div data-ng-if="isEdt">
                 <div data-bind="if: $root.jobTypeList().length > 0">
                   <span class="bld">Job type:</span>
                   <select class="input-sm" data-bind="options: $root.jobTypeList, optionsText: 'name', optionsValue: 'id', optionsCaption: 'No job type', value: jobTypeId"></select>
@@ -401,7 +402,7 @@
                 </div>
               </div>
             </div>
-            <div data-bind="if: $root.isEditable" style="margin-top:8px">
+            <div data-ng-if="isEdt" style="margin-top:8px">
               <div class="btn-group-vertical btn-group-sm">
                 <button class="btn btn-default" type="button" data-bind="click: chooseWellHistoryFile">
                   <i class="glyphicon glyphicon-paperclip"></i> Attach a file
@@ -416,12 +417,12 @@
             </div>
           </div>
           <div class="col-md-10">
-            <div data-bind="ifnot: $root.isEditable">
+            <div data-ng-if="!isEdt">
               <div data-bind="visible: historyText">
                 <blockquote class="pre-wrap-text" data-bind="text: historyText"></blockquote>
               </div>
             </div>
-            <div data-bind="if: $root.isEditable">
+            <div data-ng-if="isEdt">
               <blockquote>
                 <textarea class="form-control" rows="3" style="resize: vertical" data-bind="value: historyText"></textarea>
                 <button class="btn btn-default btn-sm" type="button" data-bind="click: putWellHistory">
@@ -434,7 +435,7 @@
                 <span class="pointer" data-bind="panzoomImg: {src: dataUrl}">
                   <img class="img-thumbnail elem-shadow" src="" data-bind="attr: { src: dataUrl }" alt="History image" />
                 </span>
-                <span data-bind="visible: $root.isEditable">
+                <span data-ng-if="isEdt">
                   <i class="glyphicon glyphicon-remove link-icon" data-bind="click: $parent.deleteWfmImage"></i>
                 </span>
               </div>
@@ -442,7 +443,9 @@
             <div data-bind="foreach: WellHistoryFiles" class="clearfix">
               <div class="img-thumbnail pull-left">
                 <a href="#" data-bind="text: FileNameWODate, click: downloadWellHistoryFile"></a>
-                <i class="glyphicon glyphicon-remove link-icon" data-bind="click: $parent.deleteWellHistoryFile, visible: $root.isEditable"></i>
+                <span data-ng-if="isEdt">
+                  <i class="glyphicon glyphicon-remove link-icon" data-bind="click: $parent.deleteWellHistoryFile"></i>
+                </span>
               </div>
             </div>
           </div>
@@ -450,8 +453,8 @@
       </div>
     </div>
   </div>
-</script>
-  <script type="text/html" id="well-integrity-tpl">
+</div>
+    <div data-bind="if: selectedSectionId() === 'integrity'">
   <div data-bind="ifnot: isLoadedIntegrity">
     Loading...
   </div>
@@ -477,8 +480,8 @@
       </div>
     </div>
   </div>
-</script>
-  <script type="text/html" id="well-log-tpl">
+</div>
+    <div data-bind="if: selectedSectionId() === 'log'">
   <div class="clearfix">
     <div class="pull-left" data-bind="visible: wellLogSelectedFile">
       <div class="clearfix">
@@ -533,8 +536,8 @@
       </div>
     </div>
   </div>
-</script>
-  <script type="text/html" id="well-map-tpl">
+</div>
+    <div data-bind="if: selectedSectionId() === 'map'">
   <div class="row">
     <div class="col-md-8">
       <div style="width: 620px; height: 512px; border: 1px dotted #555">
@@ -578,10 +581,10 @@
       </div>
     </div>
   </div>
-</script>
-  <script type="text/html" id="well-nodalanalysis-tpl">
+</div>
+    <div data-bind="if: selectedSectionId() === 'nodalanalysis'">
   <div data-bind="ifnot: isLoadedNodal">
-    Loading...
+    loading...
   </div>
   <div data-bind="if: isLoadedNodal">
     <div data-bind="ifnot: isExistsSectionWellFiles">
@@ -605,8 +608,8 @@
       </div>
     </div>
   </div>
-</script>
-  <script type="text/html" id="well-pd-tpl">
+</div>
+    <div data-bind="if: selectedSectionId() === 'pd'">
   <div data-bind="with: mainPerfomanceView">
     <div data-bind="ifnot: prfPartial.isLoadedHstProductionData">loading...</div>
     <div data-bind="if: prfPartial.isLoadedHstProductionData">
@@ -790,7 +793,7 @@ c0,91.755,74.258,166,166,166C347.755,422,422,347.741,422,256z"></path>
 </table>
             <div class="text-center">
               <ul class="pagination pagination-sm" data-bind="foreach: {data: joinedYearList, as: 'joinedYear'}">
-                <li data-bind="visible: joinedYear >= $parent.WPDDateStartYear() && joinedYear <= $parent.WPDDateEndYear(), css: {'active': joinedYear === $parent.selectedPrfTableYear() }">
+                <li data-bind="css: {'active': joinedYear === $parent.selectedPrfTableYear() }, visible: joinedYear >= $parent.WPDDateStartYear() && joinedYear <= $parent.WPDDateEndYear()">
                   <a href="#" data-bind="text: joinedYear, click: function(){ $parent.selectPrfTableYear(joinedYear);}"></a>
                 </li>
               </ul>
@@ -800,11 +803,11 @@ c0,91.755,74.258,166,166,166C347.755,422,422,347.741,422,256z"></path>
       </div>
     </div>
   </div>
-</script>
-  <script type="text/html" id="well-report-tpl">
-    under construction...
-</script>
-  <script type="text/html" id="well-sketch-tpl">
+</div>
+    <div data-bind="if: selectedSectionId() === 'report'">
+  under construction...
+</div>
+    <div data-bind="if: selectedSectionId() === 'sketch'">
   <div class="row">
     <div class="col-sm-4 text-center">
       <div>
@@ -838,41 +841,80 @@ c0,91.755,74.258,166,166,166C347.755,422,422,347.741,422,256z"></path>
       </div>
     </div>
   </div>
-</script>
-  <script type="text/html" id="well-summary-tpl">
-  <div data-bind="foreach: wellPropertyList">
-    <div>
-      <i class="glyphicon glyphicon-edit" data-bind="click: $parent.editField, visible: $root.isEditable"></i>
-      <label data-bind="text: ttl"></label>
-    </div>
-    <div class="well well-sm" data-bind="visible: $parent[id]">
-      <span data-bind="if: tpe === 'SingleLine'">
-        <span data-bind="text: $parent[id]"></span>
-      </span>
-      <span data-bind="if: tpe === 'MultiLine'">
-        <span class="pre-wrap-text" data-bind="text: $parent[id]"></span>
-      </span>
-      <span data-bind="if: tpe === 'DateLine'">
-        <span data-bind="date: $parent[id]"></span>
-      </span>
+</div>
+    <div data-bind="if: selectedSectionId() === 'summary'">
+  <div data-ng-if="!isEdt">
+    <div data-bind="foreach: wellPropertyList">
+      <div data-bind="if: $parent[id]">
+        <div>
+          <label data-bind="text: ttl"></label>
+        </div>
+        <div class="well well-sm">
+          <span data-bind="if: tpe === 'SingleLine'">
+            <span data-bind="text: $parent[id]"></span>
+          </span>
+          <span data-bind="if: tpe === 'MultiLine'">
+            <span class="pre-wrap-text" data-bind="text: $parent[id]"></span>
+          </span>
+          <span data-bind="if: tpe === 'DateLine'">
+            <span data-bind="unix: $parent[id]"></span>
+          </span>
+        </div>
+      </div>
     </div>
   </div>
-  <div class="text-right" data-bind="visible: $root.isEditable">
-    <button type="button" class="btn btn-default" data-bind="click: $parent.deleteWell">Delete well</button>
+  <div data-ng-if="isEdt">
+    <div data-bind="foreach: wellPropertyList">
+      <div>
+        <label data-bind="text: ttl"></label>
+        <span data-bind="if: tpe !== 'DateLine'">
+          <i class="glyphicon glyphicon-edit" data-bind="click: $parent.editField"></i>
+        </span>
+      </div>
+      <div class="well well-sm">
+        <span data-bind="if: tpe === 'SingleLine'">
+          <span data-bind="text: $parent[id]"></span>
+        </span>
+        <span data-bind="if: tpe === 'MultiLine'">
+          <span class="pre-wrap-text" data-bind="text: $parent[id]"></span>
+        </span>
+        <span data-bind="if: tpe === 'DateLine'">
+          <input class="input-sm" type="text" size="10" data-bind="datepicker: $parent[id], datepickerOptions: { format: 'yyyy-mm-dd', selectYears: true, selectMonths: true }" />
+          <button class="btn btn-sm btn-default" data-bind="click: $parent.putWell">Save</button>
+        </span>
+      </div>
+    </div>
+    <div class="text-right">
+      <button class="btn btn-default" type="button" data-bind="click: $parent.deleteWell">Delete well</button>
+    </div>
   </div>
-</script>
-  <script type="text/html" id="well-test-tpl">
-  <div class="clearfix">
+</div>
+    <div data-bind="if: selectedSectionId() === 'test'">
+  <div class="clearfix" data-ng-if="isEdt">
+    <!-- ko with: testScopeNewStartUnixTime -->
     <div class="pull-left">
-      <button type="button" class="btn btn-default" data-bind="click: addTestScope">
-        <i class="glyphicon glyphicon-plus"></i> Add new test
+      Date:
+      <input class="input-sm" type="text" size="10" data-bind="datepicker: unixDate, datepickerOptions: { format: 'yyyy-mm-dd', selectYears: true, selectMonths: true }" />
+    </div>
+    <div class="pull-left min-left-margin">
+      Hours:
+      <input class="input-sm" type="number" min="0" max="23" data-bind="value: hour" placeholder="hours"></input>
+    </div>
+    <div class="pull-left min-left-margin">
+      Minutes:
+      <input class="input-sm" type="number" min="0" max="59" data-bind="value: minute" placeholder="minutes"></input>
+    </div>
+    <!-- /ko -->
+    <div class="pull-left">
+      <button type="button" class="btn btn-default btn-sm" data-bind="enable: isEnabledPostTestScope, click: postTestScope">
+        <i class="glyphicon glyphicon-plus"></i> Create new test
       </button>
     </div>
     <div class="pull-right">
-      <button type="button" class="btn btn-default" data-bind="click: getWellGroup().addWellGroupWfmParameter, enable: getWellGroup().selectedWfmParameterId">Add</button>
+      <button type="button" class="btn btn-sm btn-default" data-bind="click: getWellGroup().addWellGroupWfmParameter, enable: getWellGroup().selectedWfmParameterId">Add</button>
     </div>
     <div class="pull-right">
-      <select class="form-control" data-bind="options: getWellGroup().unselectedWfmParameterList, optionsValue: 'id', optionsText: 'name', value: getWellGroup().selectedWfmParameterId, optionsCaption: 'Add new parameter...'"></select>
+      <select class="form-control input-sm" data-bind="options: getWellGroup().unselectedWfmParameterList, optionsValue: 'id', optionsText: 'name', value: getWellGroup().selectedWfmParameterId, optionsCaption: 'Add new parameter...'"></select>
     </div>
   </div>
   <div data-bind="foreach: { data: sortedTestScopeList, as: 'testScope' }">
@@ -942,7 +984,7 @@ c0,91.755,74.258,166,166,166C347.755,422,422,347.741,422,256z"></path>
           <!-- /ko -->
           <tr>
             <td colspan="6">
-              <button type="button" class="btn btn-xs btn-default" data-bind="click: testScope.addTestData">Add new hour</button>
+              <button type="button" class="btn btn-xs btn-default" data-bind="click: testScope.addTestData">Add hour</button>
             </td>
           </tr>
         </tbody>
@@ -961,8 +1003,8 @@ c0,91.755,74.258,166,166,166C347.755,422,422,347.741,422,256z"></path>
       </table>
     </div>
   </div>
-</script>
-  <script type="text/html" id="well-volume-tpl">
+</div>
+    <div data-bind="if: selectedSectionId() === 'volume'">
   <div class="row">
     <div class="col-sm-4 text-center">
       <div>
@@ -973,8 +1015,9 @@ c0,91.755,74.258,166,166,166C347.755,422,422,347.741,422,256z"></path>
       </span>
     </div>
   </div>
-</script>
-  <script type="text/html" id="perfomance-widget-tpl">
+</div>
+
+    <script type="text/html" id="perfomance-widget-tpl">
     <div data-bind="if: widget.isVisSettingPanel">
         <div class="widget-setting-panel">
             <div data-bind="with: widget.perfomanceView">
@@ -1042,7 +1085,7 @@ c0,91.755,74.258,166,166,166C347.755,422,422,347.741,422,256z"></path>
         </div>
     </div>
 </script>
-<script type="text/html" id="sketch-widget-tpl">
+    <script type="text/html" id="sketch-widget-tpl">
   <div data-bind="if: widget.isVisSettingPanel">
     <div class="widget-setting-panel">
       <label>
@@ -1067,7 +1110,7 @@ c0,91.755,74.258,166,166,166C347.755,422,422,347.741,422,256z"></path>
     </div>
   </div>
 </script>
-<script type="text/html" id="summary-widget-tpl">
+    <script type="text/html" id="summary-widget-tpl">
   <div data-bind="if: widget.isVisSettingPanel">
     <div class="widget-setting-panel" data-bind="foreach: $parents[3].wellPropertyList">
       <label style="font-weight: normal">
@@ -1093,7 +1136,7 @@ c0,91.755,74.258,166,166,166C347.755,422,422,347.741,422,256z"></path>
     </div>
   </div>
 </script>
-<script type="text/html" id="history-widget-tpl">
+    <script type="text/html" id="history-widget-tpl">
   <div data-bind="if: widget.isVisSettingPanel">
     <div class="widget-setting-panel">
       <div data-bind="with: widget.historyView">
@@ -1151,27 +1194,28 @@ c0,91.755,74.258,166,166,166C347.755,422,422,347.741,422,256z"></path>
     </div>
   </div>
 </script>
-<script type="text/html" id="well-widget-scope-tpl">
+
+    <div data-bind="if: selectedSectionId() === null">
     <div data-bind="if: isLoadedWellWidgoutList">
         <div class="clearfix">
             <div class="pull-left">
                 <span class="bld" data-bind="text: Name"></span>
                 <span data-bind="with: selectedWellWidgout">
-                    <span data-bind="if: $root.isEditable">
+                    <span data-ng-if="isEdt">
                         <input class="input-sm" type="text" data-bind="value: name" />
                     </span>
-                    <span data-bind="ifnot: $root.isEditable">
+                    <span data-ng-if="!isEdt">
                         <span data-bind="text: name" />
                     </span>
                 </span>
             </div>
-            <div class="pull-right" data-bind="if: $root.isEditable, visible: selectedWellWidgout">
+            <div class="pull-right" data-ng-if="isEdt" data-bind="visible: selectedWellWidgout">
                 <button class="btn btn-sm btn-default" data-bind="click: deleteWellWidgout">Delete layout</button>
             </div>
             <div class="pull-right" data-bind="visible: selectedWellWidgout" style="margin-left: 32px">
                 <select class="input-sm" data-bind="options: wellWidgoutList, optionsText: 'name', value: selectedWellWidgout"></select>
             </div>
-            <div class="pull-right" data-bind="if: $root.isEditable">
+            <div class="pull-right" data-ng-if="isEdt">
                 <select class="input-sm" data-bind="options: possibleWidgoutList, optionsText: 'name', value: slcPossibleWidgout, optionsCaption: 'Choose scheme...'"></select>
                 <button class="btn btn-sm btn-default" data-bind="enable: slcPossibleWidgout, click: postWellWidgout">Create new layout</button>
             </div>
@@ -1190,7 +1234,7 @@ c0,91.755,74.258,166,166,166C347.755,422,422,347.741,422,256z"></path>
                                         <input type="text" class="input-sm" data-bind="value: name" />
                                     </div>
                                 </div>
-                                <div class="pull-right" data-bind="if: $root.isEditable">
+                                <div class="pull-right" data-ng-if="isEdt">
                                     <div data-bind="ifnot: isVisSettingPanel">
                                         <button class="btn btn-xs" type="button" data-bind="click: showVisSettingPanel">
                                             <i class="glyphicon glyphicon-cog" title="Settings"></i>
@@ -1207,11 +1251,11 @@ c0,91.755,74.258,166,166,166C347.755,422,422,347.741,422,256z"></path>
                                 </div>
                             </div>
                             <div class="widget-tile-content">
-                                <div data-bind="template: { name: widgetTpl, data: $data, as: 'widget', afterRender: processWidget }"></div>
+                                <div data-bind="template: { name: widgetTpl, data: $data, as: 'widget' }"></div>
                             </div>
                         </div>
                     </div>
-                    <div data-bind="if: $root.isEditable">
+                    <div data-ng-if="isEdt">
                         <div class="widget-tile">
                             <div class="widget-empty">
                                 <div class="text-right">
@@ -1227,15 +1271,7 @@ c0,91.755,74.258,166,166,166C347.755,422,422,347.741,422,256z"></path>
             </div>
         </div>
     </div>
-</script>
-
-  <div class="well-content-pad">
-    <div data-bind="if: selectedSectionId">
-      <div data-bind="template: { name: 'well-' + selectedSectionId() + '-tpl' }"></div>
-    </div>
-    <div data-bind="ifnot: selectedSectionId">
-      <div data-bind="template: { name: 'well-widget-scope-tpl', afterRender: afterRenderWidgetScope }"></div>
-    </div>
+</div>
   </div>
   <div id="modal-file-manager" class="modal fade" role="dialog" tabindex="-1" aria-hidden="true">
   <div class="modal-dialog modal-wide">
@@ -1351,9 +1387,6 @@ c0,91.755,74.258,166,166,166C347.755,422,422,347.741,422,256z"></path>
             </div>
           </div>
         </div>
-        <p class="text-error" data-bind="if: viewModelError">
-          <span data-bind="text: viewModelError"></span>
-        </p>
       </div>
     </div>
   </div>

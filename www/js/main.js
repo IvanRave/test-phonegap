@@ -1,7 +1,7 @@
 require(['require-config'], function () {
     'use strict';
 
-    require(['jquery', 'angular', 'app/controllers/company', 'app/controllers/auth', 'app/controllers/register',
+    require(['jquery', 'angular', 'controllers/company', 'controllers/auth', 'controllers/register',
         'angular-route', 'jquery.bootstrap', 'jquery.panzoom',
         'console-shim', 'es5-shim'], function ($, angular) {
             var PRJ_MODULE_NAME = 'ang-cabinet-project';

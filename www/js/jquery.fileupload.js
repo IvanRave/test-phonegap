@@ -1,5 +1,5 @@
 /*
- * jQuery File Upload Plugin 5.39.0
+ * jQuery File Upload Plugin 5.39.1
  * https://github.com/blueimp/jQuery-File-Upload
  *
  * Copyright 2010, Sebastian Tschan
@@ -9,8 +9,8 @@
  * http://www.opensource.org/licenses/MIT
  */
 
-/*jslint nomen: true, unparam: true, regexp: true */
-/*global define, window, document, location, File, Blob, FormData */
+/* jshint nomen:false */
+/* global define, window, document, location, Blob, FormData */
 
 (function (factory) {
     'use strict';
@@ -429,7 +429,7 @@
                     encodeURI(file.name) + '"';
             }
             if (!multipart) {
-                options.contentType = file.type;
+                options.contentType = file.type || 'application/octet-stream';
                 options.data = options.blob || file;
             } else if ($.support.xhrFormDataFileUpload) {
                 if (options.postMessage) {

@@ -11,13 +11,11 @@
 .jcrop-holder {
   direction: ltr;
   text-align: left;
-  /* IE10 touch compatibility */
-  -ms-touch-action: none;
 }
 /* Selection Border */
 .jcrop-vline,
 .jcrop-hline {
-  background: #ffffff url(../img/jcrop.gif);
+  background: #ffffff url("Jcrop.gif");
   font-size: 0;
   position: absolute;
 }
